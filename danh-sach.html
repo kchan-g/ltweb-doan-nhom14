@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Danh sách các sự kiện dành cho sinh viên trên hệ thống UniEvent"
+    />
+    <title>Danh sách sự kiện | UniEvent</title>
+  </head>
+
+  <body>
+    <header>UniEvent, Nền tảng tìm kiếm và đăng ký sự kiện</header>
+
+    <nav>
+      <ul>
+        <li>
+          <a href="https://kchan-g.github.io/ltweb-doan-nhom14/#">Trang chủ</a>
+        </li>
+        <li>
+          <a href="https://kchan-g.github.io/ltweb-doan-nhom14/danh-sach.html"
+            >Danh sách sự kiện</a
+          >
+        </li>
+        <li>
+          <a href="https://kchan-g.github.io/ltweb-doan-nhom14/chi-tiet.html"
+            >Chi tiết sự kiện</a
+          >
+        </li>
+        <li>
+          <a href="https://kchan-g.github.io/ltweb-doan-nhom14/gioi-thieu.html"
+            >Giới thiệu</a
+          >
+        </li>
+        <li>
+          <a href="https://kchan-g.github.io/ltweb-doan-nhom14/lien-he.html"
+            >Liên hệ</a
+          >
+        </li>
+      </ul>
+    </nav>
+
+    <main>
+      <h1>Danh sách sự kiện</h1>
+
+      <!-- Lọc theo danh mục -->
+      <section>
+        <h2>Lọc theo danh mục</h2>
+
+        <form>
+          <label for="danh-muc">Chọn danh mục:</label>
+
+          <select id="danh-muc" name="danh-muc">
+            <option value="">Tất cả</option>
+            <option value="hoi-thao">Hội thảo</option>
+            <option value="van-hoa">Văn hóa</option>
+            <option value="the-thao">Thể thao</option>
+            <option value="hoc-thuat">Học thuật</option>
+            <option value="viec-lam">Việc làm</option>
+          </select>
+
+          <button type="submit">Lọc</button>
+        </form>
+      </section>
+
+      <!-- Danh sách sự kiện -->
+      <ul>
+        <li>
+          <img
+            src="AI.jpg"
+            alt="Workshop Trí tuệ nhân tạo"
+            width="300"
+            height="180"
+          />
+          <h3>Workshop Trí tuệ nhân tạo trong thời đại số</h3>
+          <p>Thời gian: 20/08/2026 | Địa điểm: Hội trường A</p>
+          <a href="chi-tiet-su-kien.html">Xem chi tiết sự kiện</a>
+        </li>
+
+        <li>
+          <img
+            src="nghe.jpg"
+            alt="Định hướng nghề nghiệp"
+            width="300"
+            height="180"
+          />
+          <h3>Hội thảo: Định hướng nghề nghiệp Gen Z</h3>
+          <p>Thời gian: 26/08/2026 | Địa điểm: Hội trường A1</p>
+          <a href="chi-tiet-su-kien.html">Xem chi tiết sự kiện</a>
+        </li>
+
+        <li>
+          <img
+            src="giaidieu.jpg"
+            alt="Đêm nhạc sinh viên"
+            width="300"
+            height="180"
+          />
+          <h3>Đêm nhạc "Giai điệu sinh viên"</h3>
+          <p>Thời gian: 30/08/2026 | Địa điểm: Sân trường</p>
+          <a href="chi-tiet-su-kien.html">Xem chi tiết sự kiện</a>
+        </li>
+
+        <li>
+          <img
+            src="bongda.jpg"
+            alt="Giải bóng đá sinh viên"
+            width="300"
+            height="180"
+          />
+          <h3>Giải bóng đá sinh viên</h3>
+          <p>Thời gian: 05/09/2026 | Địa điểm: Sân vận động</p>
+          <a href="chi-tiet-su-kien.html">Xem chi tiết sự kiện</a>
+        </li>
+      </ul>
+
+      <!-- Phân trang -->
+      <nav aria-label="Phân trang">
+        <a href="danh-sach.html">Previous</a>
+        <a href="danh-sach.html">1</a>
+        <a href="danh-sach-2.html">2</a>
+        <a href="danh-sach-3.html">3</a>
+        <a href="danh-sach-2.html">Next</a>
+      </nav>
+    </main>
+
+    <footer>© 2026 Nhóm 14 — Khoa Toán - Tin</footer>
+  </body>
+</html>
