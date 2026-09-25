@@ -5,126 +5,452 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Danh sách các sự kiện dành cho sinh viên trên hệ thống UniEvent"
+      content="Danh sách các sự kiện dành cho sinh viên trên hệ thống UniEvent - Trường Đại học Sư phạm Đà Nẵng."
     />
-    <title>Danh sách sự kiện | UniEvent</title>
+    <title>Danh Sách Sự Kiện | UniEvent</title>
+
+    <!-- Nạp 5 tệp CSS theo module chuẩn đề bài -->
+    <link rel="stylesheet" href="css/01-bien.css" />
+    <link rel="stylesheet" href="css/02-chuan-hoa.css" />
+    <link rel="stylesheet" href="css/03-bo-cuc.css" />
+    <link rel="stylesheet" href="css/04-thanh-phan.css" />
+    <link rel="stylesheet" href="css/05-tien-ich.css" />
   </head>
 
-  <body>
-    <header>UniEvent, Nền tảng tìm kiếm và đăng ký sự kiện</header>
+  <body class="trang">
+    <!-- Header chung -->
+    <header class="vung-dau">
+      <div class="container site-header__inner">
+        <a
+          href="index.html"
+          class="thuong-hieu"
+          aria-label="Trang chủ UniEvent"
+        >
+          <img
+            src="images/logo.png"
+            alt="Logo UniEvent - Cổng sự kiện Đại học Sư phạm Đà Nẵng"
+            class="logo-img"
+            width="44"
+            height="44"
+          />
+          <div>
+            <div class="thuong-hieu__ten">UniEvent</div>
+            <div class="thuong-hieu__mota">
+              Hệ thống Quản lý Sự kiện ĐHSP Đà Nẵng
+            </div>
+          </div>
+        </a>
 
-    <nav>
-      <ul>
-        <li>
-          <a href="https://kchan-g.github.io/ltweb-doan-nhom14/#">Trang chủ</a>
-        </li>
-        <li>
-          <a href="https://kchan-g.github.io/ltweb-doan-nhom14/danh-sach.html"
-            >Danh sách sự kiện</a
-          >
-        </li>
-        <li>
-          <a href="https://kchan-g.github.io/ltweb-doan-nhom14/chi-tiet.html"
-            >Chi tiết sự kiện</a
-          >
-        </li>
-        <li>
-          <a href="https://kchan-g.github.io/ltweb-doan-nhom14/gioi-thieu.html"
-            >Giới thiệu</a
-          >
-        </li>
-        <li>
-          <a href="https://kchan-g.github.io/ltweb-doan-nhom14/lien-he.html"
-            >Liên hệ</a
-          >
-        </li>
-      </ul>
+        <div class="header-phai">
+          <div class="search-box" role="search">
+            <label for="tim-kiem-header" class="chi-danh-cho-sr"
+              >Tìm kiếm sự kiện</label
+            >
+            <input
+              type="text"
+              id="tim-kiem-header"
+              placeholder="Tìm kiếm sự kiện, hội thảo..."
+            />
+            <button type="button" aria-label="Tìm kiếm">🔍</button>
+          </div>
+          <div class="tai-khoan" aria-label="Tài khoản người dùng">
+            <span>Admin</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigation chung -->
+    <nav class="vung-menu site-nav" aria-label="Điều hướng chính">
+      <div class="container">
+        <ul>
+          <li>
+            <a href="index.html">Trang chủ</a>
+          </li>
+          <li>
+            <a href="danh-sach.html" class="active" aria-current="page"
+              >Danh sách sự kiện</a
+            >
+          </li>
+          <li>
+            <a href="gioi-thieu.html">Giới thiệu</a>
+          </li>
+          <li>
+            <a href="lien-he.html">Liên hệ</a>
+          </li>
+        </ul>
+      </div>
     </nav>
 
+    <!-- Main Content -->
     <main>
-      <h1>Danh sách sự kiện</h1>
+      <div class="container">
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb mb-3" aria-label="Đường dẫn phân cấp">
+          <a href="index.html">Trang chủ</a>
+          <span aria-hidden="true">/</span>
+          <span class="hien-tai">Danh sách sự kiện</span>
+        </nav>
 
-      <!-- Lọc theo danh mục -->
-      <section>
-        <h2>Lọc theo danh mục</h2>
+        <!-- Tiêu đề trang duy nhất (H1) -->
+        <div class="trang-tieu-de mb-4">
+          <h1>Danh Sách Các Sự Kiện Đang Diễn Ra</h1>
+          <p class="do-dai-chuan text-phu">
+            Khám phá và đăng ký các hoạt động học thuật, văn hóa, thể thao đang
+            diễn ra tại Trường Đại học Sư phạm – Đại học Đà Nẵng.
+          </p>
+        </div>
 
-        <form>
-          <label for="danh-muc">Chọn danh mục:</label>
+        <!-- Thanh lọc theo danh mục -->
+        <section class="bo-loc mb-5" aria-labelledby="tieu-de-bo-loc">
+          <h2 id="tieu-de-bo-loc" class="chi-danh-cho-sr">
+            Bộ lọc tìm kiếm sự kiện
+          </h2>
 
-          <select id="danh-muc" name="danh-muc">
-            <option value="">Tất cả</option>
-            <option value="hoi-thao">Hội thảo</option>
-            <option value="van-hoa">Văn hóa</option>
-            <option value="the-thao">Thể thao</option>
-            <option value="hoc-thuat">Học thuật</option>
-            <option value="viec-lam">Việc làm</option>
-          </select>
+          <form action="#" method="get">
+            <div class="form-nhom">
+              <label for="danh-muc-select">Chọn phân loại danh mục:</label>
+              <select id="danh-muc-select" name="danh-muc">
+                <option value="">Tất cả các danh mục sự kiện</option>
+                <option value="hoi-thao">
+                  Hội thảo khoa học &amp; Công nghệ
+                </option>
+                <option value="van-hoa">Văn hóa &amp; Nghệ thuật</option>
+                <option value="the-thao">Thể dục - Thể thao sinh viên</option>
+                <option value="hoc-thuat">Học thuật &amp; Kỹ năng mềm</option>
+                <option value="viec-lam">
+                  Cơ hội việc làm &amp; Tuyển dụng
+                </option>
+              </select>
+            </div>
 
-          <button type="submit">Lọc</button>
-        </form>
-      </section>
+            <div class="form-nhom">
+              <label for="sap-xep-select">Sắp xếp theo tiêu chí:</label>
+              <select id="sap-xep-select" name="sap-xep">
+                <option value="moi-nhat">Mới nhất tuần này</option>
+                <option value="sap-dien-ra">Sắp diễn ra gần nhất</option>
+                <option value="diem-ren-luyen">Điểm rèn luyện cao nhất</option>
+              </select>
+            </div>
 
-      <!-- Danh sách sự kiện -->
-      <ul>
-        <li>
-          <img
-            src="images/AI.jpg"
-            alt="Workshop Trí tuệ nhân tạo"
-            width="300"
-            height="180"
-          />
-          <h3>Workshop Trí tuệ nhân tạo trong thời đại số</h3>
-          <p>Thời gian: 20/08/2026 | Địa điểm: Hội trường A</p>
-          <a href="chi-tiet-su-kien.html">Xem chi tiết sự kiện</a>
-        </li>
+            <button type="submit" class="nut-bam nut-nhan">Lọc sự kiện</button>
+          </form>
+        </section>
 
-        <li>
-          <img
-            src="images/nghe.jpg"
-            alt="Định hướng nghề nghiệp"
-            width="300"
-            height="180"
-          />
-          <h3>Hội thảo: Định hướng nghề nghiệp Gen Z</h3>
-          <p>Thời gian: 26/08/2026 | Địa điểm: Hội trường A1</p>
-          <a href="chi-tiet-su-kien.html">Xem chi tiết sự kiện</a>
-        </li>
+        <!-- Danh sách thẻ sự kiện: Lưới repeat(auto-fit, minmax) -->
+        <section aria-labelledby="tieu-de-tat-ca-su-kien">
+          <div class="section-head mb-4">
+            <h2 id="tieu-de-tat-ca-su-kien" class="tieu-de-muc">
+              Tất Cả Sự Kiện Mới Nhất
+            </h2>
+          </div>
 
-        <li>
-          <img
-            src="images/giaidieu.jpg"
-            alt="Đêm nhạc sinh viên"
-            width="300"
-            height="180"
-          />
-          <h3>Đêm nhạc "Giai điệu sinh viên"</h3>
-          <p>Thời gian: 30/08/2026 | Địa điểm: Sân trường</p>
-          <a href="chi-tiet-su-kien.html">Xem chi tiết sự kiện</a>
-        </li>
+          <ul class="danh-sach-su-kien">
+            <!-- Item 1: Workshop AI -->
+            <li>
+              <article class="the-tin">
+                <div class="the-tin__media">
+                  <span class="badge">Hội thảo</span>
+                  <img
+                    src="images/AI.jpg"
+                    alt="Poster Workshop Trí tuệ Nhân tạo trong thời đại số"
+                    width="360"
+                    height="225"
+                    loading="lazy"
+                  />
+                </div>
+                <div class="the-tin__body">
+                  <h3>Workshop: Ứng Dụng AI Để Nâng Cao Hiệu Quả Công Việc</h3>
+                  <p class="event-meta">
+                    📅 Thời gian: 25/08/2026, 18:00 - 20:30
+                  </p>
+                  <p class="event-meta">
+                    📍 Địa điểm: Hội trường A1, ĐH Sư Phạm
+                  </p>
+                  <p class="event-meta">🏅 Quyền lợi: +5 Điểm rèn luyện</p>
+                  <a href="chi-tiet.html" class="nut-bam nut-nhan nut-nho">
+                    Xem chi tiết sự kiện
+                  </a>
+                </div>
+              </article>
+            </li>
 
-        <li>
-          <img
-            src="images/bongda.jpg"
-            alt="Giải bóng đá sinh viên"
-            width="300"
-            height="180"
-          />
-          <h3>Giải bóng đá sinh viên</h3>
-          <p>Thời gian: 05/09/2026 | Địa điểm: Sân vận động</p>
-          <a href="chi-tiet-su-kien.html">Xem chi tiết sự kiện</a>
-        </li>
-      </ul>
+            <!-- Item 2: Định hướng nghề nghiệp -->
+            <li>
+              <article class="the-tin">
+                <div class="the-tin__media">
+                  <span class="badge badge--vang">Kỹ năng</span>
+                  <img
+                    src="images/nghe.jpg"
+                    alt="Hình ảnh Hội thảo Định hướng nghề nghiệp Gen Z"
+                    width="360"
+                    height="225"
+                    loading="lazy"
+                  />
+                </div>
+                <div class="the-tin__body">
+                  <h3>
+                    Hội Thảo: Gen Z Chuyện Chọn Nghề &amp; Phát Triển Kỹ Năng
+                  </h3>
+                  <p class="event-meta">
+                    📅 Thời gian: 26/08/2026, 08:30 - 11:30
+                  </p>
+                  <p class="event-meta">
+                    📍 Địa điểm: Hội trường A, Khu Hiệu bộ
+                  </p>
+                  <p class="event-meta">🏅 Quyền lợi: +4 Điểm rèn luyện</p>
+                  <a
+                    href="chi-tiet-nghe-nghiep.html"
+                    class="nut-bam nut-nhan nut-nho"
+                  >
+                    Xem chi tiết sự kiện
+                  </a>
+                </div>
+              </article>
+            </li>
 
-      <!-- Phân trang -->
-      <nav aria-label="Phân trang">
-        <a href="danh-sach.html">Previous</a>
-        <a href="danh-sach.html">1</a>
-        <a href="danh-sach-2.html">2</a>
-        <a href="danh-sach-3.html">3</a>
-        <a href="danh-sach-2.html">Next</a>
-      </nav>
+            <!-- Item 3: Đêm nhạc sinh viên -->
+            <li>
+              <article class="the-tin">
+                <div class="the-tin__media">
+                  <span class="badge badge--info">Văn hóa</span>
+                  <img
+                    src="images/giaidieu.jpg"
+                    alt="Ban nhạc trình diễn tại Đêm nhạc Giai điệu sinh viên"
+                    width="360"
+                    height="225"
+                    loading="lazy"
+                  />
+                </div>
+                <div class="the-tin__body">
+                  <h3>Đêm Nhạc Hội "Giai Điệu Sinh Viên" Sắc Màu Tuổi Trẻ</h3>
+                  <p class="event-meta">
+                    📅 Thời gian: 30/08/2026, 19:00 - 22:00
+                  </p>
+                  <p class="event-meta">
+                    📍 Địa điểm: Quảng trường Trung tâm ĐHSP
+                  </p>
+                  <p class="event-meta">🏅 Quyền lợi: +5 Điểm rèn luyện</p>
+                  <a
+                    href="chi-tiet-am-nhac.html"
+                    class="nut-bam nut-nhan nut-nho"
+                  >
+                    Xem chi tiết sự kiện
+                  </a>
+                </div>
+              </article>
+            </li>
+
+            <!-- Item 4: Giải bóng đá sinh viên -->
+            <li>
+              <article class="the-tin">
+                <div class="the-tin__media">
+                  <span class="badge badge--success">Thể thao</span>
+                  <img
+                    src="images/bongda.jpg"
+                    alt="Trận đấu trong Giải bóng đá sinh viên tranh cúp UniEvent"
+                    width="360"
+                    height="225"
+                    loading="lazy"
+                  />
+                </div>
+                <div class="the-tin__body">
+                  <h3>
+                    Giải Bóng Đá Sinh Viên Tranh Cúp Vô Địch UniEvent 2026
+                  </h3>
+                  <p class="event-meta">
+                    📅 Thời gian: 05/09/2026, 15:30 - 18:00
+                  </p>
+                  <p class="event-meta">
+                    📍 Địa điểm: Sân vận động cỏ nhân tạo trường
+                  </p>
+                  <p class="event-meta">🏅 Quyền lợi: +4 Điểm rèn luyện</p>
+                  <a
+                    href="chi-tiet-bong-da.html"
+                    class="nut-bam nut-nhan nut-nho"
+                  >
+                    Xem chi tiết sự kiện
+                  </a>
+                </div>
+              </article>
+            </li>
+
+            <!-- Item 5: Hội thảo Công nghệ 4.0 -->
+            <li>
+              <article class="the-tin">
+                <div class="the-tin__media">
+                  <span class="badge">Công nghệ</span>
+                  <img
+                    src="images/event1.jpg"
+                    alt="Hội thảo Công nghệ 4.0 và chuyển đổi số sinh viên"
+                    width="360"
+                    height="225"
+                    loading="lazy"
+                  />
+                </div>
+                <div class="the-tin__body">
+                  <h3>
+                    Hội Thảo Công Nghệ 4.0: Cơ Hội Việc Làm Lập Trình &amp; IT
+                  </h3>
+                  <p class="event-meta">
+                    📅 Thời gian: 28/10/2026, 08:30 - 11:30
+                  </p>
+                  <p class="event-meta">
+                    📍 Địa điểm: Hội trường A1 - ĐH Sư Phạm
+                  </p>
+                  <p class="event-meta">🏅 Quyền lợi: +5 Điểm rèn luyện</p>
+                  <a
+                    href="chi-tiet-cong-nghe.html"
+                    class="nut-bam nut-nhan nut-nho"
+                  >
+                    Xem chi tiết sự kiện
+                  </a>
+                </div>
+              </article>
+            </li>
+
+            <!-- Item 6: Ngày hội Câu lạc bộ -->
+            <li>
+              <article class="the-tin">
+                <div class="the-tin__media">
+                  <span class="badge badge--vang">CLB Đội nhóm</span>
+                  <img
+                    src="images/hero-image.jpg"
+                    alt="Sinh viên tham gia Ngày hội Câu Lạc Bộ UniEvent"
+                    width="360"
+                    height="225"
+                    loading="lazy"
+                  />
+                </div>
+                <div class="the-tin__body">
+                  <h3>
+                    Ngày Hội Tuyển Thành Viên Các CLB &amp; Đội Nhóm Sinh Viên
+                  </h3>
+                  <p class="event-meta">
+                    📅 Thời gian: 12/09/2026, 07:30 - 17:00
+                  </p>
+                  <p class="event-meta">📍 Địa điểm: Sân trường ĐH Sư Phạm</p>
+                  <p class="event-meta">🏅 Quyền lợi: +3 Điểm rèn luyện</p>
+                  <a href="chi-tiet-clb.html" class="nut-bam nut-nhan nut-nho">
+                    Xem chi tiết sự kiện
+                  </a>
+                </div>
+              </article>
+            </li>
+          </ul>
+        </section>
+
+        <!-- Phân trang ngữ nghĩa -->
+        <nav aria-label="Phân trang danh sách sự kiện" class="mt-5">
+          <div class="phan-trang">
+            <a href="danh-sach.html" class="dieu-huong" aria-label="Trang trước"
+              >« Trước</a
+            >
+            <a href="danh-sach.html" class="dang-active" aria-current="page"
+              >1</a
+            >
+            <a href="danh-sach.html">2</a>
+            <a href="danh-sach.html">3</a>
+            <a
+              href="danh-sach.html"
+              class="dieu-huong"
+              aria-label="Trang tiếp theo"
+              >Sau »</a
+            >
+          </div>
+        </nav>
+      </div>
     </main>
 
-    <footer>© 2026 Nhóm 14 — Khoa Toán - Tin</footer>
+    <!-- Footer 4 cột chung -->
+    <footer class="vung-chan">
+      <div class="container footer-grid">
+        <!-- Cột 1: Về UniEvent -->
+        <div>
+          <div class="footer-brand">
+            <img
+              src="images/logo.png"
+              alt="Logo UniEvent Footer"
+              class="logo-img"
+              width="32"
+              height="32"
+            />
+            <span>UniEvent</span>
+          </div>
+          <p>
+            Nền tảng quản lý và kết nối sự kiện đại học toàn diện dành cho sinh
+            viên và giảng viên Trường Đại học Sư phạm – Đại học Đà Nẵng.
+          </p>
+          <p class="mt-2">
+            📍 459 Tôn Đức Thắng, Hòa Khánh Nam, Liên Chiểu, Đà Nẵng
+          </p>
+          <p>✉️ support@unievent.edu.vn | 📞 0236 3841 323</p>
+        </div>
+
+        <!-- Cột 2: Điều hướng nhanh -->
+        <div>
+          <h3>Điều hướng nhanh</h3>
+          <ul>
+            <li><a href="index.html">Trang chủ</a></li>
+            <li><a href="danh-sach.html">Danh sách sự kiện</a></li>
+            <li><a href="gioi-thieu.html">Giới thiệu nhóm phát triển</a></li>
+            <li><a href="lien-he.html">Liên hệ hỗ trợ</a></li>
+          </ul>
+        </div>
+
+        <!-- Cột 3: Hỗ trợ sinh viên -->
+        <div>
+          <h3>Hỗ trợ sinh viên</h3>
+          <ul>
+            <li><a href="lien-he.html">Hướng dẫn đăng ký vé</a></li>
+            <li>
+              <a href="danh-sach.html">Quy định tích lũy điểm rèn luyện</a>
+            </li>
+            <li><a href="lien-he.html">Câu hỏi thường gặp (FAQ)</a></li>
+            <li><a href="lien-he.html">Bảo mật thông tin sinh viên</a></li>
+          </ul>
+        </div>
+
+        <!-- Cột 4: Mạng xã hội & Bản quyền -->
+        <div>
+          <h3>Kết nối mạng xã hội</h3>
+          <p>
+            Theo dõi các kênh thông tin chính thức của Đoàn - Hội trường ĐHSP:
+          </p>
+          <div class="mang-xa-hoi mt-3">
+            <a
+              href="https://www.facebook.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Facebook UniEvent"
+              >f</a
+            >
+            <a
+              href="https://www.youtube.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Kênh YouTube UniEvent"
+              >▶</a
+            >
+            <a
+              href="https://twitter.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Twitter UniEvent"
+              >t</a
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="container">
+          <p>
+            © 2026 UniEvent — Hệ thống Quản lý Sự kiện | Khoa Toán - Tin, Trường
+            Đại học Sư phạm – Đại học Đà Nẵng.
+          </p>
+        </div>
+      </div>
+    </footer>
   </body>
 </html>
