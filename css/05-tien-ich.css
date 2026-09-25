@@ -1,0 +1,240 @@
+/* ============================================================
+   05-TIEN-ICH.CSS — UTILITY CLASSES
+   ============================================================ */
+
+/* Text align */
+.text-center {
+  text-align: center;
+}
+.text-left {
+  text-align: left;
+}
+.text-right {
+  text-align: right;
+}
+
+/* Text color */
+.text-phu {
+  color: var(--chu-phu);
+}
+.text-nhan {
+  color: var(--mau-nhan-toi);
+}
+.text-chinh {
+  color: var(--mau-chinh);
+}
+.text-tren-toi {
+  color: var(--chu-tren-toi);
+}
+
+/* Font weight */
+.fw-vua {
+  font-weight: var(--dam-vua);
+}
+.fw-day {
+  font-weight: var(--dam-day);
+}
+
+/* Flex helpers */
+.flex {
+  display: flex;
+}
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+.items-center {
+  align-items: center;
+}
+.justify-between {
+  justify-content: space-between;
+}
+.justify-center {
+  justify-content: center;
+}
+.gap-1 {
+  gap: var(--space-1);
+}
+.gap-2 {
+  gap: var(--space-2);
+}
+.gap-3 {
+  gap: var(--space-3);
+}
+.gap-4 {
+  gap: var(--space-4);
+}
+.gap-5 {
+  gap: var(--space-5);
+}
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+/* Spacing */
+.mt-0 {
+  margin-top: 0;
+}
+.mt-1 {
+  margin-top: var(--space-1);
+}
+.mt-2 {
+  margin-top: var(--space-2);
+}
+.mt-3 {
+  margin-top: var(--space-3);
+}
+.mt-4 {
+  margin-top: var(--space-4);
+}
+.mt-5 {
+  margin-top: var(--space-5);
+}
+.mt-6 {
+  margin-top: var(--space-6);
+}
+.mb-0 {
+  margin-bottom: 0;
+}
+.mb-1 {
+  margin-bottom: var(--space-1);
+}
+.mb-2 {
+  margin-bottom: var(--space-2);
+}
+.mb-3 {
+  margin-bottom: var(--space-3);
+}
+.mb-4 {
+  margin-bottom: var(--space-4);
+}
+.mb-5 {
+  margin-bottom: var(--space-5);
+}
+.mb-6 {
+  margin-bottom: var(--space-6);
+}
+
+.pt-0 {
+  padding-top: 0;
+}
+.pb-0 {
+  padding-bottom: 0;
+}
+
+/* Width helpers */
+.w-full {
+  width: 100%;
+}
+.max-w-prose {
+  max-width: 68ch;
+}
+
+/* Visibility / responsive — Triết lý Mobile-First (min-width) */
+.chi-hien-tren-may-tinh {
+  display: none;
+}
+
+.chi-hien-mobile {
+  display: block;
+}
+
+@media (min-width: 1024px) {
+  .chi-hien-tren-may-tinh {
+    display: flex;
+  }
+
+  .chi-hien-mobile {
+    display: none;
+  }
+}
+
+/* Các lớp tiện ích thay thế cho style nội tuyến */
+.img-cover {
+  object-fit: cover;
+}
+.rounded-vua {
+  border-radius: var(--radius-vua);
+}
+.fs-nho {
+  font-size: var(--co-chu-nho);
+}
+.fs-meta {
+  font-size: var(--co-chu-meta);
+}
+.lh-vua {
+  line-height: 1.5;
+}
+.lh-chuan {
+  line-height: 1.6;
+}
+.col-width-35 {
+  width: 35%;
+}
+.caption-center {
+  text-align: center;
+}
+
+/* Ẩn phần tử nhưng vẫn giữ cho trình đọc màn hình (accessibility) */
+.chi-danh-cho-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Ngăn tràn ngang toàn cục */
+.khong-tran-ngang {
+  overflow-x: hidden;
+}
+
+/* Border helpers */
+.bo-tron-nho {
+  border-radius: var(--radius-nho);
+}
+.bo-tron-vua {
+  border-radius: var(--radius-vua);
+}
+.bo-tron-lon {
+  border-radius: var(--radius-lon);
+}
+.bo-tron-pill {
+  border-radius: var(--radius-pill);
+}
+
+/* Shadow helpers */
+.shadow-sm {
+  box-shadow: var(--shadow-sm);
+}
+.shadow-md {
+  box-shadow: var(--shadow-md);
+}
+.shadow-lg {
+  box-shadow: var(--shadow-lg);
+}
+
+/* Section spacing wrapper */
+.khoi-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* Nền surface nhanh */
+.nen-surface {
+  background: var(--nen-surface);
+}
+
+.nen-section {
+  background: var(--nen-section);
+}
+
+/* Đường viền nhẹ dùng nhanh */
+.vien-nhat {
+  border: 1px solid var(--border-nhat);
+}

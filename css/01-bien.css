@@ -1,0 +1,144 @@
+/* ============================================================
+   01-BIEN.CSS — DESIGN SYSTEM / CSS CUSTOM PROPERTIES
+   UniEvent — Nền tảng Quản lý Sự kiện Đại học
+   Toàn bộ màu sắc, typography, spacing, radius, shadow, transition
+   dùng trong dự án PHẢI được khai báo và lấy giá trị từ file này.
+   ============================================================ */
+
+:root {
+  /* -----------------------------------------------------------
+     1. COLOR — BRAND
+     Navy: màu thương hiệu chính (chuyên nghiệp, đáng tin)
+     Gold: màu nhấn (điểm nhấn CTA, badge, highlight)
+  ----------------------------------------------------------- */
+  --navy-900: #0b1e3d;
+  --navy-800: #102a52;
+  --navy-700: #163863;
+  --navy-600: #1d4a80;
+  --navy-500: #26619e;
+  --navy-100: #e7edf6;
+  --navy-50: #f2f6fb;
+
+  --gold-700: #8c5d0a; /* Đạt chuẩn tương phản AA >= 4.5:1 trên nền --gold-100 */
+  --gold-600: #c68e22;
+  --gold-500: #dba62c;
+  --gold-400: #e9bc4f;
+  --gold-100: #fbf0d6;
+  --gold-50: #fdf7e8;
+
+  --mau-chinh: var(--navy-800);
+  --mau-chinh-toi: var(--navy-900);
+  --mau-chinh-sang: var(--navy-600);
+  --mau-nhan: var(--gold-500);
+  --mau-nhan-toi: var(--gold-600);
+  --mau-nhan-sang: var(--gold-400);
+
+  /* -----------------------------------------------------------
+     2. COLOR — NỀN (BACKGROUND)
+  ----------------------------------------------------------- */
+  --nen-chinh: #f6f8fb; /* nền chung của trang */
+  --nen-surface: #ffffff; /* nền thẻ / card / form */
+  --nen-section: #eef2f8; /* nền cho các khối section xen kẽ */
+  --nen-toi: var(--navy-900); /* nền tối cho footer / header đặc biệt */
+  --nen-toi-2: var(--navy-800);
+
+  /* -----------------------------------------------------------
+     3. COLOR — TEXT
+  ----------------------------------------------------------- */
+  --chu-chinh: #16202e; /* Tương phản 15.5:1 trên nền trắng */
+  --chu-phu: #475569; /* Tương phản 5.9:1 trên nền trắng (đạt chuẩn AA >= 4.5:1) */
+  --chu-nhat: #526071; /* Tương phản 4.8:1 trên nền trắng (đạt chuẩn AA >= 4.5:1) */
+  --chu-tren-toi: #f3f6fb; /* Tương phản 15.8:1 trên nền tối */
+  --chu-tren-toi-phu: #d0dbe9; /* Tương phản 9.2:1 trên nền tối */
+  --chu-lien-ket: #144073; /* Tương phản 7.8:1 trên nền trắng */
+
+  /* -----------------------------------------------------------
+     4. COLOR — BORDER
+  ----------------------------------------------------------- */
+  --border-nhat: #e3e8f0;
+  --border-vua: #d3dbe6;
+  --border-toi: #2a3b58;
+
+  /* -----------------------------------------------------------
+     5. COLOR — TRẠNG THÁI
+  ----------------------------------------------------------- */
+  --mau-success: #1f8a58;
+  --mau-success-nen: #e7f6ee;
+  --mau-warning: #b7791f;
+  --mau-warning-nen: #fdf3df;
+  --mau-danger: #c53030;
+  --mau-danger-nen: #fbeaea;
+  --mau-info: #2470b3;
+  --mau-info-nen: #e9f2fb;
+
+  /* -----------------------------------------------------------
+     6. TYPOGRAPHY
+  ----------------------------------------------------------- */
+  --font-chinh:
+    "Segoe UI", "Inter", -apple-system, BlinkMacSystemFont, "Helvetica Neue",
+    Roboto, Arial, sans-serif;
+  --font-hien-thi: "Georgia", "Segoe UI", serif;
+
+  --co-chu-h1: clamp(2rem, 1.6rem + 1.6vw, 3rem);
+  --co-chu-h2: clamp(1.5rem, 1.3rem + 0.8vw, 2.1rem);
+  --co-chu-h3: clamp(1.15rem, 1.05rem + 0.4vw, 1.375rem);
+  --co-chu-h4: 1.125rem;
+  --co-chu-body: 1rem;
+  --co-chu-nho: 0.875rem;
+  --co-chu-meta: 0.8125rem;
+  --co-chu-button: 0.9375rem;
+
+  --dam-thuong: 400;
+  --dam-vua: 500;
+  --dam-day: 600;
+  --dam-rat-day: 700;
+
+  --dong-chinh: 1.65;
+  --dong-tieu-de: 1.25;
+
+  /* -----------------------------------------------------------
+     7. SPACING SCALE
+  ----------------------------------------------------------- */
+  --space-1: 0.25rem; /* 4px */
+  --space-2: 0.5rem; /* 8px */
+  --space-3: 0.75rem; /* 12px */
+  --space-4: 1rem; /* 16px */
+  --space-5: 1.5rem; /* 24px */
+  --space-6: 2rem; /* 32px */
+  --space-8: 3rem; /* 48px */
+  --space-10: 4rem; /* 64px */
+  --space-12: 5rem; /* 80px */
+
+  /* -----------------------------------------------------------
+     8. BORDER RADIUS
+  ----------------------------------------------------------- */
+  --radius-nho: 6px;
+  --radius-vua: 12px;
+  --radius-lon: 20px;
+  --radius-pill: 999px;
+
+  /* -----------------------------------------------------------
+     9. SHADOW — tinh tế, không quá đậm
+  ----------------------------------------------------------- */
+  --shadow-sm:
+    0 1px 2px rgba(16, 32, 64, 0.06), 0 1px 1px rgba(16, 32, 64, 0.04);
+  --shadow-md:
+    0 6px 16px rgba(16, 32, 64, 0.08), 0 2px 6px rgba(16, 32, 64, 0.05);
+  --shadow-lg:
+    0 16px 40px rgba(16, 32, 64, 0.12), 0 4px 12px rgba(16, 32, 64, 0.06);
+  --shadow-focus: 0 0 0 3px rgba(38, 97, 158, 0.22);
+
+  /* -----------------------------------------------------------
+     10. TRANSITION
+  ----------------------------------------------------------- */
+  --transition-nhanh: 0.15s ease;
+  --transition-chuan: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-cham: 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Tối đa 0.3s theo yêu cầu đề bài */
+
+  /* -----------------------------------------------------------
+     11. LAYOUT
+  ----------------------------------------------------------- */
+  --container-max: 1240px;
+  --container-hep: 860px;
+  --header-height: 76px;
+}
