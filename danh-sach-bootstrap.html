@@ -23,7 +23,7 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
     />
 
-    <!-- TÙY BIẾN BIẾN CSS BOOTSTRAP (--bs-*) VÀ GIAO DIỆN UNIEVENT (Tệp riêng theo yêu cầu đề bài) -->
+    <!-- TÙY BIẾN BIẾN CSS BOOTSTRAP (-bs-*) VÀ GIAO DIỆN UNIEVENT (Tệp riêng theo yêu cầu đề bài) -->
     <link rel="stylesheet" href="css/danh-sach-bootstrap.css" />
   </head>
 
@@ -170,7 +170,7 @@
       </div>
 
       <!-- KHỐI BỘ LỌC TÌM KIẾM: DÙNG ROW - COL & FORM CONTROLS -->
-      <section class="card border-0 shadow-sm p-3 mb-4">
+      <div class="card border-0 shadow-sm p-3 mb-4">
         <form>
           <div class="row g-3 align-items-end">
             <div class="col-12 col-md-4">
@@ -226,10 +226,11 @@
             </div>
           </div>
         </form>
-      </section>
+      </div>
 
       <!-- DANH SÁCH THẺ SỰ KIỆN: DÙNG ROW - COLS & CARD & BADGE COMPONENTS -->
       <section class="mb-5">
+        <h2 class="visually-hidden">Danh sách các thẻ sự kiện</h2>
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
           <!-- CARD 1: Workshop AI -->
           <div class="col">
@@ -575,11 +576,11 @@
         class="d-flex justify-content-center mb-5"
       >
         <ul class="pagination pagination-md shadow-sm">
-          <li class="page-item disabled">
-            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
-              <i class="bi bi-chevron-left"></i> Trước
-            </a>
-          </li>
+            <li class="page-item disabled">
+              <span class="page-link" aria-disabled="true">
+                <i class="bi bi-chevron-left"></i> Trước
+              </span>
+            </li>
           <li class="page-item active" aria-current="page">
             <a class="page-link" href="#">1</a>
           </li>
@@ -626,16 +627,16 @@
       class="modal fade"
       id="modalDangKy"
       tabindex="-1"
+      role="dialog"
       aria-labelledby="modalDangKyLabel"
       aria-hidden="true"
     >
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content shadow border-0">
           <div class="modal-header bg-primary text-white">
-            <h5 class="modal-title fs-5 fw-bold" id="modalDangKyLabel">
-              <i class="bi bi-ticket-perforated-fill me-2 text-warning"></i>Đăng
-              Ký Tham Gia Sự Kiện
-            </h5>
+            <h2 class="modal-title fs-5 fw-bold" id="modalDangKyLabel">
+            <i class="bi bi-ticket-perforated-fill me-2 text-warning"></i>Đăng Ký Tham Gia Sự Kiện
+            </h2>
             <button
               type="button"
               class="btn-close btn-close-white"
@@ -747,7 +748,7 @@
                 height="32"
                 class="rounded-2"
               />
-              <h4 class="h5 text-white fw-bold mb-0">UniEvent</h4>
+              <h3 class="h5 text-white fw-bold mb-0">UniEvent</h3>
             </div>
             <p class="small text-white-50">
               Nền tảng tìm kiếm, đăng ký và quản lý sự kiện đại học toàn diện
@@ -760,7 +761,7 @@
           </div>
 
           <div class="col-6 col-md-2">
-            <h5 class="text-white h6 fw-bold mb-3">Điều hướng</h5>
+            <h4 class="text-white h6 fw-bold mb-3">Điều hướng</h4>
             <ul class="list-unstyled small d-flex flex-column gap-2 mb-0">
               <li>
                 <a href="index.html" class="text-decoration-none text-white-50"
