@@ -1,0 +1,149 @@
+/* ============================================================
+   02-CHUAN-HOA.CSS — RESET / NORMALIZE
+   ============================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-chinh);
+  font-size: var(--co-chu-body);
+  line-height: var(--dong-chinh);
+  color: var(--chu-chinh);
+  background-color: var(--nen-chinh);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Headings */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: var(--dam-day);
+  line-height: var(--dong-tieu-de);
+  color: var(--chu-chinh);
+}
+
+h1 {
+  font-size: var(--co-chu-h1);
+  font-weight: var(--dam-rat-day);
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: var(--co-chu-h2);
+}
+h3 {
+  font-size: var(--co-chu-h3);
+}
+h4 {
+  font-size: var(--co-chu-h4);
+  font-weight: var(--dam-day);
+}
+
+p {
+  color: var(--chu-phu);
+}
+
+small {
+  font-size: var(--co-chu-nho);
+}
+
+/* Links */
+a {
+  color: var(--chu-lien-ket);
+  text-decoration: none;
+  transition: color var(--transition-chuan);
+}
+
+a:hover {
+  color: var(--mau-chinh-toi);
+}
+
+a:active {
+  color: var(--mau-nhan-toi);
+}
+
+/* Images & media */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+iframe {
+  max-width: 100%;
+  border: 0;
+}
+
+svg {
+  display: block;
+}
+
+/* Lists */
+ul,
+ol {
+  list-style: none;
+}
+
+/* Buttons & form controls inherit font */
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: 1rem;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--mau-chinh-sang);
+  outline-offset: 2px;
+  border-radius: var(--radius-nho);
+}
+
+fieldset {
+  border: none;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

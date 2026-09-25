@@ -1,0 +1,406 @@
+/* ============================================================
+   03-BO-CUC.CSS — MOBILE-FIRST LAYOUT & RESPONSIVE GRID
+   UniEvent - Hệ thống Quản lý Sự kiện ĐHSP Đà Nẵng
+   Triết lý Mobile-First: Định nghĩa base styles cho thiết bị di động (>=360px),
+   sau đó mở rộng qua tối thiểu 2 điểm ngắt:
+   - Breakpoint 1: min-width: 768px (Tablet)
+   - Breakpoint 2: min-width: 1024px (Desktop)
+   ============================================================ */
+
+/* -----------------------------------------------------------
+   1. CONTAINER CƠ SỞ (Chống cuộn ngang ở 360px)
+----------------------------------------------------------- */
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--space-4);
+  box-sizing: border-box;
+}
+
+.container--hep {
+  max-width: var(--container-hep);
+}
+
+/* -----------------------------------------------------------
+   2. KHUNG TRANG TOÀN BỘ (Mobile Base: 1 Cột xếp dọc)
+----------------------------------------------------------- */
+body.trang {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+main {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding-block: var(--space-6) var(--space-8);
+  min-width: 0;
+}
+
+/* CSS Grid Khung trang mở rộng cho trang có cột phụ aside (index.html) */
+.khung-trang-grid {
+  display: grid;
+  grid-template-areas:
+    "dau"
+    "menu"
+    "chinh"
+    "ben"
+    "chan";
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto auto auto auto;
+  min-height: 100vh;
+  row-gap: 0;
+  column-gap: 0;
+}
+
+.vung-dau,
+header.vung-dau {
+  grid-area: dau;
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--nen-surface);
+  border-bottom: 1px solid var(--border-nhat);
+}
+
+.vung-menu,
+nav.vung-menu {
+  grid-area: menu;
+  width: 100%;
+  background: var(--nen-toi);
+}
+
+.vung-chinh,
+main.vung-chinh {
+  grid-area: chinh;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding-block: var(--space-6) var(--space-8);
+}
+
+.vung-ben,
+aside.vung-ben {
+  grid-area: ben;
+  min-width: 0;
+  padding-block: 0 var(--space-8);
+}
+
+.vung-chan,
+footer.vung-chan {
+  grid-area: chan;
+  width: 100%;
+  background: var(--nen-toi);
+  color: var(--chu-tren-toi-phu);
+  margin-top: auto;
+}
+
+/* -----------------------------------------------------------
+   3. HEADER & NAVIGATION LAYOUT (Mobile)
+----------------------------------------------------------- */
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-block: var(--space-3);
+  flex-wrap: wrap;
+}
+
+nav.site-nav .container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-inline: var(--space-3);
+}
+
+nav.site-nav ul {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  overflow-x: auto;
+  white-space: nowrap;
+  padding-block: var(--space-1);
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+}
+
+/* -----------------------------------------------------------
+   4. CÁC KHỐI BỐ CỤC CƠ SỞ (Mobile: 1 Cột)
+----------------------------------------------------------- */
+/* Hero section layout */
+.hero {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  align-items: center;
+}
+
+/* Lưới thẻ sự kiện repeat(auto-fit, minmax) & tự xuống dòng */
+.luoi-the,
+.danh-sach-su-kien {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-5);
+  list-style: none;
+  padding: 0;
+}
+
+.luoi-3-the,
+.luoi-3-the-tu-dong {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-5);
+}
+
+/* Lưới danh mục sự kiện */
+.luoi-danh-muc {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+}
+
+/* Layout chi tiết sự kiện 2 cột màn hình rộng, 1 cột mobile */
+.chi-tiet-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+/* Layout trang liên hệ */
+.lien-he-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+/* Layout trang giới thiệu */
+.gioi-thieu {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  align-items: center;
+}
+
+.hinh-anh {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.hinh-anh img:first-child {
+  grid-column: 1 / -1;
+}
+
+/* Flexbox danh sách thành viên */
+.danh-sach-thanh-vien {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-4);
+  padding: 0;
+  list-style: none;
+}
+
+.thanh-vien {
+  flex: 1 1 240px;
+  max-width: 320px;
+}
+
+/* Bố cục biểu mẫu */
+.form-luoi {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+.form-nhom {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.form-nhom--full {
+  grid-column: 1 / -1;
+}
+
+/* Footer layout (Mobile: 1 cột) */
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  padding-block: var(--space-8) var(--space-5);
+}
+
+.footer-bottom {
+  border-top: 1px solid var(--border-toi);
+  padding-block: var(--space-4);
+}
+
+.footer-bottom .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+/* Bảng có thanh cuộn ngang khi màn hình nhỏ */
+.bang-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius-vua);
+  border: 1px solid var(--border-nhat);
+}
+
+/* Video wrapper responsive 16:9 */
+.video-wrapper {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 */
+  height: 0;
+  overflow: hidden;
+  border-radius: var(--radius-vua);
+}
+
+.video-wrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* ============================================================
+   5. BREAKPOINT 1: MIN-WIDTH 768px (TABLET)
+   ============================================================ */
+@media (min-width: 768px) {
+  .container {
+    padding-inline: var(--space-5);
+  }
+
+  .site-header__inner {
+    padding-block: var(--space-4);
+  }
+
+  nav.site-nav ul {
+    justify-content: center;
+    overflow-x: visible;
+    flex-wrap: wrap;
+  }
+
+  main {
+    gap: var(--space-10);
+    padding-block: var(--space-8) var(--space-10);
+  }
+
+  .luoi-danh-muc {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+  }
+
+  .form-luoi {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4) var(--space-5);
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-8);
+  }
+
+  .danh-sach-thanh-vien {
+    gap: var(--space-5);
+  }
+}
+
+/* ============================================================
+   6. BREAKPOINT 2: MIN-WIDTH 1024px (DESKTOP)
+   ============================================================ */
+@media (min-width: 1024px) {
+  /* Grid Khung trang 4 cột căn giữa thông minh */
+  .khung-trang-grid {
+    grid-template-areas:
+      "dau   dau   dau   dau"
+      "menu  menu  menu  menu"
+      ".     chinh ben   ."
+      "chan  chan  chan  chan";
+    grid-template-columns: 1fr minmax(0, 880px) 320px 1fr;
+    grid-template-rows: auto auto 1fr auto;
+    column-gap: var(--space-6);
+  }
+
+  .vung-dau,
+  header.vung-dau {
+    grid-column: 1 / -1;
+  }
+
+  .vung-menu,
+  nav.vung-menu {
+    grid-column: 1 / -1;
+  }
+
+  .vung-chinh,
+  main.vung-chinh {
+    padding-block: var(--space-8) var(--space-12);
+  }
+
+  .vung-ben,
+  aside.vung-ben {
+    padding-block: var(--space-8) var(--space-12);
+  }
+
+  .vung-chan,
+  footer.vung-chan {
+    grid-column: 1 / -1;
+  }
+
+  /* Hero 2 cột cân xứng */
+  .hero {
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: var(--space-8);
+  }
+
+  /* Chi tiết 2 cột (Main content + Sidebar tiện ích) */
+  .chi-tiet-layout {
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: var(--space-8);
+  }
+
+  /* Liên hệ 2 cột (Form + Thẻ liên hệ) */
+  .lien-he-layout {
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: var(--space-8);
+  }
+
+  /* Giới thiệu 2 cột */
+  .gioi-thieu {
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: var(--space-8);
+  }
+
+  /* Danh mục 6 cột trên Desktop */
+  .luoi-danh-muc {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  /* Footer 4 cột chuẩn */
+  .footer-grid {
+    grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+    padding-block: var(--space-10) var(--space-6);
+  }
+
+  /* Cột phụ Aside chỉ hiện trên màn hình máy tính nếu cần */
+  .chi-hien-tren-may-tinh {
+    display: flex;
+  }
+}
