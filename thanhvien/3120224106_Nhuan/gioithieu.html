@@ -3,254 +3,368 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Trang giới thiệu của Nhuận</title>
+    <title>Profile cá nhân - Phan Nhuận | UniEvent</title>
+    <!-- Nhúng biến Design System & CSS trang cá nhân -->
+    <link rel="stylesheet" href="../../css/01-bien.css" />
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <header>
-      <h1>Profile cá nhân</h1>
-      <p>Chào mừng bạn đến trang giới thiệu của Nhuận</p>
+    <!-- HEADER PROFILE -->
+    <header class="profile-header">
+      <div class="container">
+        <span class="profile-header__badge"
+          >Thành viên Ban Kỹ thuật &bull; UniEvent</span
+        >
+        <h1>Profile cá nhân</h1>
+        <p>Chào mừng bạn đến trang giới thiệu của Phan Nhuận (Nhuận)</p>
+      </div>
     </header>
 
-    <nav>
-      <ul>
-        <li><a href="#about">Giới thiệu</a></li>
-        <li><a href="#projects">Dự án &amp; Sở thích</a></li>
-        <li><a href="#skills">Kỹ năng</a></li>
-        <li><a href="#schedule">Thời khóa biểu</a></li>
-      </ul>
+    <!-- NAVIGATION BAR -->
+    <nav class="profile-nav" aria-label="Điều hướng trang cá nhân">
+      <div class="container">
+        <ul>
+          <li><a href="#about">Giới thiệu</a></li>
+          <li><a href="#projects">Dự án &amp; Sở thích</a></li>
+          <li><a href="#skills">Kỹ năng</a></li>
+          <li><a href="#schedule">Thời khóa biểu</a></li>
+          <li><a href="#contact">Liên hệ</a></li>
+        </ul>
+      </div>
     </nav>
 
-    <main>
-      <section id="about">
-        <h2>Giới Thiệu Bản Thân</h2>
-        <img
-          src="avatar.jpg"
-          alt="Ảnh chân dung đại diện của tôi"
-          width="180"
-        />
-      </section>
+    <!-- MAIN CONTENT -->
+    <main class="profile-main container">
+      <!-- KHỐI 1: GIỚI THIỆU & DỰ ÁN (BỐ CỤC GRID 2 CỘT TRÊN DESKTOP) -->
+      <div class="profile-grid-top">
+        <!-- Phân đoạn Giới thiệu bản thân & Ảnh đại diện -->
+        <section
+          id="about"
+          class="profile-card about-section"
+          aria-labelledby="about-heading"
+        >
+          <div class="avatar-wrapper">
+            <img
+              src="avatar.jpg"
+              alt="Ảnh chân dung đại diện của Phan Nhuận"
+              width="180"
+              height="180"
+              loading="lazy"
+            />
+          </div>
+          <div class="about-info">
+            <h2 id="about-heading">Giới Thiệu Bản Thân</h2>
+            <span class="meta-pill">MSSV: 3120224106 &bull; Nhóm 14</span>
+            <p>
+              Xin chào! Mình là Phan Nhuận, sinh viên chuyên ngành Sư phạm Tin
+              học / CNTT tại Trường Đại học Sư phạm - Đại học Đà Nẵng. Đam mê
+              xây dựng các giao diện web hiện đại, tối ưu trải nghiệm và khả
+              năng tiếp cận (a11y).
+            </p>
+          </div>
+        </section>
 
-      <article id="projects">
-        <h2>Dự Án &amp; Sở Thích</h2>
-        <p>
-          <strong>Dự án tiêu biểu:</strong> Hệ thống website quản lý thông tin
-          nhóm và kết nối sinh viên.
+        <!-- Phân đoạn Dự án & Sở thích -->
+        <article
+          id="projects"
+          class="profile-card"
+          aria-labelledby="projects-heading"
+        >
+          <h2 id="projects-heading">Dự Án &amp; Sở Thích</h2>
+          <div class="projects-list">
+            <div class="project-item">
+              <p>
+                <strong>Dự án tiêu biểu:</strong> Hệ thống website "UniEvent -
+                Quản lý Sự kiện ĐHSP Đà Nẵng" (HTML5 Semantic, Modern CSS Grid
+                &amp; Flexbox, Responsive Mobile-First).
+              </p>
+            </div>
+            <div class="project-item">
+              <p>
+                <strong>Sở thích:</strong> Lập trình web, nghiên cứu kiến trúc
+                máy tính &amp; phần cứng, chơi thể thao và tham gia hoạt động
+                Đoàn - Hội.
+              </p>
+            </div>
+            <div class="project-item">
+              <p>
+                <strong>Mục tiêu:</strong> Trở thành Frontend Developer chuyên
+                nghiệp, thành thạo xây dựng Design System và Progressive Web
+                Apps.
+              </p>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <!-- KHỐI 2: KỸ NĂNG & THÔNG TIN BỔ SUNG (BỐ CỤC GRID 2 CỘT TRÊN DESKTOP) -->
+      <div class="profile-grid-mid">
+        <!-- Danh sách Kỹ năng (Flexbox / Grid dạng Chip Badge) -->
+        <section
+          id="skills"
+          class="profile-card"
+          aria-labelledby="skills-heading"
+        >
+          <h2 id="skills-heading">Kỹ Năng</h2>
+          <ul class="skills-list">
+            <li>HTML5 Semantic Tags &amp; a11y</li>
+            <li>Modern CSS (CSS Grid &amp; Flexbox)</li>
+            <li>Responsive Web Design (Mobile-First)</li>
+            <li>Tùy biến CSS Variables &amp; Tokens</li>
+            <li>Git &amp; GitHub Version Control</li>
+            <li>Bootstrap 5 Framework &amp; Utility</li>
+          </ul>
+        </section>
+
+        <!-- Thông tin liên hệ bổ sung -->
+        <aside
+          id="contact"
+          class="profile-card profile-aside"
+          aria-labelledby="contact-heading"
+        >
+          <h3 id="contact-heading">Thông Tin Bổ Sung</h3>
+          <ul>
+            <li>
+              <span>📧</span>
+              <div>
+                <strong>Email:</strong><br />
+                <a href="mailto:dinhtrinhngochung1301@gmail.com"
+                  >dinhtrinhngochung1301@gmail.com</a
+                >
+              </div>
+            </li>
+            <li>
+              <span>📞</span>
+              <div>
+                <strong>Số điện thoại:</strong><br />
+                <a href="tel:0707174128">0707 174 128</a>
+              </div>
+            </li>
+            <li>
+              <span>🏫</span>
+              <div>
+                <strong>Đơn vị:</strong><br />
+                <span>Khoa Toán - Tin học, Trường ĐHSP - ĐHĐN</span>
+              </div>
+            </li>
+          </ul>
+        </aside>
+      </div>
+
+      <!-- KHỐI 3: THỜI KHÓA BIỂU HỌC TẬP (KHUNG CUỘN NGANG RIÊNG BIỆT TRÊN MOBILE) -->
+      <section
+        id="schedule"
+        class="profile-card schedule-section"
+        aria-labelledby="schedule-heading"
+      >
+        <h2 id="schedule-heading">Thời Khóa Biểu Tuần</h2>
+        <p class="schedule-note">
+          <span>💡</span>
+          <em
+            >Mẹo: Trên điện thoại, bạn có thể vuốt sang trái/phải khung bảng bên
+            dưới để xem toàn bộ các ngày trong tuần.</em
+          >
         </p>
-        <p>
-          <strong>Sở thích:</strong> Đá bóng, chơi game và lập trình
-        </p>
-      </article>
 
-      <section id="skills">
-        <h2>Kỹ Năng</h2>
-        <ul>
-          <li>Hoạt động nhóm</li>
-          <li>Code nhanh</li>
-          <li>Sử dụng AI</li>
-        </ul>
+        <!-- Khung cuộn ngang độc lập chống tràn trang -->
+        <div
+          class="bang-wrapper"
+          tabindex="0"
+          role="region"
+          aria-label="Bảng thời khóa biểu học tập trong tuần"
+        >
+          <table class="schedule-table">
+            <caption>
+              Thời Khóa Biểu Học Tập Trong Tuần - Học kỳ 2 Năm học 2024-2025
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col">Tiết</th>
+                <th scope="col">Thứ 2</th>
+                <th scope="col">Thứ 3</th>
+                <th scope="col">Thứ 4</th>
+                <th scope="col">Thứ 5</th>
+                <th scope="col">Thứ 6</th>
+                <th scope="col">Thứ 7</th>
+                <th scope="col">Chủ nhật</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Tiết 1 -->
+              <tr>
+                <th scope="row">1</th>
+                <td></td>
+                <td></td>
+                <!-- Thứ 4: CSDL (chiếm tiết 1, 2, 3) -->
+                <td rowspan="3">
+                  <strong>Hệ quản trị CSDL</strong>
+                  31241283 - 24-0102<br />
+                  <span class="room-badge">Phòng: A5-404B</span>
+                </td>
+                <td></td>
+                <td></td>
+                <!-- Thứ 7: Web (chiếm tiết 1, 2, 3) -->
+                <td rowspan="3">
+                  <strong>Thiết kế &amp; Lập trình Web</strong>
+                  31231755 - 24-0102<br />
+                  <span class="room-badge">Phòng: B3-303</span>
+                </td>
+                <td></td>
+              </tr>
+
+              <!-- Tiết 2 -->
+              <tr>
+                <th scope="row">2</th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+
+              <!-- Tiết 3 -->
+              <tr>
+                <th scope="row">3</th>
+                <td></td>
+                <td rowspan="2">
+                  <strong>Lịch sử Đảng CSVN</strong>
+                  21221904 - 24-0311<br />
+                  <span class="room-badge">Phòng: A6-502</span>
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+
+              <!-- Tiết 4 -->
+              <tr>
+                <th scope="row">4</th>
+                <td></td>
+                <td></td>
+                <td rowspan="3">
+                  <strong>Khai phá dữ liệu</strong>
+                  31231330 - 24-0102<br />
+                  <span class="room-badge">Phòng: A5-404B</span>
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+
+              <!-- Tiết 5 -->
+              <tr>
+                <th scope="row">5</th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+
+              <!-- Tiết 6 -->
+              <tr>
+                <th scope="row">6</th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+
+              <!-- Tiết 7 -->
+              <tr>
+                <th scope="row">7</th>
+                <td rowspan="3">
+                  <strong>An toàn thông tin</strong>
+                  31221010 - 24-0102<br />
+                  <span class="room-badge">Phòng: A6-401</span>
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+
+              <!-- Tiết 8 -->
+              <tr>
+                <th scope="row">8</th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+
+              <!-- Tiết 9 -->
+              <tr>
+                <th scope="row">9</th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+
+              <!-- Tiết 10 -->
+              <tr>
+                <th scope="row">10</th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td rowspan="3">
+                  <strong>Công nghệ phần mềm</strong>
+                  31231016 - 24-0103<br />
+                  <span class="room-badge">Phòng: B3-304</span>
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+
+              <!-- Tiết 11 -->
+              <tr>
+                <th scope="row">11</th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+
+              <!-- Tiết 12 -->
+              <tr>
+                <th scope="row">12</th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </section>
-
-      <section id="schedule">
-        <h2>Thời Khóa Biểu Tuần</h2>
-        <table>
-          <caption>
-            Thời Khóa Biểu Học Tập Trong Tuần
-          </caption>
-          <thead>
-            <tr>
-              <th scope="col">Tiết</th>
-              <th scope="col">Thứ 2</th>
-              <th scope="col">Thứ 3</th>
-              <th scope="col">Thứ 4</th>
-              <th scope="col">Thứ 5</th>
-              <th scope="col">Thứ 6</th>
-              <th scope="col">Thứ 7</th>
-              <th scope="col">Chủ nhật</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Tiết 1 -->
-            <tr>
-              <th scope="row">1</th>
-              <td></td>
-              <td></td>
-              <!-- Thứ 4: CSDL (chiếm tiết 1, 2, 3) -->
-              <td rowspan="3">
-                31241283 - 24-0102<br />
-                Hệ quản trị cơ sở dữ liệu<br />
-                Phòng: A5-404B
-              </td>
-              <td></td>
-              <td></td>
-              <!-- Thứ 7: Web (chiếm tiết 1, 2, 3) -->
-              <td rowspan="3">
-                31231755 - 24-0102<br />
-                Thiết kế và lập trình web<br />
-                Phòng: B3-303
-              </td>
-              <td></td>
-            </tr>
-
-            <!-- Tiết 2 -->
-            <tr>
-              <th scope="row">2</th>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-
-            <!-- Tiết 3 -->
-            <tr>
-              <th scope="row">3</th>
-              <td></td>
-              <td rowspan="2">
-                21221904 - 24-0311 Lịch sử Đảng Cộng sản Việt Nam<br />
-                Phòng: A6-502
-              </td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-
-            <!-- Tiết 4 -->
-            <tr>
-              <th scope="row">4</th>
-              <td></td>
-              <td></td>
-              <td rowspan="3">
-                31231330 - 24-0102<br />
-                Khai phá dữ liệu<br />
-                Phòng: A5-404B
-              </td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-
-            <!-- Tiết 5 -->
-            <tr>
-              <th scope="row">5</th>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-
-            <!-- Tiết 6 -->
-            <tr>
-              <th scope="row">6</th>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-
-            <!-- Tiết 7 -->
-            <tr>
-              <th scope="row">7</th>
-              <td rowspan="3">
-                31221010 - 24-0102<br />
-                An toàn thông tin<br />
-                Phòng: A6-401
-              </td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-
-            <!-- Tiết 8 -->
-            <tr>
-              <th scope="row">8</th>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-
-            <!-- Tiết 9 -->
-            <tr>
-              <th scope="row">9</th>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-
-            <!-- Tiết 10 -->
-            <tr>
-              <th scope="row">10</th>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td rowspan="3">
-                31231016 - 24-0103<br />
-                Công nghệ phần mềm<br />
-                Phòng: B3-304
-              </td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-
-            <!-- Tiết 11 -->
-            <tr>
-              <th scope="row">11</th>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-
-            <!-- Tiết 12 -->
-            <tr>
-              <th scope="row">12</th>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-
-      <aside>
-        <h3>Thông Tin Bổ Sung</h3>
-        <ul>
-          <li>
-            <strong>Email:</strong>
-            <a href="mailto:nhuanphan514@gmail.com"
-              >nhuanphan514@gmail.com</a>
-          </li>
-          <li>
-            <strong>Số điện thoại:</strong>
-            <a href="tel:0335549477">0335549477</a>
-          </li>
-        </ul>
-      </aside>
     </main>
 
-    <footer>
-      <p>
-        <a href="../../index.html">← Quay lại Trang chủ UniEvent</a>
-      </p>
-      <p>&copy; 2026 Bản quyền thuộc về Phan Nhuận</p>
+    <!-- FOOTER PROFILE -->
+    <footer class="profile-footer">
+      <div class="container">
+        <a href="../../index.html" class="btn-back"
+          >&larr; Quay lại Trang chủ UniEvent</a
+        >
+        <p>
+          &copy; 2026 Bản quyền thuộc về Phan Nhuận &bull; Nhóm 14 - UniEvent
+          (ĐH Sư phạm - ĐHĐN)
+        </p>
+      </div>
     </footer>
   </body>
 </html>
