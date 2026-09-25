@@ -1,174 +1,270 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Trang giới thiệu cá nhân của Nguyễn Thị Kiều Trang - Thành viên Nhóm 14 dự án UniEvent">
-  <title>Giới thiệu cá nhân | Nguyễn Thị Kiều Trang</title>
-</head>
-<body>
-  <header>
-    <div>UniEvent - Nhóm 14</div>
-    <p>Trang giới thiệu thành viên</p>
-  </header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile cá nhân - Nguyễn Thị Kiều Trang | UniEvent</title>
+    <link rel="stylesheet" href="../../css/01-bien.css" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="profile-header">
+      <div class="container">
+        <span class="profile-header__badge"
+          >Thành viên Nhóm 14 &bull; UniEvent</span
+        >
+        <h1>Profile cá nhân</h1>
+        <p>Chào mừng bạn đến trang giới thiệu của Nguyễn Thị Kiều Trang</p>
+      </div>
+    </header>
 
-  <nav>
-    <ul>
-      <li><a href="../../index.html">Trang chủ UniEvent</a></li>
-      <li><a href="../../gioi-thieu.html">Danh sách nhóm</a></li>
-      <li><a href="gioithieu.html">Trang cá nhân</a></li>
-    </ul>
-  </nav>
+    <nav class="profile-nav" aria-label="Điều hướng trang cá nhân">
+      <div class="container">
+        <ul>
+          <li><a href="#about">Giới thiệu</a></li>
+          <li><a href="#projects">Dự án &amp; Sở thích</a></li>
+          <li><a href="#skills">Kỹ năng</a></li>
+          <li><a href="#schedule">Thời khóa biểu</a></li>
+          <li><a href="#contact">Liên hệ</a></li>
+        </ul>
+      </div>
+    </nav>
 
-  <main>
-    <h1>Giới thiệu bản thân</h1>
+    <main class="profile-main container">
+      <div class="profile-grid-top">
+        <section
+          id="about"
+          class="profile-card about-section"
+          aria-labelledby="about-heading"
+        >
+          <div class="avatar-wrapper">
+            <img
+              src="chandung.jpg"
+              alt="Ảnh chân dung Nguyễn Thị Kiều Trang"
+              width="180"
+              height="180"
+              loading="lazy"
+            />
+          </div>
+          <div class="about-info">
+            <h2 id="about-heading">Giới Thiệu Bản Thân</h2>
+            <span class="meta-pill">MSSV: 3120224153 &bull; Nhóm 14</span>
+            <p><strong>Họ và tên:</strong> Nguyễn Thị Kiều Trang</p>
+            <p>
+              <strong>Lớp:</strong> 24CNTT2 - Khoa Toán – Tin, Trường Đại học Sư
+              phạm – Đại học Đà Nẵng
+            </p>
+            <p>
+              <strong>Vai trò dự án:</strong> Phụ trách xây dựng trang Biểu mẫu
+              liên hệ (lien-he.html)
+            </p>
+          </div>
+        </section>
 
-    <!-- 1. Section giới thiệu bản thân -->
-    <section>
-      <h2>Thông tin cơ bản</h2>
-      <img src="chandung.jpg" alt="Ảnh chân dung Nguyễn Thị Kiều Trang" width="220">
-      <p><strong>Họ và tên:</strong> Nguyễn Thị Kiều Trang</p>
-      <p><strong>Mã sinh viên:</strong> 3120224153</p>
-      <p><strong>Lớp:</strong> 24CNTT2 - Khoa Toán – Tin, Trường Đại học Sư phạm – Đại học Đà Nẵng</p>
-      <p><strong>Vai trò dự án:</strong> Phụ trách xây dựng trang Biểu mẫu liên hệ (lien-he.html)</p>
-    </section>
+        <article
+          id="projects"
+          class="profile-card"
+          aria-labelledby="projects-heading"
+        >
+          <h2 id="projects-heading">Dự Án &amp; Sở Thích</h2>
+          <div class="projects-list">
+            <div class="project-item">
+              <p>
+                <strong>Dự án:</strong> Website UniEvent - Quản lý sự kiện trong
+                trường.
+              </p>
+            </div>
+            <div class="project-item">
+              <p>
+                <strong>Sở thích:</strong> Nghiên cứu kỹ thuật lập trình, phát
+                triển phần mềm, hệ thống nhúng và IoT.
+              </p>
+            </div>
+            <div class="project-item">
+              <p>
+                <strong>Định hướng:</strong> Tìm hiểu các thuật toán máy học và
+                tối ưu hóa cơ sở dữ liệu.
+              </p>
+            </div>
+          </div>
+        </article>
+      </div>
 
-    <!-- 2. Article về dự án / sở thích -->
-    <article>
-      <h2>Dự án và Sở thích</h2>
-      <p>Tôi đam mê nghiên cứu kỹ thuật lập trình, phát triển phần mềm và các giải pháp hệ thống nhúng, IoT thông minh. Bên cạnh việc xây dựng các ứng dụng phục vụ đời sống, tôi dành thời gian tìm hiểu về các thuật toán máy học và tối ưu hóa cơ sở dữ liệu.</p>
-    </article>
+      <div class="profile-grid-mid">
+        <section
+          id="skills"
+          class="profile-card"
+          aria-labelledby="skills-heading"
+        >
+          <h2 id="skills-heading">Kỹ Năng Chuyên Môn</h2>
+          <ul class="skills-list">
+            <li>Ngôn ngữ lập trình: C++, Java, Python, C#</li>
+            <li>Công nghệ web: HTML5, CSS3, PHP</li>
+            <li>Cơ sở dữ liệu: SQL Server, MySQL</li>
+            <li>Kỹ thuật phần cứng &amp; IoT: Arduino Uno, ESP8266 NodeMCU</li>
+            <li>Công cụ: Visual Studio Code, Git/GitHub, LaTeX</li>
+          </ul>
+        </section>
 
-    <!-- 3. Danh sách kỹ năng (ul) -->
-    <section>
-      <h2>Kỹ năng chuyên môn</h2>
-      <ul>
-        <li>Ngôn ngữ lập trình: C++, Java, Python, C#</li>
-        <li>Công nghệ web: HTML5 ngữ nghĩa, CSS3 cơ bản, PHP</li>
-        <li>Cơ sở dữ liệu: Hệ quản trị Microsoft SQL Server, MySQL</li>
-        <li>Kỹ thuật phần cứng & IoT: Arduino Uno, ESP8266 NodeMCU</li>
-        <li>Công cụ phát triển: Visual Studio Code, Git/GitHub, LaTeX</li>
-      </ul>
-    </section>
+        <aside
+          id="contact"
+          class="profile-card profile-aside"
+          aria-labelledby="contact-heading"
+        >
+          <h3 id="contact-heading">Thông Tin Bổ Sung</h3>
+          <ul>
+            <li>
+              <span>🎓</span>
+              <div><strong>MSSV:</strong><br />3120224153</div>
+            </li>
+            <li>
+              <span>🏫</span>
+              <div><strong>Lớp:</strong><br />24CNTT2 - Khoa Toán – Tin</div>
+            </li>
+            <li>
+              <span>💻</span>
+              <div>
+                <strong>Vai trò:</strong><br />Phụ trách trang Biểu mẫu liên hệ
+              </div>
+            </li>
+          </ul>
+        </aside>
+      </div>
 
-    <!-- 4. Bảng thời khóa biểu tuần chuẩn a11y -->
-    <section>
-      <h2>Thời khóa biểu học tập tuần</h2>
-      <table>
-        <caption>Thời khóa biểu học kỳ 1 năm học 2026 - 2027</caption>
-        <thead>
-          <tr>
-            <th scope="col">Tiết</th>
-            <th scope="col">Thứ 2</th>
-            <th scope="col">Thứ 3</th>
-            <th scope="col">Thứ 4</th>
-            <th scope="col">Thứ 5</th>
-            <th scope="col">Thứ 6</th>
-            <th scope="col">Thứ 7</th>
-            <th scope="col">Chủ nhật</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Tiết 1 - 3 -->
-          <tr>
-            <th scope="row">Tiết 1</th>
-            <td rowspan="6"></td>
-            <td rowspan="2"></td>
-            <td rowspan="3">
-              31241283 - 24-0102<br>
-              Hệ quản trị cơ sở dữ liệu<br>
-              Phòng: B3-402
-            </td>
-            <td rowspan="3"></td>
-            <td rowspan="6"></td>
-            <td rowspan="3">
-              31231755 - 24-0102<br>
-              Thiết kế và lập trình web<br>
-              Phòng: B3-303
-            </td>
-            <td rowspan="6"></td>
-          </tr>
-          <tr>
-            <th scope="row">Tiết 2</th>
-          </tr>
-          <tr>
-            <th scope="row">Tiết 3</th>
-            <td rowspan="3">
-              21221904 - 24-0311<br>
-              Lịch sử Đảng Cộng sản Việt Nam<br>
-              Phòng: A6-502
-            </td>
-          </tr>
+      <section
+        id="schedule"
+        class="profile-card schedule-section"
+        aria-labelledby="schedule-heading"
+      >
+        <h2 id="schedule-heading">Thời Khóa Biểu Tuần</h2>
+        <p class="schedule-note">
+          <span>💡</span>
+          <em
+            >Mẹo: Trên điện thoại, bạn có thể vuốt sang trái/phải khung bảng bên
+            dưới để xem toàn bộ các ngày trong tuần.</em
+          >
+        </p>
 
-          <!-- Tiết 4 - 6 -->
-          <tr>
-            <th scope="row">Tiết 4</th>
-            <td rowspan="3"></td>
-            <td rowspan="3">
-              31231330 - 24-0102<br>
-              Khai phá dữ liệu<br>
-              Phòng: A5-404B
-            </td>
-            <td rowspan="3"></td>
-          </tr>
-          <tr>
-            <th scope="row">Tiết 5</th>
-          </tr>
-          <tr>
-            <th scope="row">Tiết 6</th>
-            <td></td>
-          </tr>
+        <div
+          class="bang-wrapper"
+          tabindex="0"
+          role="region"
+          aria-label="Bảng thời khóa biểu học tập trong tuần"
+        >
+          <table class="schedule-table">
+            <caption>
+              Thời Khóa Biểu Học Tập Trong Tuần - Học kỳ 1 Năm học 2026-2027
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col">Tiết</th>
+                <th scope="col">Thứ 2</th>
+                <th scope="col">Thứ 3</th>
+                <th scope="col">Thứ 4</th>
+                <th scope="col">Thứ 5</th>
+                <th scope="col">Thứ 6</th>
+                <th scope="col">Thứ 7</th>
+                <th scope="col">Chủ nhật</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Tiết 1</th>
+                <td rowspan="6"></td>
+                <td rowspan="2"></td>
+                <td rowspan="3">
+                  <strong>Hệ quản trị cơ sở dữ liệu</strong>31241283 -
+                  24-0102<br /><span class="room-badge">Phòng: B3-402</span>
+                </td>
+                <td rowspan="3"></td>
+                <td rowspan="6"></td>
+                <td rowspan="3">
+                  <strong>Thiết kế và lập trình web</strong>31231755 -
+                  24-0102<br /><span class="room-badge">Phòng: B3-303</span>
+                </td>
+                <td rowspan="6"></td>
+              </tr>
+              <tr>
+                <th scope="row">Tiết 2</th>
+              </tr>
+              <tr>
+                <th scope="row">Tiết 3</th>
+                <td rowspan="3">
+                  <strong>Lịch sử Đảng Cộng sản Việt Nam</strong>21221904 -
+                  24-0311<br /><span class="room-badge">Phòng: A6-502</span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">Tiết 4</th>
+                <td rowspan="3"></td>
+                <td rowspan="3">
+                  <strong>Khai phá dữ liệu</strong>31231330 - 24-0102<br /><span
+                    class="room-badge"
+                    >Phòng: A5-404B</span
+                  >
+                </td>
+                <td rowspan="3"></td>
+              </tr>
+              <tr>
+                <th scope="row">Tiết 5</th>
+              </tr>
+              <tr>
+                <th scope="row">Tiết 6</th>
+                <td></td>
+              </tr>
+              <tr>
+                <th scope="row">Tiết 7</th>
+                <td rowspan="2">
+                  <strong>An toàn thông tin</strong>31221010 - 24-0102<br /><span
+                    class="room-badge"
+                    >Phòng: A6-401</span
+                  >
+                </td>
+                <td rowspan="6"></td>
+                <td rowspan="6"></td>
+                <td rowspan="3"></td>
+                <td rowspan="6"></td>
+                <td rowspan="6"></td>
+                <td rowspan="6"></td>
+              </tr>
+              <tr>
+                <th scope="row">Tiết 8</th>
+              </tr>
+              <tr>
+                <th scope="row">Tiết 9</th>
+                <td rowspan="4"></td>
+              </tr>
+              <tr>
+                <th scope="row">Tiết 10</th>
+                <td rowspan="3">
+                  <strong>Công nghệ phần mềm</strong>31231016 - 24-0103<br /><span
+                    class="room-badge"
+                    >Phòng: B3-304</span
+                  >
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">Tiết 11</th>
+              </tr>
+              <tr>
+                <th scope="row">Tiết 12</th>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
 
-          <!-- Tiết 7 - 9 -->
-          <tr>
-            <th scope="row">Tiết 7</th>
-            <td rowspan="2">
-              31221010 - 24-0102<br>
-              An toàn thông tin<br>
-              Phòng: A6-401
-            </td>
-            <td rowspan="6"></td>
-            <td rowspan="6"></td>
-            <td rowspan="3"></td>
-            <td rowspan="6"></td>
-            <td rowspan="6"></td>
-            <td rowspan="6"></td>
-          </tr>
-          <tr>
-            <th scope="row">Tiết 8</th>
-          </tr>
-          <tr>
-            <th scope="row">Tiết 9</th>
-            <td rowspan="4"></td>
-          </tr>
-
-          <!-- Tiết 10 - 12 -->
-          <tr>
-            <th scope="row">Tiết 10</th>
-            <td rowspan="3">
-              31231016 - 24-0103<br>
-              Công nghệ phần mềm<br>
-              Phòng: B3-304
-            </td>
-          </tr>
-          <tr>
-            <th scope="row">Tiết 11</th>
-          </tr>
-          <tr>
-            <th scope="row">Tiết 12</th>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-
-    <!-- Đường dẫn tương đối quay về trang chủ nhóm -->
-    <p>
-      <a href="../../index.html">&larr; Quay lại trang chủ UniEvent</a>
-    </p>
-  </main>
-
-  <footer>
-    <p>&copy; 2026 Nguyễn Thị Kiều Trang — Nhóm 14</p>
-  </footer>
-</body>
+    <footer class="profile-footer">
+      <div class="container">
+        <a href="../../index.html" class="btn-back"
+          >&larr; Quay lại Trang chủ UniEvent</a
+        >
+        <p>
+          &copy; 2026 Nguyễn Thị Kiều Trang &bull; Nhóm 14 - UniEvent (ĐH Sư
+          phạm - ĐHĐN)
+        </p>
+      </div>
+    </footer>
+  </body>
 </html>
