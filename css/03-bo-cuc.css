@@ -150,6 +150,7 @@ nav.site-nav ul {
   gap: var(--space-5);
   list-style: none;
   padding: 0;
+  min-height: 520px;
 }
 
 .luoi-3-the,

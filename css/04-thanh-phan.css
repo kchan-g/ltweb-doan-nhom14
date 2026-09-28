@@ -69,8 +69,8 @@
 }
 
 .tai-khoan::before {
-  content: "👤";
-  font-size: 0.95em;
+  content: "";
+  display: none;
 }
 
 /* Ô tìm kiếm ở header trang chủ */
@@ -708,15 +708,34 @@ nav[aria-label="Phân trang"] {
   background: var(--gold-50);
 }
 
-.the-danh-muc p:first-child {
-  font-size: 1.75rem;
-  line-height: 1;
+.the-danh-muc__tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: var(--navy-50, #f0f4f8);
+  color: var(--navy-800, #0f2240);
+  border: 1px solid var(--border-nhat, #cbd5e1);
+  border-radius: var(--radius-vua, 8px);
+  font-weight: 800;
+  font-size: 0.875rem;
+  letter-spacing: 0.5px;
+  transition: all var(--transition-chuan, 0.2s ease);
 }
 
-.the-danh-muc p:last-child {
+.the-danh-muc:hover .the-danh-muc__tag {
+  background: var(--mau-nhan, #dba62c);
+  color: #ffffff;
+  border-color: var(--mau-nhan, #dba62c);
+}
+
+.the-danh-muc p {
+  margin: 0;
   font-size: var(--co-chu-nho);
   font-weight: var(--dam-day);
   color: var(--chu-chinh);
+  text-decoration: none;
 }
 
 /* =========================================================
@@ -843,6 +862,7 @@ aside.widget-cot,
 .form-control,
 input[type="text"],
 input[type="email"],
+input[type="password"],
 input[type="tel"],
 input[type="date"],
 input[type="search"],
@@ -852,10 +872,11 @@ textarea {
   padding: 10px 14px;
   min-height: 44px; /* Touch target chuẩn tiếp cận >= 44px */
   border: 1px solid var(--border-vua);
-  border-radius: var(--radius-nho);
+  border-radius: var(--radius-vua, 8px);
   background: var(--nen-surface);
   color: var(--chu-chinh);
   font-size: var(--co-chu-body);
+  font-family: inherit;
   transition:
     border-color var(--transition-chuan),
     box-shadow var(--transition-chuan);
@@ -868,13 +889,19 @@ textarea {
 input:focus,
 select:focus,
 textarea:focus {
-  border-color: var(--mau-chinh-sang);
-  box-shadow: var(--shadow-focus);
+  outline: none;
+  border-color: var(--mau-chinh);
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.18);
 }
 
 input:focus-visible,
 select:focus-visible,
-textarea:focus-visible,
+textarea:focus-visible {
+  outline: none;
+  border-color: var(--mau-chinh);
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.22);
+}
+
 button:focus-visible,
 a:focus-visible {
   outline: 2px solid var(--mau-chinh);
@@ -1388,4 +1415,973 @@ footer.footer-don a {
   font-size: 1.05rem;
   line-height: 1.6;
   margin: 0;
+}
+
+/* =========================================================
+   PHẦN B: CÁC THÀNH PHẦN TƯƠNG TÁC JAVASCRIPT & DỮ LIỆU ĐỘNG
+========================================================= */
+
+/* 1. Nút mở menu di động và Progressive Enhancement */
+.nut-menu {
+  display: none;
+  background: var(--trang);
+  border: 1px solid var(--xam-300);
+  border-radius: var(--radius-vua);
+  padding: var(--space-2) var(--space-3);
+  font-size: 1.25rem;
+  cursor: pointer;
+  color: var(--navy-800);
+  line-height: 1;
+  transition: all var(--transition-chuan);
+}
+
+.nut-menu:hover,
+.nut-menu:focus-visible {
+  background: var(--xam-100);
+  border-color: var(--mau-chinh);
+  outline: 2px solid var(--mau-nhan);
+}
+
+@media (max-width: 767px) {
+  .js .nut-menu {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .js .site-nav {
+    display: none;
+  }
+
+  .js .site-nav.mo {
+    display: block;
+    animation: menuXuatHien 0.25s ease-out;
+  }
+
+  .js .site-nav.mo ul {
+    flex-direction: column;
+    align-items: stretch;
+    padding-block: var(--space-2);
+  }
+
+  .js .site-nav.mo a {
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
+
+@keyframes menuXuatHien {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 2. Nút và số đếm yêu thích trên header */
+.nut-yeu-thich-header {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid var(--xam-300);
+  border-radius: var(--radius-pill);
+  color: var(--navy-800);
+  font-size: var(--co-chu-nho);
+  font-weight: var(--dam-vua);
+  text-decoration: none;
+  transition: all var(--transition-chuan);
+}
+
+.nut-yeu-thich-header:hover,
+.nut-yeu-thich-header:focus-visible {
+  background: var(--trang);
+  border-color: #dc2626;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.15);
+  outline: 2px solid var(--mau-nhan);
+}
+
+.huy-hieu-dem {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding-inline: 6px;
+  background: #dc2626;
+  color: #ffffff;
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* 3. Nút yêu thích trên thẻ sự kiện và trang chi tiết */
+.the-tin__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.nut-yeu-thich {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 12px;
+  background: var(--xam-100);
+  border: 1px solid var(--xam-300);
+  border-radius: var(--radius-vua);
+  color: var(--xam-700);
+  font-size: var(--co-chu-nho);
+  cursor: pointer;
+  transition: all var(--transition-chuan);
+}
+
+.nut-yeu-thich:hover,
+.nut-yeu-thich:focus-visible {
+  border-color: #dc2626;
+  color: #dc2626;
+  background: #fee2e2;
+  outline: 2px solid var(--mau-nhan);
+}
+
+.nut-yeu-thich.da-thich {
+  background: #fef2f2;
+  border-color: #f87171;
+  color: #dc2626;
+  font-weight: var(--dam-vua);
+}
+
+/* 4. Các trạng thái: Đang tải, Lỗi, Rỗng */
+.trang-thai-hop {
+  padding: var(--space-5);
+  border-radius: var(--radius-vua);
+  text-align: center;
+  margin-block: var(--space-4);
+}
+
+.trang-thai-tai {
+  background: var(--xam-100);
+  border: 1px dashed var(--xam-400);
+  color: var(--navy-800);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+}
+
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba(15, 34, 64, 0.2);
+  border-top-color: var(--mau-chinh);
+  border-radius: 50%;
+  animation: xoaySpinner 0.8s linear infinite;
+  display: inline-block;
+}
+
+@keyframes xoaySpinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.trang-thai-loi {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+}
+
+.trang-thai-rong {
+  background: var(--xam-100);
+  border: 1px solid var(--xam-300);
+  color: var(--xam-700);
+}
+
+/* 5. Thông báo lỗi biểu mẫu */
+.thong-bao-loi {
+  color: #dc2626;
+  font-size: 0.825rem;
+  margin-top: 4px;
+}
+
+.form-nhom input.co-loi,
+.form-nhom select.co-loi,
+.form-nhom textarea.co-loi {
+  border-color: #dc2626 !important;
+  background-color: #fff8f8;
+}
+
+.hop-thong-bao {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-vua);
+  border-left: 4px solid;
+}
+
+.hop-thong-bao--thanh-cong {
+  background: #f0fdf4;
+  border-color: #16a34a;
+  color: #166534;
+}
+
+.hop-thong-bao--loi {
+  background: #fef2f2;
+  border-color: #dc2626;
+  color: #991b1b;
+}
+
+.hop-thong-bao__icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+/* 6. Card thời tiết trang chủ */
+.card-thoi-tiet {
+  background: linear-gradient(135deg, #0f2240 0%, #1e3a68 100%);
+  color: #ffffff;
+  border-radius: var(--radius-lon);
+  padding: var(--space-5) var(--space-6);
+  box-shadow: 0 4px 16px rgba(15, 34, 64, 0.12);
+  margin-block: var(--space-5);
+}
+
+.card-thoi-tiet__dau {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  padding-bottom: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.card-thoi-tiet__diadiem {
+  font-weight: var(--dam-vua);
+  font-size: var(--co-chu-nho);
+  color: #f1f5f9;
+}
+
+.card-thoi-tiet__thoigian {
+  color: #cbd5e1;
+}
+
+.card-thoi-tiet__than {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.card-thoi-tiet__chinh {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.card-thoi-tiet__icon-lon {
+  font-size: 2.8rem;
+  line-height: 1;
+}
+
+.card-thoi-tiet__nhiet-do {
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: #dba62c;
+  line-height: 1;
+}
+
+.card-thoi-tiet__mota {
+  font-size: 1.05rem;
+  font-weight: var(--dam-vua);
+  color: #f8fafc;
+}
+
+.card-thoi-tiet__chitiet {
+  display: flex;
+  gap: var(--space-5);
+}
+
+.card-thoi-tiet__thongso {
+  font-size: var(--co-chu-nho);
+  color: #e2e8f0;
+}
+
+.card-thoi-tiet__thongso strong {
+  color: #ffffff;
+  font-size: 1rem;
+}
+
+.card-thoi-tiet__loikhuyen {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-vua);
+  padding: var(--space-2) var(--space-3);
+  display: flex;
+  align-items: center;
+}
+
+/* =========================================================
+   7. MODAL / POPUP CHI TIẾT SỰ KIỆN (UniEvent Popup)
+========================================================= */
+
+/* Khóa cuộn trang khi Modal đang mở mà không làm mất vị trí cuộn */
+body.khoa-cuon-modal {
+  overflow: hidden;
+}
+
+/* Lớp phủ làm tối nền phía sau (Backdrop Overlay) */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  background-color: rgba(15, 34, 64, 0.72);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.25s ease,
+    visibility 0.25s ease;
+}
+
+.modal-overlay:not([hidden]) {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Hộp thoại Modal nổi ở giữa */
+.modal-hop-thoai {
+  position: relative;
+  width: 100%;
+  max-width: 720px;
+  max-height: 90vh;
+  background-color: var(--trang, #ffffff);
+  border-radius: var(--radius-lon, 16px);
+  box-shadow: 0 24px 48px rgba(15, 34, 64, 0.35);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: scale(0.94) translateY(12px);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-overlay:not([hidden]) .modal-hop-thoai {
+  transform: scale(1) translateY(0);
+}
+
+/* Nút đóng (X) ở góc trên bên phải */
+.modal-nut-dong {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 20;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-pill, 9999px);
+  background-color: rgba(15, 34, 64, 0.75);
+  color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  font-size: 1.4rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  transition: all var(--transition-chuan, 0.2s ease);
+}
+
+.modal-nut-dong:hover,
+.modal-nut-dong:focus-visible {
+  background-color: #dc2626;
+  border-color: #ffffff;
+  color: #ffffff;
+  transform: scale(1.08);
+  outline: 2px solid var(--mau-nhan, #dba62c);
+}
+
+/* Nội dung cuộn bên trong nếu thông tin dài */
+.modal-noi-dung {
+  overflow-y: auto;
+  max-height: 90vh;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+}
+
+/* Tùy biến thanh cuộn trong modal */
+.modal-noi-dung::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-noi-dung::-webkit-scrollbar-track {
+  background: var(--xam-100, #f8fafc);
+}
+
+.modal-noi-dung::-webkit-scrollbar-thumb {
+  background: var(--xam-400, #cbd5e1);
+  border-radius: var(--radius-pill, 9999px);
+}
+
+.modal-noi-dung::-webkit-scrollbar-thumb:hover {
+  background: var(--navy-800, #1e3a68);
+}
+
+/* Ảnh banner trên đỉnh modal */
+.modal-banner-wrapper {
+  position: relative;
+  width: 100%;
+  height: 240px;
+  background-color: var(--navy-900, #0f2240);
+  overflow: hidden;
+}
+
+.modal-banner-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.modal-banner-wrapper .badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 10;
+  font-size: 0.85rem;
+  padding: 6px 14px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+/* Phần thân modal */
+.modal-than {
+  padding: var(--space-6, 24px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4, 16px);
+}
+
+.modal-tieu-de {
+  color: var(--navy-900, #0f2240);
+  font-size: 1.45rem;
+  font-weight: 700;
+  line-height: 1.35;
+  margin: 0;
+}
+
+/* Lưới thông tin nhanh 2 cột */
+.modal-thong-tin-nhanh {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3, 12px);
+  background-color: var(--xam-100, #f8fafc);
+  border: 1px solid var(--xam-200, #e2e8f0);
+  border-radius: var(--radius-vua, 8px);
+  padding: var(--space-4, 16px);
+}
+
+.modal-dong-meta {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2, 8px);
+  font-size: 0.925rem;
+  line-height: 1.45;
+  color: var(--chu-chinh, #1e293b);
+}
+
+.modal-dong-meta strong {
+  color: var(--navy-900, #0f2240);
+  display: inline-block;
+  margin-right: 4px;
+}
+
+.modal-icon {
+  font-size: 1.15rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* Phần mô tả chi tiết */
+.modal-phan-mo-ta {
+  border-top: 1px solid var(--xam-200, #e2e8f0);
+  padding-top: var(--space-4, 16px);
+}
+
+.modal-phan-mo-ta h3 {
+  color: var(--navy-800, #1e3a68);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: var(--space-2, 8px);
+}
+
+.modal-mo-ta-text {
+  color: var(--chu-phu, #475569);
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* Khối nội dung nổi bật */
+.modal-khoi-noi-bat {
+  background: rgba(219, 166, 44, 0.08);
+  border-left: 3px solid var(--mau-nhan, #dba62c);
+  border-radius: 0 var(--radius-vua, 8px) var(--radius-vua, 8px) 0;
+  padding: var(--space-3, 12px) var(--space-4, 16px);
+  margin-top: var(--space-3, 12px);
+}
+
+.modal-khoi-noi-bat h4 {
+  color: var(--navy-900, #0f2240);
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0 0 6px 0;
+}
+
+.modal-danh-sach-noi-bat {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.modal-danh-sach-noi-bat li {
+  position: relative;
+  padding-left: 20px;
+  font-size: 0.9rem;
+  color: var(--chu-chinh, #334155);
+  line-height: 1.5;
+}
+
+.modal-danh-sach-noi-bat li::before {
+  content: "•";
+  position: absolute;
+  left: 4px;
+  top: -1px;
+  color: var(--mau-chinh, #0284c7);
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+/* Chân modal chứa nút hành động */
+.modal-chan {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3, 12px);
+  border-top: 1px solid var(--xam-200, #e2e8f0);
+  padding-top: var(--space-4, 16px);
+  flex-wrap: wrap;
+}
+
+/* Responsive trên di động */
+@media (max-width: 640px) {
+  .modal-overlay {
+    padding: var(--space-2, 8px);
+  }
+
+  .modal-hop-thoai {
+    max-height: 94vh;
+    border-radius: var(--radius-vua, 8px);
+  }
+
+  .modal-banner-wrapper {
+    height: 180px;
+  }
+
+  .modal-than {
+    padding: var(--space-4, 16px);
+  }
+
+  .modal-tieu-de {
+    font-size: 1.2rem;
+  }
+
+  .modal-thong-tin-nhanh {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: var(--space-3, 12px);
+  }
+
+  .modal-chan {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .modal-chan .nut-bam {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* =========================================================
+   8. POPUP ĐĂNG KÝ VÉ SỰ KIỆN & THẺ VÉ ĐIỆN TỬ (E-TICKET)
+========================================================= */
+
+.modal-hop-thoai--dang-ky {
+  max-width: 600px;
+}
+
+.modal-header-dang-ky {
+  border-bottom: 1px solid var(--xam-200);
+  padding-bottom: var(--space-3);
+  text-align: left;
+}
+
+.form-luoi-modal {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  text-align: left;
+}
+
+.form-luoi-modal .form-nhom--full {
+  grid-column: 1 / -1;
+}
+
+/* Thẻ vé điện tử E-Ticket sinh viên */
+.ve-dien-tu {
+  background: #ffffff;
+  border: 2px dashed #cbd5e1;
+  border-radius: var(--radius-lon, 16px);
+  overflow: hidden;
+  text-align: left;
+  margin-block: var(--space-3);
+  position: relative;
+  box-shadow: 0 8px 24px rgba(15, 34, 64, 0.08);
+}
+
+.ve-dien-tu::before,
+.ve-dien-tu::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  background-color: var(--xam-100, #f8fafc);
+  border-radius: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+}
+
+.ve-dien-tu::before {
+  left: -10px;
+}
+.ve-dien-tu::after {
+  right: -10px;
+}
+
+.ve-dien-tu__dau {
+  background: linear-gradient(135deg, var(--navy-800), var(--navy-900));
+  color: #ffffff;
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ve-dien-tu__logo {
+  font-weight: 800;
+  letter-spacing: 1px;
+  font-size: 0.95rem;
+  color: var(--mau-nhan, #dba62c);
+}
+
+.ve-dien-tu__than {
+  padding: var(--space-4);
+}
+
+.ve-tieu-de {
+  color: var(--navy-900, #0f2240);
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: var(--space-3);
+  line-height: 1.4;
+}
+
+.ve-thong-tin-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2) var(--space-3);
+  font-size: 0.875rem;
+  background: var(--xam-100, #f8fafc);
+  border-radius: var(--radius-vua, 8px);
+  padding: var(--space-3);
+}
+
+.ve-nhan {
+  color: var(--chu-phu, #64748b);
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.ve-qr-wrapper {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-vua, 8px);
+  padding: var(--space-3);
+  text-align: center;
+}
+
+.ve-qr-wrapper svg {
+  display: block;
+}
+
+.ve-ma-so {
+  font-family: monospace;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--navy-800, #1e3a68);
+  letter-spacing: 1px;
+  margin-bottom: 0;
+}
+
+@media (max-width: 576px) {
+  .form-luoi-modal {
+    grid-template-columns: 1fr;
+  }
+  .ve-thong-tin-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================================
+   9. ĐĂNG NHẬP SINH VIÊN UED & AUTHENTICATION UI
+========================================================= */
+
+/* Nút mở Modal đăng nhập UED trên Header */
+.nut-login-ued {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+  padding: 6px 14px;
+  background: linear-gradient(
+    135deg,
+    var(--navy-800, #0f2240),
+    var(--navy-900, #0a1728)
+  );
+  color: #ffffff;
+  border: 1px solid rgba(219, 166, 44, 0.4);
+  border-radius: var(--radius-pill, 9999px);
+  font-size: var(--co-chu-nho, 0.875rem);
+  font-weight: var(--dam-vua, 600);
+  cursor: pointer;
+  line-height: 1.2;
+  transition: all var(--transition-chuan, 0.2s ease);
+  box-shadow: 0 2px 6px rgba(15, 34, 64, 0.15);
+}
+
+.nut-login-ued:hover,
+.nut-login-ued:focus-visible {
+  background: var(--navy-700, #1e3a68);
+  border-color: var(--mau-nhan, #dba62c);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(15, 34, 64, 0.2);
+  outline: 2px solid var(--mau-nhan, #dba62c);
+}
+
+/* Badge sinh viên khi đã đăng nhập trên Header */
+.user-badge-ued {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #cbd5e1;
+  border-radius: var(--radius-pill, 9999px);
+  box-shadow: 0 1px 4px rgba(15, 34, 64, 0.08);
+}
+
+.user-badge-ued__avatar {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.user-badge-ued__info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+  text-align: left;
+}
+
+.user-badge-ued__name {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--navy-900, #0f2240);
+  white-space: nowrap;
+}
+
+.user-badge-ued__mssv {
+  font-size: 0.6875rem;
+  color: var(--chu-phu, #64748b);
+  letter-spacing: 0.3px;
+}
+
+.user-badge-ued__logout {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-nho, 4px);
+  padding: 2px 6px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--do-600, #dc2626);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  margin-left: 2px;
+}
+
+.user-badge-ued__logout:hover {
+  background: var(--do-600, #dc2626);
+  color: #ffffff;
+  border-color: var(--do-600, #dc2626);
+}
+
+/* Modal Popup Đăng nhập UED */
+.modal-hop-thoai--dang-nhap {
+  max-width: 440px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 32px 28px 28px 28px;
+  box-shadow: 0 20px 45px rgba(15, 34, 64, 0.22);
+  border: 1px solid var(--border-nhat, #e2e8f0);
+}
+
+.modal-hop-thoai--dang-nhap .modal-nut-dong {
+  top: 14px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  background-color: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+  font-size: 1.25rem;
+  box-shadow: none;
+}
+
+.modal-hop-thoai--dang-nhap .modal-nut-dong:hover,
+.modal-hop-thoai--dang-nhap .modal-nut-dong:focus-visible {
+  background-color: #fee2e2;
+  color: #dc2626;
+  border-color: #fca5a5;
+  outline: none;
+}
+
+.modal-login-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.modal-login-header {
+  text-align: center;
+  margin-bottom: 22px;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.modal-login-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--mau-chinh, #0284c7);
+  background: rgba(2, 132, 199, 0.08);
+  padding: 4px 12px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.modal-login-title {
+  color: var(--navy-900, #0f2240);
+  font-size: 1.45rem;
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0 0 6px 0;
+}
+
+.modal-login-desc {
+  font-size: 0.875rem;
+  color: var(--chu-phu, #64748b);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.modal-login-desc code {
+  color: var(--mau-chinh, #0284c7);
+  font-weight: 600;
+  background: #f1f5f9;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.modal-hop-thoai--dang-nhap .form-nhom {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+}
+
+.modal-hop-thoai--dang-nhap label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--navy-800, #1e3a68);
+  margin-bottom: 0;
+}
+
+.modal-hop-thoai--dang-nhap input[type="email"],
+.modal-hop-thoai--dang-nhap input[type="password"] {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--chu-chinh, #0f172a);
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.modal-hop-thoai--dang-nhap input[type="email"]:focus,
+.modal-hop-thoai--dang-nhap input[type="password"]:focus {
+  outline: none;
+  border-color: var(--mau-chinh, #0284c7);
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+}
+
+.modal-hop-thoai--dang-nhap .nut-bam.nut-nhan {
+  min-height: 44px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.thong-bao-loi-login {
+  background-color: #fef2f2;
+  border: 1px solid #f87171;
+  border-radius: var(--radius-vua, 8px);
+  color: #b91c1c;
+  padding: var(--space-2, 8px) var(--space-3, 12px);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.4;
+  text-align: left;
 }
