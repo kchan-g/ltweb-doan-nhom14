@@ -1,0 +1,1151 @@
+/* ============================================================
+   STYLE.CSS — TRANG CÁ NHÂN: ĐINH TRỊNH NGỌC HƯNG (BII)
+   MSSV: 3120224065 | Nhóm 14 - UniEvent (ĐHSP Đà Nẵng)
+   Tái sử dụng 100% bảng màu và Design System từ css/01-bien.css
+   Triết lý thiết kế: Mobile-First, CSS Grid & Flexbox, a11y chuẩn
+   ============================================================ */
+
+/* -----------------------------------------------------------
+   1. IMPORT BIẾN HỆ THỐNG VÀ THIẾT LẬP CHUNG
+----------------------------------------------------------- */
+@import url("../../css/01-bien.css");
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-chinh);
+  background-color: var(--nen-chinh);
+  color: var(--chu-chinh);
+  line-height: var(--dong-chinh);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+/* -----------------------------------------------------------
+   2. KHUNG CHỨA (CONTAINER) & TYPOGRAPHY
+----------------------------------------------------------- */
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--space-4);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: var(--mau-chinh-toi);
+  font-weight: var(--dam-day);
+  line-height: var(--dong-tieu-de);
+}
+
+h1 {
+  font-size: var(--co-chu-h1);
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: var(--co-chu-h2);
+  margin-bottom: var(--space-4);
+  position: relative;
+  display: inline-block;
+}
+
+h2::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 40px;
+  height: 3px;
+  background: var(--mau-nhan);
+  border-radius: var(--radius-pill);
+}
+
+h3 {
+  font-size: var(--co-chu-h3);
+}
+
+p {
+  color: var(--chu-phu);
+  margin-bottom: var(--space-3);
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+/* -----------------------------------------------------------
+   3. TRẠNG THÁI TƯƠNG TÁC CHUNG (:hover, :focus-visible, :active)
+----------------------------------------------------------- */
+a {
+  color: var(--chu-lien-ket);
+  text-decoration: none;
+  transition:
+    color var(--transition-nhanh),
+    background var(--transition-nhanh),
+    transform var(--transition-nhanh);
+  border-radius: var(--radius-nho);
+}
+
+a:hover {
+  color: var(--mau-chinh-toi);
+}
+
+/* Chuẩn hỗ trợ tiếp cận a11y: Viền nét rõ khi duyệt bằng phím Tab */
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--mau-nhan-toi);
+  outline-offset: 3px;
+  box-shadow: var(--shadow-focus);
+}
+
+a:active,
+button:active {
+  transform: scale(0.98);
+}
+
+/* -----------------------------------------------------------
+   4. HEADER & HERO PROFILE
+----------------------------------------------------------- */
+header.profile-header {
+  background: linear-gradient(
+    135deg,
+    var(--navy-900) 0%,
+    var(--navy-800) 65%,
+    var(--navy-700) 100%
+  );
+  color: var(--chu-tren-toi);
+  padding-block: var(--space-8) var(--space-6);
+  text-align: center;
+  position: relative;
+  border-bottom: 3px solid var(--mau-nhan);
+}
+
+header.profile-header h1 {
+  color: var(--chu-tren-toi);
+  margin-bottom: var(--space-2);
+}
+
+header.profile-header p {
+  color: var(--chu-tren-toi-phu);
+  font-size: 1.1rem;
+  max-width: 60ch;
+  margin-inline: auto;
+}
+
+.profile-header__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: rgba(219, 166, 44, 0.2);
+  color: var(--mau-nhan-sang);
+  border: 1px solid rgba(219, 166, 44, 0.4);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  font-size: var(--co-chu-meta);
+  font-weight: var(--dam-day);
+  margin-bottom: var(--space-3);
+}
+
+/* -----------------------------------------------------------
+   5. NAVIGATION (STICKY & RESPONSIVE FLEXBOX)
+----------------------------------------------------------- */
+nav.profile-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--nen-surface);
+  border-bottom: 1px solid var(--border-nhat);
+  box-shadow: var(--shadow-sm);
+  transition:
+    background-color var(--transition-chuan),
+    border-color var(--transition-chuan);
+}
+
+.profile-nav__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-block: var(--space-2);
+}
+
+nav.profile-nav ul {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--space-2);
+  list-style: none;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  flex: 1 1 auto;
+}
+
+nav.profile-nav a {
+  display: inline-block;
+  padding: var(--space-2) var(--space-4);
+  color: var(--chu-phu);
+  font-weight: var(--dam-day);
+  font-size: var(--co-chu-nho);
+  border-radius: var(--radius-pill);
+  transition: all var(--transition-chuan);
+}
+
+nav.profile-nav a:hover {
+  background: var(--navy-50);
+  color: var(--mau-chinh);
+  transform: translateY(-1px);
+}
+
+nav.profile-nav a:focus-visible {
+  outline: 2px solid var(--mau-chinh);
+  outline-offset: 1px;
+}
+
+.profile-nav__actions {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+/* Nút chuyển đổi giao diện Sáng / Tối (Tương tác 1) */
+.btn-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--radius-pill);
+  background: var(--navy-50);
+  color: var(--navy-800);
+  border: 1.5px solid var(--navy-600);
+  font-family: inherit;
+  font-size: var(--co-chu-nho);
+  font-weight: var(--dam-day);
+  cursor: pointer;
+  transition: all var(--transition-chuan);
+}
+
+.btn-theme-toggle:hover {
+  background: var(--navy-100);
+  color: var(--navy-900);
+  transform: translateY(-1px);
+}
+
+.btn-theme-toggle:focus-visible {
+  outline: 2px solid var(--mau-nhan-toi);
+  outline-offset: 2px;
+  box-shadow: var(--shadow-focus);
+}
+
+.btn-theme-toggle .theme-icon {
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+/* -----------------------------------------------------------
+   6. MAIN LAYOUT (MOBILE-FIRST BỐ CỤC KHUNG)
+----------------------------------------------------------- */
+main.profile-main {
+  flex: 1 1 auto;
+  padding-block: var(--space-6) var(--space-10);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* Thẻ card bao quanh từng phân đoạn */
+.profile-card {
+  background: var(--nen-surface);
+  border: 1px solid var(--border-nhat);
+  border-radius: var(--radius-vua);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform var(--transition-chuan),
+    box-shadow var(--transition-chuan);
+}
+
+.profile-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-vua);
+}
+
+/* -----------------------------------------------------------
+   7. PHÂN ĐOẠN GIỚI THIỆU & ẢNH CHÂN DUNG CO GIÃN
+----------------------------------------------------------- */
+.about-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-4);
+}
+
+/* Khung ảnh co giãn linh hoạt */
+.avatar-wrapper {
+  width: 100%;
+  max-width: 180px;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid var(--mau-nhan);
+  box-shadow: var(--shadow-md);
+  flex-shrink: 0;
+  position: relative;
+  background: var(--navy-100);
+}
+
+.avatar-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform var(--transition-cham);
+}
+
+.avatar-wrapper:hover img {
+  transform: scale(1.08);
+}
+
+.about-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.about-info h2 {
+  margin-inline: auto;
+}
+
+.about-info h2::after {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.meta-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--navy-50);
+  color: var(--mau-chinh);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  font-size: var(--co-chu-meta);
+  font-weight: var(--dam-day);
+  margin-inline: auto;
+}
+
+/* -----------------------------------------------------------
+   8. DỰ ÁN & SỞ THÍCH
+----------------------------------------------------------- */
+.projects-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.project-item {
+  background: var(--navy-50);
+  border-left: 4px solid var(--mau-chinh);
+  padding: var(--space-3) var(--space-4);
+  border-radius: 0 var(--radius-nho) var(--radius-nho) 0;
+}
+
+/* -----------------------------------------------------------
+   9. DANH SÁCH KỸ NĂNG (FLEXBOX CHIP / TAG CO GIÃN ĐIỆN THOẠI)
+----------------------------------------------------------- */
+.skills-list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding: 0;
+  margin-top: var(--space-2);
+}
+
+.skills-list li {
+  background: linear-gradient(135deg, var(--nen-surface), var(--navy-50));
+  border: 1px solid var(--border-vua);
+  color: var(--mau-chinh-toi);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-pill);
+  font-size: var(--co-chu-nho);
+  font-weight: var(--dam-day);
+  box-shadow: var(--shadow-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  transition: all var(--transition-chuan);
+}
+
+.skills-list li::before {
+  content: "⚡";
+  font-size: 0.9em;
+  color: var(--mau-nhan-toi);
+}
+
+.skills-list li:hover {
+  background: var(--mau-chinh);
+  color: var(--chu-tren-toi);
+  border-color: var(--mau-chinh);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* -----------------------------------------------------------
+   10. THỜI KHÓA BIỂU (CUỘN NGANG RIÊNG BIỆT TRÊN MOBILE)
+----------------------------------------------------------- */
+.schedule-section p.schedule-note {
+  font-size: var(--co-chu-meta);
+  color: var(--chu-phu);
+  margin-bottom: var(--space-3);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Khung cuộn ngang độc lập cho điện thoại */
+.bang-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius-vua);
+  border: 1px solid var(--border-nhat);
+  box-shadow: var(--shadow-sm);
+  background: var(--nen-surface);
+  position: relative;
+}
+
+/* Thanh cuộn tinh tế */
+.bang-wrapper::-webkit-scrollbar {
+  height: 8px;
+}
+
+.bang-wrapper::-webkit-scrollbar-track {
+  background: var(--navy-50);
+  border-radius: var(--radius-pill);
+}
+
+.bang-wrapper::-webkit-scrollbar-thumb {
+  background: var(--border-vua);
+  border-radius: var(--radius-pill);
+}
+
+.bang-wrapper::-webkit-scrollbar-thumb:hover {
+  background: var(--mau-chinh-sang);
+}
+
+table.schedule-table {
+  width: 100%;
+  min-width: 680px; /* Đảm bảo không bị bẹp dúm trên điện thoại */
+  border-collapse: collapse;
+  text-align: center;
+  font-size: var(--co-chu-nho);
+}
+
+table.schedule-table caption {
+  padding: var(--space-3);
+  font-weight: var(--dam-day);
+  color: var(--chu-phu);
+  background: var(--navy-50);
+  border-bottom: 1px solid var(--border-nhat);
+  font-size: var(--co-chu-meta);
+}
+
+table.schedule-table thead th {
+  background: var(--navy-800);
+  color: var(--chu-tren-toi);
+  padding: var(--space-3) var(--space-2);
+  font-weight: var(--dam-day);
+  border: 1px solid var(--border-toi);
+  white-space: nowrap;
+}
+
+table.schedule-table thead th:first-child {
+  background: var(--navy-900);
+  width: 50px;
+}
+
+table.schedule-table tbody th {
+  background: var(--navy-50);
+  color: var(--mau-chinh);
+  font-weight: var(--dam-day);
+  border: 1px solid var(--border-nhat);
+}
+
+table.schedule-table tbody td {
+  border: 1px solid var(--border-nhat);
+  padding: var(--space-2);
+  vertical-align: middle;
+  background: var(--nen-surface);
+}
+
+/* Ô có môn học xếp lịch */
+table.schedule-table tbody td[rowspan] {
+  background: linear-gradient(135deg, var(--gold-50), #ffffff);
+  border-left: 3px solid var(--mau-nhan-toi);
+  border-right: 1px solid var(--border-vua);
+  border-top: 1px solid var(--border-vua);
+  border-bottom: 1px solid var(--border-vua);
+  color: var(--mau-chinh-toi);
+  font-size: var(--co-chu-meta);
+  line-height: 1.45;
+  box-shadow: inset 0 0 4px rgba(219, 166, 44, 0.1);
+  padding: var(--space-3) var(--space-2);
+}
+
+table.schedule-table tbody td[rowspan] strong {
+  display: block;
+  color: var(--mau-chinh);
+  margin-bottom: var(--space-1);
+}
+
+table.schedule-table tbody td[rowspan] span.room-badge {
+  display: inline-block;
+  background: var(--navy-800);
+  color: #ffffff;
+  font-weight: var(--dam-day);
+  padding: 3px 8px;
+  border-radius: var(--radius-nho);
+  font-size: 0.75rem;
+  margin-top: 4px;
+}
+
+/* -----------------------------------------------------------
+   11. THÔNG TIN BỔ SUNG & LIÊN KẾT LIÊN HỆ
+----------------------------------------------------------- */
+aside.profile-aside ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+aside.profile-aside li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--co-chu-nho);
+  padding-block: var(--space-2);
+  border-bottom: 1px solid var(--border-nhat);
+}
+
+aside.profile-aside li:last-child {
+  border-bottom: none;
+}
+
+aside.profile-aside a {
+  color: var(--mau-chinh);
+  font-weight: var(--dam-day);
+  word-break: break-all;
+}
+
+aside.profile-aside a:hover {
+  color: var(--mau-nhan-toi);
+  text-decoration: underline;
+}
+
+/* -----------------------------------------------------------
+   12. FOOTER CÁ NHÂN
+----------------------------------------------------------- */
+footer.profile-footer {
+  background: var(--navy-900);
+  color: var(--chu-tren-toi-phu);
+  padding-block: var(--space-6);
+  text-align: center;
+  margin-top: auto;
+  border-top: 1px solid var(--border-toi);
+}
+
+footer.profile-footer a.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--navy-700);
+  color: var(--chu-tren-toi);
+  padding: var(--space-2) var(--space-5);
+  border-radius: var(--radius-pill);
+  font-weight: var(--dam-day);
+  font-size: var(--co-chu-nho);
+  margin-bottom: var(--space-3);
+  border: 1px solid var(--border-toi);
+}
+
+footer.profile-footer a.btn-back:hover {
+  background: var(--mau-nhan);
+  color: var(--navy-900);
+  border-color: var(--mau-nhan);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+footer.profile-footer p {
+  font-size: var(--co-chu-meta);
+  color: var(--chu-tren-toi-phu);
+}
+
+/* ============================================================
+   13. RESPONSIVE — BREAKPOINT 1: MIN-WIDTH: 768px (TABLET & DESKTOP)
+   Thỏa mãn: "Trang cá nhân phải responsive với ít nhất một điểm ngắt min-width"
+   ============================================================ */
+@media (min-width: 768px) {
+  .container {
+    padding-inline: var(--space-6);
+  }
+
+  /* Header căn chỉnh rộng rãi */
+  header.profile-header {
+    padding-block: var(--space-10) var(--space-8);
+  }
+
+  /* Nav căn giữa toàn bộ link */
+  nav.profile-nav ul {
+    justify-content: center;
+    gap: var(--space-4);
+  }
+
+  /* Bố cục Grid 2 cột cho thông tin chính: Giới thiệu & Dự án */
+  .profile-grid-top {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: var(--space-6);
+    align-items: stretch;
+  }
+
+  /* Phần About chuyển sang dạng Card đứng gọn gàng */
+  .about-section {
+    height: 100%;
+    justify-content: center;
+  }
+
+  .avatar-wrapper {
+    max-width: 200px;
+  }
+
+  /* Bố cục Grid 2 cột cho Kỹ năng & Thông tin liên hệ */
+  .profile-grid-mid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: var(--space-6);
+    align-items: stretch;
+  }
+}
+
+/* ============================================================
+   14. RESPONSIVE — BREAKPOINT 2: MIN-WIDTH: 1024px (LARGE SCREEN)
+   ============================================================ */
+@media (min-width: 1024px) {
+  .profile-grid-top {
+    grid-template-columns: 360px 1fr;
+    gap: var(--space-8);
+  }
+
+  .profile-card {
+    padding: var(--space-6);
+  }
+
+  /* Chuyển các kỹ năng thành lưới cân xứng */
+  .skills-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+  }
+}
+
+/* ============================================================
+   15. COUNTDOWN SECTION (TƯƠNG TÁC 2 - ĐẾM NGƯỢC THI CUỐI KỲ)
+   ============================================================ */
+.countdown-section {
+  border-top: 4px solid var(--mau-nhan);
+  transition:
+    background-color var(--transition-chuan),
+    border-color var(--transition-chuan);
+}
+
+.countdown-header {
+  text-align: center;
+  margin-bottom: var(--space-5);
+}
+
+.countdown-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--gold-50);
+  color: var(--gold-700);
+  border: 1px solid var(--gold-400);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  font-size: var(--co-chu-meta);
+  font-weight: var(--dam-day);
+  margin-bottom: var(--space-2);
+}
+
+.countdown-desc {
+  color: var(--chu-phu);
+  font-size: var(--co-chu-body);
+  margin-top: var(--space-2);
+}
+
+.countdown-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-3);
+  max-width: 580px;
+  margin-inline: auto;
+  margin-bottom: var(--space-5);
+}
+
+.countdown-box {
+  background: var(--nen-chinh);
+  border: 2px solid var(--border-vua);
+  border-radius: var(--radius-vua);
+  padding: var(--space-4) var(--space-2);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform var(--transition-nhanh),
+    border-color var(--transition-nhanh),
+    background-color var(--transition-chuan);
+}
+
+.countdown-box:hover {
+  transform: translateY(-2px);
+  border-color: var(--mau-nhan);
+}
+
+.countdown-num {
+  display: block;
+  font-size: clamp(1.5rem, 3.5vw, 2.4rem);
+  font-weight: var(--dam-rat-day);
+  color: var(--mau-chinh);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  font-family: "Consolas", monospace, var(--font-chinh);
+}
+
+.countdown-label {
+  display: block;
+  font-size: var(--co-chu-meta);
+  font-weight: var(--dam-day);
+  color: var(--chu-phu);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: var(--space-1);
+}
+
+.countdown-footer {
+  text-align: center;
+  max-width: 680px;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.countdown-target-text {
+  font-size: var(--co-chu-nho);
+  color: var(--chu-phu);
+  background: var(--navy-50);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--navy-100);
+}
+
+.countdown-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-top: var(--space-1);
+}
+
+.btn-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding: var(--space-2) var(--space-5);
+  background: var(--navy-800);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-pill);
+  font-size: var(--co-chu-nho);
+  font-weight: var(--dam-day);
+  cursor: pointer;
+  transition: all var(--transition-chuan);
+  font-family: inherit;
+}
+
+.btn-action:hover {
+  background: var(--navy-900);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-action:focus-visible {
+  outline: 2px solid var(--mau-nhan-toi);
+  outline-offset: 2px;
+  box-shadow: var(--shadow-focus);
+}
+
+.btn-action--secondary {
+  background: transparent;
+  color: var(--navy-800);
+  border: 1.5px solid var(--navy-800);
+}
+
+.btn-action--secondary:hover {
+  background: var(--navy-50);
+  color: var(--navy-900);
+}
+
+.countdown-status-msg {
+  min-height: 24px;
+  font-size: var(--co-chu-nho);
+  font-weight: var(--dam-day);
+  color: var(--mau-chinh);
+  transition: all var(--transition-nhanh);
+}
+
+.countdown-status-msg.status-highlight {
+  color: var(--mau-success);
+}
+
+.exam-reminder-panel {
+  width: 100%;
+  text-align: left;
+  background: var(--nen-chinh);
+  border: 1.5px solid var(--border-vua);
+  border-radius: var(--radius-vua);
+  padding: var(--space-5);
+  margin-top: var(--space-3);
+  animation: fadeInPanel 0.25s ease-out;
+}
+
+@keyframes fadeInPanel {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.exam-reminder-panel h3 {
+  color: var(--mau-chinh);
+  margin-bottom: var(--space-3);
+  font-size: 1.05rem;
+}
+
+.exam-reminder-panel ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.exam-reminder-panel li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: var(--co-chu-nho);
+  color: var(--chu-chinh);
+  line-height: 1.5;
+}
+
+.exam-reminder-panel .tip-notice {
+  background: var(--gold-50);
+  color: var(--gold-700);
+  border-left: 3px solid var(--gold-500);
+  padding: var(--space-2) var(--space-3);
+  border-radius: 0 var(--radius-nho) var(--radius-nho) 0;
+  font-size: var(--co-chu-meta);
+  line-height: 1.5;
+}
+
+/* ============================================================
+   16. GIAO DIỆN TỐI (TƯƠNG TÁC 1 - DARK THEME)
+   ============================================================ */
+body.dark-theme {
+  --nen-chinh: #0b1329;
+  --nen-surface: #132238;
+  --nen-section: #0f1c30;
+  --chu-chinh: #f1f5f9;
+  --chu-phu: #cbd5e1;
+  --chu-nhat: #94a3b8;
+  --chu-lien-ket: #60a5fa;
+  --mau-chinh: #60a5fa;
+  --mau-chinh-toi: #ffffff;
+  --mau-chinh-sang: #93c5fd;
+  --border-nhat: #23354e;
+  --border-vua: #334a6e;
+  --navy-50: #1b2d47;
+  --navy-100: #243b5e;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.5);
+  background-color: var(--nen-chinh);
+  color: var(--chu-chinh);
+}
+
+body.dark-theme header.profile-header {
+  background: linear-gradient(135deg, #060d1a 0%, #0d1b30 60%, #152744 100%);
+  border-bottom-color: var(--mau-nhan);
+}
+
+body.dark-theme .profile-nav {
+  background: #101c30;
+  border-bottom-color: #23354e;
+}
+
+body.dark-theme .profile-nav a {
+  color: #cbd5e1;
+}
+
+body.dark-theme .profile-nav a:hover {
+  background: #1b2d47;
+  color: #ffffff;
+}
+
+body.dark-theme .btn-theme-toggle {
+  background: #1a2a44;
+  color: #fbbf24;
+  border-color: #fbbf24;
+}
+
+body.dark-theme .btn-theme-toggle:hover {
+  background: #243b5e;
+  color: #ffffff;
+}
+
+body.dark-theme .profile-card {
+  background: #132238;
+  border-color: #23354e;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme .meta-pill {
+  background: #1e3352;
+  color: #e2e8f0;
+  border-color: #2d4a75;
+}
+
+body.dark-theme .project-item {
+  background: #0f1c30;
+  border-color: #23354e;
+}
+
+body.dark-theme .project-item strong {
+  color: #60a5fa;
+}
+
+body.dark-theme .skills-list li {
+  background: #17273e;
+  color: #93c5fd;
+  border-color: #263e63;
+}
+
+body.dark-theme .profile-aside ul li {
+  border-bottom-color: #23354e;
+}
+
+body.dark-theme .countdown-box {
+  background: #0f1c30;
+  border-color: #23354e;
+}
+
+body.dark-theme .countdown-box:hover {
+  border-color: var(--gold-400);
+}
+
+body.dark-theme .countdown-num {
+  color: #60a5fa;
+}
+
+body.dark-theme .countdown-badge {
+  background: #252010;
+  color: #fde68a;
+  border-color: #d97706;
+}
+
+body.dark-theme .countdown-target-text {
+  background: #17273e;
+  border-color: #263e63;
+  color: #cbd5e1;
+}
+
+body.dark-theme .btn-action {
+  background: #3b82f6;
+  color: #0b1329;
+  font-weight: var(--dam-rat-day);
+}
+
+body.dark-theme .btn-action:hover {
+  background: #60a5fa;
+  color: #0b1329;
+}
+
+body.dark-theme .btn-action--secondary {
+  color: #93c5fd;
+  border-color: #93c5fd;
+}
+
+body.dark-theme .btn-action--secondary:hover {
+  background: #1b2d47;
+  color: #ffffff;
+}
+
+body.dark-theme .countdown-status-msg {
+  color: #93c5fd;
+}
+
+body.dark-theme .countdown-status-msg.status-highlight {
+  color: #34d399;
+}
+
+body.dark-theme .exam-reminder-panel {
+  background: #0f1c30;
+  border-color: #23354e;
+}
+
+body.dark-theme .exam-reminder-panel h3 {
+  color: #93c5fd;
+}
+
+body.dark-theme .exam-reminder-panel li {
+  color: #f1f5f9;
+}
+
+body.dark-theme .exam-reminder-panel .tip-notice {
+  background: #252010;
+  color: #fde68a;
+  border-left-color: #fbbf24;
+}
+
+body.dark-theme .schedule-note {
+  background: #252010;
+  border-color: #4a3e1a;
+  color: #fde68a;
+}
+
+body.dark-theme .schedule-table {
+  background: #101c30;
+  border-color: #2d456d;
+}
+
+body.dark-theme .schedule-table thead th {
+  background: #091222;
+  color: #f8fafc;
+  border-color: #2d456d;
+}
+
+body.dark-theme .schedule-table tbody th {
+  background: #0d182b;
+  color: #f1f5f9;
+  border-color: #23354e;
+}
+
+body.dark-theme .schedule-table td {
+  border-color: #23354e;
+  color: #e2e8f0;
+}
+
+body.dark-theme .schedule-table td[rowspan] {
+  background: rgba(96, 165, 250, 0.15);
+  border-color: rgba(96, 165, 250, 0.35);
+  color: #f8fafc;
+}
+
+body.dark-theme .room-badge {
+  background: #091222;
+  color: #93c5fd;
+  border: 1px solid #23354e;
+}
+
+body.dark-theme .profile-footer {
+  background: #060d1a;
+  border-top-color: var(--mau-nhan);
+}
+
+body.dark-theme .btn-back {
+  background: #1b2d47;
+  color: #f1f5f9;
+  border-color: #2d4a75;
+}
+
+body.dark-theme .btn-back:hover {
+  background: #243b5e;
+  color: #ffffff;
+}
+
+/* ============================================================
+   17. TỐI ƯU MOBILE NHỎ (BỀ RỘNG 360px)
+   ============================================================ */
+@media (max-width: 480px) {
+  .profile-nav__inner {
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .profile-nav__actions {
+    width: 100%;
+    justify-content: flex-end;
+    padding-top: var(--space-1);
+    border-top: 1px dashed var(--border-nhat);
+  }
+
+  .btn-theme-toggle {
+    padding: 0.35rem 0.75rem;
+    font-size: var(--co-chu-meta);
+  }
+
+  .countdown-grid {
+    gap: 0.35rem;
+  }
+
+  .countdown-box {
+    padding: var(--space-3) var(--space-1);
+    border-radius: var(--radius-nho);
+  }
+
+  .countdown-num {
+    font-size: 1.35rem;
+  }
+
+  .countdown-label {
+    font-size: 0.7rem;
+  }
+
+  .countdown-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn-action {
+    width: 100%;
+  }
+}
