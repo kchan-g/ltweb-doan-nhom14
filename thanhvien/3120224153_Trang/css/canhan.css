@@ -1,6 +1,6 @@
 /* ============================================================
-   STYLE.CSS — TRANG CÁ NHÂN: ĐINH TRỊNH NGỌC HƯNG (BII)
-   MSSV: 3120224065 | Nhóm 14 - UniEvent (ĐHSP Đà Nẵng)
+   STYLE.CSS — TRANG CÁ NHÂN: NGUYỄN THỊ KIỀU TRANG
+   MSSV: 3120224153 | Nhóm 14 - UniEvent (ĐHSP Đà Nẵng)
    Tái sử dụng 100% bảng màu và Design System từ css/01-bien.css
    Triết lý thiết kế: Mobile-First, CSS Grid & Flexbox, a11y chuẩn
    ============================================================ */
@@ -8,7 +8,7 @@
 /* -----------------------------------------------------------
    1. IMPORT BIẾN HỆ THỐNG VÀ THIẾT LẬP CHUNG
 ----------------------------------------------------------- */
-@import url("../../css/01-bien.css");
+@import url("../../../css/01-bien.css");
 
 *,
 *::before,
@@ -32,6 +32,19 @@ body {
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
+}
+
+/* Hỗ trợ accessibility: ẩn phần tử về mặt thị giác nhưng trình đọc màn hình vẫn đọc được */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* -----------------------------------------------------------
@@ -302,8 +315,39 @@ main.profile-main {
 }
 
 /* -----------------------------------------------------------
-   8. DỰ ÁN & SỞ THÍCH
+   8. DỰ ÁN & BỘ LỌC DỰ ÁN THEO TAG (TƯƠNG TÁC PHẦN C)
 ----------------------------------------------------------- */
+.project-filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.btn-tag {
+  background: var(--navy-50);
+  color: var(--mau-chinh-toi);
+  border: 1px solid var(--border-vua);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  font-size: var(--co-chu-meta);
+  font-weight: var(--dam-day);
+  cursor: pointer;
+  transition: all var(--transition-nhanh);
+}
+
+.btn-tag:hover {
+  background: var(--navy-100);
+  color: var(--mau-chinh);
+}
+
+.btn-tag.active {
+  background: var(--mau-chinh);
+  color: var(--chu-tren-toi);
+  border-color: var(--mau-chinh);
+  box-shadow: var(--shadow-sm);
+}
+
 .projects-list {
   display: flex;
   flex-direction: column;
@@ -315,6 +359,35 @@ main.profile-main {
   border-left: 4px solid var(--mau-chinh);
   padding: var(--space-3) var(--space-4);
   border-radius: 0 var(--radius-nho) var(--radius-nho) 0;
+  transition: opacity var(--transition-chuan), transform var(--transition-chuan);
+}
+
+.project-item__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.project-item__header strong {
+  color: var(--mau-chinh-toi);
+  font-size: var(--co-chu-chuan);
+}
+
+.project-tag {
+  font-size: var(--co-chu-meta);
+  color: var(--mau-chinh);
+  font-weight: var(--dam-day);
+  background: var(--nen-surface);
+  border: 1px solid var(--border-nhat);
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+}
+
+/* Lớp ẩn dự án khi lọc */
+.project-item.an-du-an {
+  display: none !important;
 }
 
 /* -----------------------------------------------------------
@@ -511,7 +584,50 @@ aside.profile-aside a:hover {
 }
 
 /* -----------------------------------------------------------
-   12. FOOTER CÁ NHÂN
+   12. NÚT BACK-TO-TOP (TƯƠNG TÁC PHẦN C)
+----------------------------------------------------------- */
+.btn-back-to-top {
+  position: fixed;
+  bottom: var(--space-6);
+  right: var(--space-6);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--mau-chinh);
+  color: var(--chu-tren-toi);
+  border: 2px solid var(--mau-nhan);
+  font-size: 1.25rem;
+  font-weight: var(--dam-day);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition:
+    opacity var(--transition-chuan),
+    visibility var(--transition-chuan),
+    transform var(--transition-chuan),
+    background var(--transition-nhanh);
+  z-index: 99;
+}
+
+.btn-back-to-top.hien {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.btn-back-to-top:hover {
+  background: var(--mau-chinh-toi);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* -----------------------------------------------------------
+   13. FOOTER CÁ NHÂN
 ----------------------------------------------------------- */
 footer.profile-footer {
   background: var(--navy-900);
@@ -550,26 +666,22 @@ footer.profile-footer p {
 }
 
 /* ============================================================
-   13. RESPONSIVE — BREAKPOINT 1: MIN-WIDTH: 768px (TABLET & DESKTOP)
-   Thỏa mãn: "Trang cá nhân phải responsive với ít nhất một điểm ngắt min-width"
+   14. RESPONSIVE — BREAKPOINT 1: MIN-WIDTH: 768px (TABLET & DESKTOP)
    ============================================================ */
 @media (min-width: 768px) {
   .container {
     padding-inline: var(--space-6);
   }
 
-  /* Header căn chỉnh rộng rãi */
   header.profile-header {
     padding-block: var(--space-10) var(--space-8);
   }
 
-  /* Nav căn giữa toàn bộ link */
   nav.profile-nav ul {
     justify-content: center;
     gap: var(--space-4);
   }
 
-  /* Bố cục Grid 2 cột cho thông tin chính: Giới thiệu & Dự án */
   .profile-grid-top {
     display: grid;
     grid-template-columns: 320px 1fr;
@@ -577,7 +689,6 @@ footer.profile-footer p {
     align-items: stretch;
   }
 
-  /* Phần About chuyển sang dạng Card đứng gọn gàng */
   .about-section {
     height: 100%;
     justify-content: center;
@@ -587,7 +698,6 @@ footer.profile-footer p {
     max-width: 200px;
   }
 
-  /* Bố cục Grid 2 cột cho Kỹ năng & Thông tin liên hệ */
   .profile-grid-mid {
     display: grid;
     grid-template-columns: 1.2fr 0.8fr;
@@ -597,7 +707,7 @@ footer.profile-footer p {
 }
 
 /* ============================================================
-   14. RESPONSIVE — BREAKPOINT 2: MIN-WIDTH: 1024px (LARGE SCREEN)
+   15. RESPONSIVE — BREAKPOINT 2: MIN-WIDTH: 1024px (LARGE SCREEN)
    ============================================================ */
 @media (min-width: 1024px) {
   .profile-grid-top {
@@ -609,7 +719,6 @@ footer.profile-footer p {
     padding: var(--space-6);
   }
 
-  /* Chuyển các kỹ năng thành lưới cân xứng */
   .skills-list {
     display: grid;
     grid-template-columns: repeat(2, 1fr);

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Profile cá nhân - Nguyễn Thị Kiều Trang | UniEvent</title>
     <link rel="stylesheet" href="../../css/01-bien.css" />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="css/canhan.css" />
   </head>
   <body>
     <header class="profile-header">
@@ -55,8 +55,7 @@
               phạm – Đại học Đà Nẵng
             </p>
             <p>
-              <strong>Vai trò dự án:</strong> Phụ trách xây dựng trang Biểu mẫu
-              liên hệ (lien-he.html)
+              <strong>Vai trò dự án:</strong> Phụ trách xây dựng trang Chi tiết (chi-tiet.html)
             </p>
           </div>
         </section>
@@ -67,23 +66,104 @@
           aria-labelledby="projects-heading"
         >
           <h2 id="projects-heading">Dự Án &amp; Sở Thích</h2>
-          <div class="projects-list">
-            <div class="project-item">
+
+          <!-- Bộ lọc dự án cá nhân theo tag (Tương tác Phần C) -->
+          <div
+            class="project-filter-group"
+            role="group"
+            aria-label="Bộ lọc dự án theo chuyên môn"
+          >
+            <button
+              type="button"
+              class="btn-tag active"
+              data-tag="all"
+              aria-pressed="true"
+            >
+              Tất cả
+            </button>
+            <button
+              type="button"
+              class="btn-tag"
+              data-tag="web"
+              aria-pressed="false"
+            >
+              Web Dev
+            </button>
+            <button
+              type="button"
+              class="btn-tag"
+              data-tag="iot"
+              aria-pressed="false"
+            >
+              IoT &amp; Nhúng
+            </button>
+            <button
+              type="button"
+              class="btn-tag"
+              data-tag="ai"
+              aria-pressed="false"
+            >
+              AI &amp; Data
+            </button>
+          </div>
+
+          <!-- Khu vực aria-live để thông báo số lượng dự án sau lọc cho Accessibility -->
+          <div id="filter-status" class="sr-only" aria-live="polite"></div>
+
+          <div class="projects-list" id="projects-list">
+            <div class="project-item" data-category="web">
+              <div class="project-item__header">
+                <strong>Dự án UniEvent</strong>
+                <span class="project-tag">#Web Dev</span>
+              </div>
               <p>
-                <strong>Dự án:</strong> Website UniEvent - Quản lý sự kiện trong
-                trường.
+                Website quản lý và kết nối sự kiện trong trường đại học, thiết
+                kế giao diện responsive chuẩn semantic HTML5/CSS3 và biểu mẫu
+                liên hệ tương tác REST API.
               </p>
             </div>
-            <div class="project-item">
+
+            <div class="project-item" data-category="iot">
+              <div class="project-item__header">
+                <strong>Khóa cửa tự động RFID RC522</strong>
+                <span class="project-tag">#IoT &amp; Nhúng</span>
+              </div>
               <p>
-                <strong>Sở thích:</strong> Nghiên cứu kỹ thuật lập trình, phát
-                triển phần mềm, hệ thống nhúng và IoT.
+                Mạch vi điều khiển Arduino Uno kết nối đầu đọc thẻ RFID RC522 và
+                động cơ servo đóng mở chốt cửa an ninh tự động.
               </p>
             </div>
-            <div class="project-item">
+
+            <div class="project-item" data-category="iot">
+              <div class="project-item__header">
+                <strong>Hệ thống quan trắc Smart Home ESP8266</strong>
+                <span class="project-tag">#IoT &amp; Nhúng</span>
+              </div>
               <p>
-                <strong>Định hướng:</strong> Tìm hiểu các thuật toán máy học và
-                tối ưu hóa cơ sở dữ liệu.
+                Thu thập nhiệt độ và độ ẩm qua cảm biến DHT11, đồng bộ dữ liệu
+                và điều khiển thiết bị từ xa qua nền tảng đám mây Blynk IoT.
+              </p>
+            </div>
+
+            <div class="project-item" data-category="ai">
+              <div class="project-item__header">
+                <strong>Phát hiện âm thanh giọng nói (VAD)</strong>
+                <span class="project-tag">#AI &amp; Data</span>
+              </div>
+              <p>
+                Ứng dụng mô hình học máy Scikit-Learn kết hợp trích xuất đặc trưng
+                MFCC bằng Librosa để nhận dạng khoảng lặng và hoạt động tiếng nói.
+              </p>
+            </div>
+
+            <div class="project-item" data-category="web">
+              <div class="project-item__header">
+                <strong>Quản lý điểm sinh viên Java Swing &amp; SQL Server</strong>
+                <span class="project-tag">#Web Dev</span>
+              </div>
+              <p>
+                Ứng dụng phần mềm quản lý học tập kết nối CSDL quan hệ chuẩn hóa
+                qua JDBC, truy vấn thống kê dữ liệu trực quan.
               </p>
             </div>
           </div>
@@ -266,5 +346,18 @@
         </p>
       </div>
     </footer>
+
+    <!-- Nút Back-to-top (Tương tác Phần C) -->
+    <button
+      type="button"
+      id="btn-back-to-top"
+      class="btn-back-to-top"
+      aria-label="Cuộn lên đầu trang"
+    >
+      <span aria-hidden="true">&uarr;</span>
+    </button>
+
+    <!-- Nạp mã JavaScript tương tác riêng cho trang cá nhân -->
+    <script src="js/canhan.js"></script>
   </body>
 </html>
