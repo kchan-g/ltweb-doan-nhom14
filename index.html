@@ -8,6 +8,8 @@
       content="UniEvent - Cổng sự kiện Đại học Sư phạm Đà Nẵng. Khám phá, đăng ký và tham gia các hoạt động học thuật, văn hóa, thể thao sôi động."
     />
     <title>UniEvent - Cổng Sự Kiện Đại Học Sư Phạm Đà Nẵng</title>
+    <meta name="theme-color" content="#0284c7" />
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg" />
 
     <!-- Nạp 5 tệp CSS theo module chuẩn đề bài -->
     <link rel="stylesheet" href="css/01-bien.css" />
@@ -20,11 +22,7 @@
     <!-- Header (Vùng "dau") -->
     <header class="vung-dau">
       <div class="container site-header__inner">
-        <a
-          href="index.html"
-          class="thuong-hieu"
-          aria-label="Trang chủ UniEvent"
-        >
+        <a href="index.html" class="thuong-hieu">
           <img
             src="images/logo.png"
             alt="Logo UniEvent - Cổng sự kiện Đại học Sư phạm Đà Nẵng"
@@ -41,6 +39,16 @@
         </a>
 
         <div class="header-phai">
+          <button
+            type="button"
+            class="nut-menu"
+            id="nut-menu"
+            aria-label="Mở menu điều hướng"
+            aria-expanded="false"
+            aria-controls="menu-chinh"
+          >
+            <span aria-hidden="true">☰</span>
+          </button>
           <div class="search-box" role="search">
             <label for="tim-kiem-header" class="chi-danh-cho-sr"
               >Tìm kiếm sự kiện</label
@@ -50,8 +58,29 @@
               id="tim-kiem-header"
               placeholder="Tìm kiếm sự kiện, hội thảo..."
             />
-            <button type="button" aria-label="Tìm kiếm">🔍</button>
+            <button type="button" aria-label="Tìm kiếm">
+              <svg
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </button>
           </div>
+          <a href="danh-sach.html#yeu-thich" class="nut-yeu-thich-header">
+            <span>Đã lưu</span>
+            <span class="huy-hieu-dem" id="dem-yeu-thich" aria-live="polite"
+              >0</span
+            >
+          </a>
           <div class="tai-khoan" role="group" aria-label="Tài khoản đăng nhập">
             <span>Admin</span>
           </div>
@@ -60,7 +89,11 @@
     </header>
 
     <!-- Navigation (Vùng "menu") -->
-    <nav class="vung-menu site-nav" aria-label="Điều hướng chính">
+    <nav
+      class="vung-menu site-nav"
+      id="menu-chinh"
+      aria-label="Điều hướng chính"
+    >
       <div class="container">
         <ul>
           <li>
@@ -86,7 +119,7 @@
       <!-- 1. Hero Section Nổi Bật -->
       <section class="hero">
         <div class="hero__noi-dung">
-          <span class="hero__badge">✨ Cổng sự kiện sinh viên #1</span>
+          <span class="hero__badge">Cổng sự kiện sinh viên UED</span>
           <h1>
             Khám phá &amp; Khởi tạo
             <span class="text-highlight">Sự kiện Đại học</span> cùng UniEvent
@@ -127,15 +160,32 @@
             alt="Sinh viên năng động tham gia hoạt động tại trường Đại học Sư phạm Đà Nẵng"
             width="560"
             height="420"
+            fetchpriority="high"
+            decoding="async"
           />
           <div class="hero__the-noi">
-            <span class="the-noi__icon" aria-hidden="true">🔥</span>
             <div>
-              <strong>Sự kiện nổi bật tuần này</strong>
+              <strong>Tiêu điểm tuần này</strong>
               <span>Đang mở cổng đăng ký trực tuyến</span>
             </div>
           </div>
         </div>
+      </section>
+
+      <!-- Khối dữ liệu từ REST API công khai: Thời tiết khuôn viên ĐH Sư Phạm Đà Nẵng (Open-Meteo) -->
+      <section class="thoi-tiet-section" aria-labelledby="tieu-de-thoi-tiet">
+        <div class="section-head mb-3">
+          <div>
+            <h2 id="tieu-de-thoi-tiet" class="tieu-de-muc">
+              Thời Tiết &amp; Hoạt Động Hôm Nay
+            </h2>
+            <p class="section-head__mota">
+              Dữ liệu quan trắc thời gian thực tại khuôn viên Trường ĐH Sư Phạm
+              – Đại học Đà Nẵng từ Open-Meteo REST API.
+            </p>
+          </div>
+        </div>
+        <div id="khoi-thoi-tiet-widget"></div>
       </section>
 
       <!-- 2. Featured Events (Lưới 3 thẻ tự xuống dòng) -->
@@ -168,13 +218,12 @@
             </div>
             <div class="the-tin__body">
               <h3>Hội thảo Công nghệ 4.0 &amp; Trí tuệ Nhân tạo (AI)</h3>
-              <p class="event-meta">📅 28/10/2026, 08:30 - 11:30</p>
-              <p class="event-meta">📍 Hội trường A1 - Khu hiệu bộ ĐHSP</p>
-              <p class="event-meta">🏅 Tích lũy +5 điểm rèn luyện</p>
-              <a
-                href="chi-tiet-cong-nghe.html"
-                class="nut-bam nut-nhan nut-nho"
-              >
+              <p class="event-meta">Thời gian: 28/10/2026, 08:30 - 11:30</p>
+              <p class="event-meta">
+                Địa điểm: Hội trường A1 - Khu hiệu bộ ĐHSP
+              </p>
+              <p class="event-meta">Quyền lợi: +5 điểm rèn luyện</p>
+              <a href="chi-tiet.html?id=1" class="nut-bam nut-nhan nut-nho">
                 Xem chi tiết &amp; Đăng ký
               </a>
             </div>
@@ -194,10 +243,10 @@
             </div>
             <div class="the-tin__body">
               <h3>Giải Bóng Đá Sinh Viên Tranh Cúp UniEvent 2026</h3>
-              <p class="event-meta">📅 22/10/2026, 15:00 - 18:00</p>
-              <p class="event-meta">📍 Sân vận động trường ĐH Sư Phạm</p>
-              <p class="event-meta">🏅 Tích lũy +4 điểm rèn luyện</p>
-              <a href="chi-tiet-bong-da.html" class="nut-bam nut-nhan nut-nho">
+              <p class="event-meta">Thời gian: 22/10/2026, 15:00 - 18:00</p>
+              <p class="event-meta">Địa điểm: Sân vận động trường ĐH Sư Phạm</p>
+              <p class="event-meta">Quyền lợi: +4 điểm rèn luyện</p>
+              <a href="chi-tiet.html?id=4" class="nut-bam nut-nhan nut-nho">
                 Xem chi tiết &amp; Đăng ký
               </a>
             </div>
@@ -217,10 +266,10 @@
             </div>
             <div class="the-tin__body">
               <h3>Nhạc Hội Mùa Thu — Autumn Music Festival 2026</h3>
-              <p class="event-meta">📅 30/10/2026, 19:00 - 22:00</p>
-              <p class="event-meta">📍 Quảng trường Trung tâm ĐHSP</p>
-              <p class="event-meta">🏅 Tích lũy +5 điểm rèn luyện</p>
-              <a href="chi-tiet-am-nhac.html" class="nut-bam nut-nhan nut-nho">
+              <p class="event-meta">Thời gian: 30/10/2026, 19:00 - 22:00</p>
+              <p class="event-meta">Địa điểm: Quảng trường Trung tâm ĐHSP</p>
+              <p class="event-meta">Quyền lợi: +5 điểm rèn luyện</p>
+              <a href="chi-tiet.html?id=3" class="nut-bam nut-nhan nut-nho">
                 Xem chi tiết &amp; Đăng ký
               </a>
             </div>
@@ -228,44 +277,7 @@
         </div>
       </section>
 
-      <!-- 3. Danh mục sự kiện -->
-      <section>
-        <h2 class="tieu-de-muc mb-4">Danh mục sự kiện</h2>
-
-        <div class="luoi-danh-muc">
-          <div class="the-danh-muc">
-            <p aria-hidden="true">📚</p>
-            <p>Học thuật</p>
-          </div>
-
-          <div class="the-danh-muc">
-            <p aria-hidden="true">🎤</p>
-            <p>Hội thảo</p>
-          </div>
-
-          <div class="the-danh-muc">
-            <p aria-hidden="true">⚽</p>
-            <p>Thể thao</p>
-          </div>
-
-          <div class="the-danh-muc">
-            <p aria-hidden="true">🎸</p>
-            <p>Văn nghệ</p>
-          </div>
-
-          <div class="the-danh-muc">
-            <p aria-hidden="true">👥</p>
-            <p>CLB Đội nhóm</p>
-          </div>
-
-          <div class="the-danh-muc">
-            <p aria-hidden="true">🏆</p>
-            <p>Hoạt động SV</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- 4. Khối giới thiệu / Kêu gọi hành động -->
+      <!-- 3. Khối giới thiệu / Kêu gọi hành động -->
       <section class="khung-gioi-thieu">
         <h2>Giới thiệu UniEvent</h2>
         <p>
@@ -283,7 +295,7 @@
     <!-- Aside (Vùng "ben" - Cột tiện ích phụ hiển thị trên màn hình máy tính) -->
     <aside class="vung-ben chi-hien-tren-may-tinh">
       <div class="widget">
-        <h3>📢 Thông báo mới</h3>
+        <h3>Thông báo mới</h3>
         <ul>
           <li>Hạn đăng ký giải bóng đá sinh viên kết thúc vào 20/10.</li>
           <li>
@@ -294,7 +306,7 @@
       </div>
 
       <div class="widget">
-        <h3>💡 Mẹo sinh viên</h3>
+        <h3>Lưu ý sinh viên</h3>
         <p class="mt-2 text-phu fs-nho lh-vua">
           Quét mã QR tại cổng vào sự kiện để được điểm danh tự động và cộng điểm
           rèn luyện trực tiếp vào tài khoản đào tạo!
@@ -302,7 +314,7 @@
       </div>
 
       <div class="widget">
-        <h3>📅 Lịch sự kiện trong tuần</h3>
+        <h3>Lịch sự kiện trong tuần</h3>
         <p class="mt-2 text-phu fs-nho lh-vua">
           Đã có 12 sự kiện đang diễn ra trong tuần này. Hãy kiểm tra lịch trình
           để không bỏ lỡ các hoạt động hấp dẫn.
@@ -333,9 +345,9 @@
             viên và giảng viên Trường Đại học Sư phạm – Đại học Đà Nẵng.
           </p>
           <p class="mt-2">
-            📍 459 Tôn Đức Thắng, Hòa Khánh Nam, Liên Chiểu, Đà Nẵng
+            Địa chỉ: 459 Tôn Đức Thắng, Hòa Khánh Nam, Liên Chiểu, Đà Nẵng
           </p>
-          <p>✉️ support@unievent.edu.vn | 📞 0236 3841 323</p>
+          <p>Email: support@unievent.edu.vn | Hotline: 0236 3841 323</p>
         </div>
 
         <!-- Cột 2: Điều hướng nhanh -->
@@ -403,5 +415,9 @@
         </div>
       </div>
     </footer>
+
+    <!-- JavaScript ES6 Modules -->
+    <script type="module" src="js/main.js"></script>
+    <script type="module" src="js/trang-chu.js"></script>
   </body>
 </html>
