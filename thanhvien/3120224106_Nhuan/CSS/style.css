@@ -616,3 +616,369 @@ footer.profile-footer p {
     gap: var(--space-3);
   }
 }
+/* ==============================
+   LỌC KỸ NĂNG
+   ============================== */
+
+.skill-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.skill-filter__button {
+    border: 1px solid var(--border-vua, #ccc);
+    background: var(--nen-surface, #fff);
+    color: var(--mau-chinh-toi, #222);
+    padding: 0.5rem 0.8rem;
+    border-radius: 999px;
+    cursor: pointer;
+    font: inherit;
+}
+
+.skill-filter__button:hover,
+.skill-filter__button.is-active {
+    background: var(--mau-chinh, #1f4b7a);
+    color: var(--chu-tren-toi, #fff);
+}
+
+.skill-filter__button:focus-visible {
+    outline: 2px solid var(--mau-nhan-toi, #c99a20);
+    outline-offset: 3px;
+}
+
+
+/* ==============================
+   NÚT SAO CHÉP EMAIL
+   ============================== */
+
+#copyEmail {
+    position: relative;
+    margin-left: 0.5rem;
+    padding: 0.35rem 0.6rem;
+    border: 1px solid var(--border-vua, #ccc);
+    border-radius: 6px;
+    background: var(--nen-surface, #fff);
+    cursor: pointer;
+    font: inherit;
+}
+
+#copyEmail:hover {
+    background: var(--mau-chinh, #1f4b7a);
+    color: var(--chu-tren-toi, #fff);
+}
+
+#copyEmail:focus-visible {
+    outline: 2px solid var(--mau-nhan-toi, #c99a20);
+    outline-offset: 3px;
+}
+
+
+/* Tooltip */
+
+.email-tooltip {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 8px);
+    transform: translateX(-50%);
+
+    padding: 0.4rem 0.6rem;
+    border-radius: 5px;
+
+    background: #222;
+    color: #fff;
+
+    font-size: 0.8rem;
+    white-space: nowrap;
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transition:
+        opacity 0.2s ease,
+        visibility 0.2s ease;
+}
+
+.email-tooltip.is-visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+
+/* Mobile 360px */
+
+/* ============================================================
+   15. BỘ LỌC KỸ NĂNG
+============================================================ */
+
+.skill-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.skill-filter__title {
+  font-weight: var(--dam-day);
+  color: var(--mau-chinh-toi);
+}
+
+.skill-filter__button {
+  border: 1px solid var(--border-vua);
+  background: var(--nen-surface);
+  color: var(--mau-chinh-toi);
+  padding: 0.5rem 0.8rem;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  font: inherit;
+}
+
+.skill-filter__button:hover,
+.skill-filter__button.is-active {
+  background: var(--mau-chinh);
+  color: var(--chu-tren-toi);
+}
+
+.skill-filter__button:focus-visible {
+  outline: 2px solid var(--mau-nhan-toi);
+  outline-offset: 3px;
+}
+
+
+/* Kỹ năng bị ẩn khi lọc */
+
+.skills-list li.is-hidden {
+  display: none;
+}
+
+
+/* ============================================================
+   16. NÚT SAO CHÉP EMAIL
+============================================================ */
+
+#copyEmail {
+  position: relative;
+  margin-left: 0.5rem;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--border-vua);
+  border-radius: var(--radius-nho);
+  background: var(--nen-surface);
+  color: var(--mau-chinh-toi);
+  cursor: pointer;
+  font: inherit;
+}
+
+#copyEmail:hover {
+  background: var(--mau-chinh);
+  color: var(--chu-tren-toi);
+}
+
+#copyEmail:focus-visible {
+  outline: 2px solid var(--mau-nhan-toi);
+  outline-offset: 3px;
+}
+
+
+/* ============================================================
+   17. TOOLTIP EMAIL
+============================================================ */
+
+.email-tooltip {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+
+  transform: translateX(-50%);
+
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--radius-nho);
+
+  background: var(--navy-900);
+  color: var(--chu-tren-toi);
+
+  font-size: 0.8rem;
+  line-height: 1.3;
+  white-space: nowrap;
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease;
+
+  z-index: 100;
+}
+
+.email-tooltip.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+
+/* ============================================================
+   18. RESPONSIVE 360PX
+============================================================ */
+
+@media (max-width: 360px) {
+
+  .skill-filter {
+    align-items: stretch;
+  }
+
+  .skill-filter__button {
+    min-height: 44px;
+  }
+
+  #copyEmail {
+    margin-left: 0;
+    margin-top: 0.4rem;
+  }
+
+  .email-tooltip {
+    white-space: normal;
+    width: 180px;
+    text-align: center;
+  }
+
+}/* ============================================================
+   15. BỘ LỌC KỸ NĂNG
+============================================================ */
+
+.skill-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.skill-filter__title {
+  font-weight: var(--dam-day);
+  color: var(--mau-chinh-toi);
+}
+
+.skill-filter__button {
+  border: 1px solid var(--border-vua);
+  background: var(--nen-surface);
+  color: var(--mau-chinh-toi);
+  padding: 0.5rem 0.8rem;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  font: inherit;
+}
+
+.skill-filter__button:hover,
+.skill-filter__button.is-active {
+  background: var(--mau-chinh);
+  color: var(--chu-tren-toi);
+}
+
+.skill-filter__button:focus-visible {
+  outline: 2px solid var(--mau-nhan-toi);
+  outline-offset: 3px;
+}
+
+
+/* Kỹ năng bị ẩn khi lọc */
+
+.skills-list li.is-hidden {
+  display: none;
+}
+
+
+/* ============================================================
+   16. NÚT SAO CHÉP EMAIL
+============================================================ */
+
+#copyEmail {
+  position: relative;
+  margin-left: 0.5rem;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--border-vua);
+  border-radius: var(--radius-nho);
+  background: var(--nen-surface);
+  color: var(--mau-chinh-toi);
+  cursor: pointer;
+  font: inherit;
+}
+
+#copyEmail:hover {
+  background: var(--mau-chinh);
+  color: var(--chu-tren-toi);
+}
+
+#copyEmail:focus-visible {
+  outline: 2px solid var(--mau-nhan-toi);
+  outline-offset: 3px;
+}
+
+
+/* ============================================================
+   17. TOOLTIP EMAIL
+============================================================ */
+
+.email-tooltip {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+
+  transform: translateX(-50%);
+
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--radius-nho);
+
+  background: var(--navy-900);
+  color: var(--chu-tren-toi);
+
+  font-size: 0.8rem;
+  line-height: 1.3;
+  white-space: nowrap;
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease;
+
+  z-index: 100;
+}
+
+.email-tooltip.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+
+/* ============================================================
+   18. RESPONSIVE 360PX
+============================================================ */
+
+@media (max-width: 360px) {
+
+  .skill-filter {
+    align-items: stretch;
+  }
+
+  .skill-filter__button {
+    min-height: 44px;
+  }
+
+  #copyEmail {
+    margin-left: 0;
+    margin-top: 0.4rem;
+  }
+
+  .email-tooltip {
+    white-space: normal;
+    width: 180px;
+    text-align: center;
+  }
+
+}

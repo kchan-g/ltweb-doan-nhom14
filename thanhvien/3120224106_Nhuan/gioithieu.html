@@ -7,6 +7,7 @@
     <!-- Nhúng biến Design System & CSS trang cá nhân -->
     <link rel="stylesheet" href="../../css/01-bien.css" />
     <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="../../../images/favicon.svg" type="image/svg+xml">
   </head>
   <body>
     <!-- HEADER PROFILE -->
@@ -107,13 +108,13 @@
         >
           <h2 id="skills-heading">Kỹ Năng</h2>
           <ul class="skills-list">
-            <li>HTML5 Semantic Tags &amp; a11y</li>
-            <li>Modern CSS (CSS Grid &amp; Flexbox)</li>
-            <li>Responsive Web Design (Mobile-First)</li>
-            <li>Tùy biến CSS Variables &amp; Tokens</li>
-            <li>Git &amp; GitHub Version Control</li>
-            <li>Bootstrap 5 Framework &amp; Utility</li>
-          </ul>
+    <li data-group="html">HTML5 Semantic Tags &amp; a11y</li>
+    <li data-group="css">Modern CSS (CSS Grid &amp; Flexbox)</li>
+    <li data-group="css">Responsive Web Design (Mobile-First)</li>
+    <li data-group="css">Tùy biến CSS Variables &amp; Tokens</li>
+    <li data-group="tools">Git &amp; GitHub Version Control</li>
+    <li data-group="tools">Bootstrap 5 Framework &amp; Utility</li>
+</ul>
         </section>
 
         <!-- Thông tin liên hệ bổ sung -->
@@ -128,16 +129,23 @@
               <span>📧</span>
               <div>
                 <strong>Email:</strong><br />
-                <a href="mailto:dinhtrinhngochung1301@gmail.com"
-                  >dinhtrinhngochung1301@gmail.com</a
-                >
+                <a href="mailto:nhuanphan514@gmail.com">
+    nhuanphan514@gmail.com
+</a>
+<button
+    type="button"
+    id="copyEmail"
+    aria-label="Sao chép địa chỉ email"
+>
+    Sao chép
+</button>
               </div>
             </li>
             <li>
               <span>📞</span>
               <div>
                 <strong>Số điện thoại:</strong><br />
-                <a href="tel:0707174128">0707 174 128</a>
+                <a href="tel:0335549477">0335549477</a>
               </div>
             </li>
             <li>
@@ -366,5 +374,6 @@
         </p>
       </div>
     </footer>
+    <script src="js/canhan.js"></script>
   </body>
 </html>

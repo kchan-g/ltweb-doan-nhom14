@@ -325,7 +325,7 @@
                 </div>
                 <div class="d-flex gap-2 pt-2 border-top">
                   <a
-                    href="chi-tiet-nghe-nghiep.html"
+                    href="chi-tiet.html?id=2"
                     class="btn btn-primary btn-sm flex-grow-1"
                   >
                     Xem chi tiết
@@ -381,7 +381,7 @@
                 </div>
                 <div class="d-flex gap-2 pt-2 border-top">
                   <a
-                    href="chi-tiet-am-nhac.html"
+                    href="chi-tiet.html?id=3"
                     class="btn btn-primary btn-sm flex-grow-1"
                   >
                     Xem chi tiết
@@ -437,7 +437,7 @@
                 </div>
                 <div class="d-flex gap-2 pt-2 border-top">
                   <a
-                    href="chi-tiet-bong-da.html"
+                    href="chi-tiet.html?id=4"
                     class="btn btn-primary btn-sm flex-grow-1"
                   >
                     Xem chi tiết
@@ -493,7 +493,7 @@
                 </div>
                 <div class="d-flex gap-2 pt-2 border-top">
                   <a
-                    href="chi-tiet-cong-nghe.html"
+                    href="chi-tiet.html?id=1"
                     class="btn btn-primary btn-sm flex-grow-1"
                   >
                     Xem chi tiết
@@ -549,7 +549,7 @@
                 </div>
                 <div class="d-flex gap-2 pt-2 border-top">
                   <a
-                    href="chi-tiet-clb.html"
+                    href="chi-tiet.html?id=5"
                     class="btn btn-primary btn-sm flex-grow-1"
                   >
                     Xem chi tiết
@@ -576,11 +576,11 @@
         class="d-flex justify-content-center mb-5"
       >
         <ul class="pagination pagination-md shadow-sm">
-            <li class="page-item disabled">
-              <span class="page-link" aria-disabled="true">
-                <i class="bi bi-chevron-left"></i> Trước
-              </span>
-            </li>
+          <li class="page-item disabled">
+            <span class="page-link" aria-disabled="true">
+              <i class="bi bi-chevron-left"></i> Trước
+            </span>
+          </li>
           <li class="page-item active" aria-current="page">
             <a class="page-link" href="#">1</a>
           </li>
@@ -635,7 +635,8 @@
         <div class="modal-content shadow border-0">
           <div class="modal-header bg-primary text-white">
             <h2 class="modal-title fs-5 fw-bold" id="modalDangKyLabel">
-            <i class="bi bi-ticket-perforated-fill me-2 text-warning"></i>Đăng Ký Tham Gia Sự Kiện
+              <i class="bi bi-ticket-perforated-fill me-2 text-warning"></i>Đăng
+              Ký Tham Gia Sự Kiện
             </h2>
             <button
               type="button"
@@ -884,7 +885,7 @@
         formDangKyNhanh.addEventListener("submit", function (e) {
           e.preventDefault();
           alert(
-            "🎉 Đăng ký sự kiện thành công! Vé và mã QR điểm danh đã được gửi tới email của bạn.",
+            "Đăng ký sự kiện thành công! Vé và mã QR điểm danh đã được gửi tới email của bạn.",
           );
           const modalInstance = bootstrap.Modal.getInstance(modalDangKy);
           if (modalInstance) {
