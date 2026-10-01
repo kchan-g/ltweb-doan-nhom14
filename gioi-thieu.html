@@ -8,6 +8,8 @@
       content="Giới thiệu về nền tảng UniEvent và danh sách thành viên nhóm sinh viên phát triển - Trường Đại học Sư phạm Đà Nẵng."
     />
     <title>Giới Thiệu Hệ Thống &amp; Đội Ngũ Phát Triển | UniEvent</title>
+    <meta name="theme-color" content="#0284c7" />
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg" />
 
     <!-- Nạp 5 tệp CSS theo module chuẩn đề bài -->
     <link rel="stylesheet" href="css/01-bien.css" />
@@ -20,11 +22,7 @@
     <!-- Header chung -->
     <header class="vung-dau">
       <div class="container site-header__inner">
-        <a
-          href="index.html"
-          class="thuong-hieu"
-          aria-label="Trang chủ UniEvent"
-        >
+        <a href="index.html" class="thuong-hieu">
           <img
             src="images/logo.png"
             alt="Logo UniEvent - Cổng sự kiện Đại học Sư phạm Đà Nẵng"
@@ -41,6 +39,16 @@
         </a>
 
         <div class="header-phai">
+          <button
+            type="button"
+            class="nut-menu"
+            id="nut-menu"
+            aria-label="Mở menu điều hướng"
+            aria-expanded="false"
+            aria-controls="menu-chinh"
+          >
+            <span aria-hidden="true">☰</span>
+          </button>
           <div class="search-box" role="search">
             <label for="tim-kiem-header" class="chi-danh-cho-sr"
               >Tìm kiếm sự kiện</label
@@ -50,9 +58,30 @@
               id="tim-kiem-header"
               placeholder="Tìm sự kiện, hội thảo..."
             />
-            <button type="button" aria-label="Tìm kiếm">🔍</button>
+            <button type="button" aria-label="Tìm kiếm">
+              <svg
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </button>
           </div>
-          <div class="tai-khoan">
+          <a href="danh-sach.html#yeu-thich" class="nut-yeu-thich-header">
+            <span>Đã lưu</span>
+            <span class="huy-hieu-dem" id="dem-yeu-thich" aria-live="polite"
+              >0</span
+            >
+          </a>
+          <div class="tai-khoan" role="group" aria-label="Tài khoản đăng nhập">
             <span>Admin</span>
           </div>
         </div>
@@ -60,7 +89,11 @@
     </header>
 
     <!-- Navigation chung -->
-    <nav class="vung-menu site-nav" aria-label="Điều hướng chính">
+    <nav
+      class="vung-menu site-nav"
+      id="menu-chinh"
+      aria-label="Điều hướng chính"
+    >
       <div class="container">
         <ul>
           <li>
@@ -286,9 +319,9 @@
             viên và giảng viên Trường Đại học Sư phạm – Đại học Đà Nẵng.
           </p>
           <p class="mt-2">
-            📍 459 Tôn Đức Thắng, Hòa Khánh Nam, Liên Chiểu, Đà Nẵng
+            Địa chỉ: 459 Tôn Đức Thắng, Hòa Khánh Nam, Liên Chiểu, Đà Nẵng
           </p>
-          <p>✉️ support@unievent.edu.vn | 📞 0236 3841 323</p>
+          <p>Email: support@unievent.edu.vn | Hotline: 0236 3841 323</p>
         </div>
 
         <!-- Cột 2: Điều hướng nhanh -->
@@ -356,5 +389,8 @@
         </div>
       </div>
     </footer>
+
+    <!-- JavaScript ES6 Modules -->
+    <script type="module" src="js/main.js"></script>
   </body>
 </html>
