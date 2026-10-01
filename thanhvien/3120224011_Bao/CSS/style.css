@@ -616,3 +616,214 @@ footer.profile-footer p {
     gap: var(--space-3);
   }
 }
+
+/* ============================================================
+   15. TƯƠNG TÁC 1: THANH TIẾN ĐỘ CUỘN TRANG (SCROLL INDICATOR)
+   ============================================================ */
+.scroll-tracker {
+  position: fixed;
+  right: 18px;
+  bottom: 24px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid var(--border-vua, #cbd5e1);
+  padding: 8px 6px;
+  border-radius: var(--radius-pill, 9999px);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  user-select: none;
+  transition: transform var(--transition-nhanh, 0.2s ease);
+}
+
+.scroll-tracker:hover {
+  transform: scale(1.05);
+}
+
+.scroll-tracker__track {
+  width: 6px;
+  height: 90px;
+  background: #e2e8f0;
+  border-radius: 3px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.scroll-tracker__bar {
+  width: 100%;
+  height: 0%;
+  background: linear-gradient(180deg, var(--mau-nhan, #f59e0b), var(--mau-chinh, #0284c7));
+  border-radius: 3px;
+  transition: height 0.12s ease-out;
+}
+
+.scroll-tracker__text {
+  font-size: 11px;
+  font-weight: var(--dam-day, 700);
+  color: var(--navy-900, #0f172a);
+  min-width: 30px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================================
+   16. TƯƠNG TÁC 2: ACCORDION HỌC VẤN (QUÁ TRÌNH HỌC TẬP)
+   ============================================================ */
+.education-section {
+  margin-top: var(--space-6, 1.5rem);
+}
+
+.education-lead {
+  color: var(--chu-phu);
+  font-size: var(--co-chu-nho, 0.875rem);
+}
+
+.education-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 0.75rem);
+}
+
+.education-accordion__item {
+  border: 1px solid var(--border-nhe, #e2e8f0);
+  border-radius: var(--radius-vua, 8px);
+  overflow: hidden;
+  background: var(--nen-surface, #ffffff);
+  transition: border-color var(--transition-nhanh, 0.2s ease), box-shadow var(--transition-nhanh, 0.2s ease);
+}
+
+.education-accordion__item:hover {
+  border-color: var(--border-vua, #cbd5e1);
+  box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.08));
+}
+
+.education-accordion__btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3, 0.75rem);
+  padding: var(--space-4, 1rem);
+  min-height: 48px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  font-size: var(--co-chu-chuan, 1rem);
+  font-weight: var(--dam-vua, 600);
+  color: var(--mau-chinh-toi, #1e3a8a);
+  transition: background-color var(--transition-nhanh, 0.2s ease);
+}
+
+.education-accordion__btn:hover {
+  background-color: rgba(2, 132, 199, 0.05);
+}
+
+.education-accordion__btn:focus-visible {
+  outline: 2px solid var(--mau-nhan, #f59e0b);
+  outline-offset: -2px;
+}
+
+.education-accordion__btn[aria-expanded="true"] {
+  background-color: rgba(2, 132, 199, 0.08);
+  color: var(--mau-chinh, #0284c7);
+}
+
+.education-accordion__btn[aria-expanded="true"] .education-accordion__icon {
+  transform: rotate(180deg);
+}
+
+.education-accordion__title {
+  flex: 1;
+}
+
+.education-accordion__meta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  flex-shrink: 0;
+}
+
+.education-accordion__hint {
+  font-size: var(--co-chu-meta, 0.75rem);
+  font-weight: var(--dam-nhe, 400);
+  color: var(--chu-phu, #64748b);
+}
+
+.education-accordion__icon {
+  display: inline-block;
+  font-size: 1.1rem;
+  line-height: 1;
+  transition: transform var(--transition-nhanh, 0.2s ease);
+}
+
+.education-accordion__panel {
+  padding-inline: var(--space-4, 1rem);
+  padding-bottom: var(--space-4, 1rem);
+  border-top: 1px dashed var(--border-nhe, #e2e8f0);
+  background: var(--nen-surface, #ffffff);
+  animation: fadeInAccordion 0.25s ease-out;
+}
+
+.education-accordion__content {
+  padding-top: var(--space-3, 0.75rem);
+}
+
+.education-accordion__content p {
+  margin-bottom: var(--space-2, 0.5rem);
+  font-size: var(--co-chu-nho, 0.875rem);
+  line-height: 1.6;
+}
+
+.education-accordion__content p:last-child {
+  margin-bottom: 0;
+}
+
+@keyframes fadeInAccordion {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================================
+   17. TỐI ƯU GIAO DIỆN DI ĐỘNG (BỀ RỘNG <= 360px)
+   ============================================================ */
+@media (max-width: 360px) {
+  .education-accordion__btn {
+    padding: var(--space-3, 0.75rem) var(--space-2, 0.5rem);
+    font-size: var(--co-chu-nho, 0.875rem);
+  }
+
+  .education-accordion__hint {
+    display: none; /* Ẩn gợi ý chữ trên màn hình siêu hẹp để dành diện tích cho tiêu đề */
+  }
+
+  .scroll-tracker {
+    right: 8px;
+    bottom: 16px;
+    padding: 6px 4px;
+  }
+
+  .scroll-tracker__track {
+    height: 60px;
+    width: 4px;
+  }
+
+  .scroll-tracker__text {
+    font-size: 10px;
+    min-width: 24px;
+  }
+}
+

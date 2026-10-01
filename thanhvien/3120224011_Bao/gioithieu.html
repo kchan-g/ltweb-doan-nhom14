@@ -4,9 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Profile cá nhân - Nguyễn Hoài Bảo | UniEvent</title>
+    <meta name="theme-color" content="#0284c7" />
+    <link rel="icon" type="image/svg+xml" href="../../images/favicon.svg" />
     <!-- Nhúng biến Design System & CSS trang cá nhân -->
     <link rel="stylesheet" href="../../css/01-bien.css" />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
     <!-- HEADER PROFILE -->
@@ -26,6 +28,7 @@
         <ul>
           <li><a href="#about">Giới thiệu</a></li>
           <li><a href="#projects">Dự án &amp; Sở thích</a></li>
+          <li><a href="#education">Học vấn</a></li>
           <li><a href="#skills">Kỹ năng</a></li>
           <li><a href="#schedule">Thời khóa biểu</a></li>
           <li><a href="#contact">Liên hệ</a></li>
@@ -150,7 +153,132 @@
         </aside>
       </div>
 
-      <!-- KHỐI 3: THỜI KHÓA BIỂU HỌC TẬP (KHUNG CUỘN NGANG RIÊNG BIỆT TRÊN MOBILE) -->
+      <!-- KHỐI 3: HỌC VẤN & MỤC TIÊU (TƯƠNG TÁC ACCORDION HỌC VẤN) -->
+      <section
+        id="education"
+        class="profile-card education-section"
+        aria-labelledby="education-heading"
+      >
+        <h2 id="education-heading">Quá Trình Học Tập &amp; Bằng Cấp</h2>
+        <p class="education-lead mb-4">
+          Nhấp vào từng mục bên dưới để xem chi tiết quá trình đào tạo và mục tiêu phát triển:
+        </p>
+
+        <div class="education-accordion">
+          <!-- Mục 1: Đại học -->
+          <div class="education-accordion__item">
+            <button
+              type="button"
+              class="education-accordion__btn"
+              id="btn-edu-1"
+              aria-expanded="false"
+              aria-controls="panel-edu-1"
+            >
+              <span class="education-accordion__title">
+                🎓 Trường Đại học Sư phạm – Đại học Đà Nẵng (2022 – Hiện tại)
+              </span>
+              <span class="education-accordion__meta">
+                <span class="education-accordion__hint">Bấm để mở rộng</span>
+                <span class="education-accordion__icon" aria-hidden="true">▾</span>
+              </span>
+            </button>
+            <div
+              id="panel-edu-1"
+              class="education-accordion__panel"
+              role="region"
+              aria-labelledby="btn-edu-1"
+              hidden
+            >
+              <div class="education-accordion__content">
+                <p>
+                  <strong>Chuyên ngành đào tạo:</strong> Sư phạm Tin học / Công nghệ thông tin (Khoa Toán - Tin học).
+                </p>
+                <p>
+                  <strong>Quá trình tích lũy:</strong> Đạt kết quả học tập tốt, hoàn thành các học phần nền tảng vững chắc: Thiết kế &amp; Lập trình Web, Cơ sở dữ liệu, Công nghệ phần mềm, An toàn thông tin.
+                </p>
+                <p>
+                  <strong>Hoạt động:</strong> Tham gia tích cực các hoạt động phong trào Đoàn - Hội và dự án công nghệ sinh viên UniEvent.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mục 2: Chứng chỉ & Kỹ năng -->
+          <div class="education-accordion__item">
+            <button
+              type="button"
+              class="education-accordion__btn"
+              id="btn-edu-2"
+              aria-expanded="false"
+              aria-controls="panel-edu-2"
+            >
+              <span class="education-accordion__title">
+                💻 Khóa Huấn Luyện &amp; Kỹ Năng Số Chuyên Sâu
+              </span>
+              <span class="education-accordion__meta">
+                <span class="education-accordion__hint">Bấm để mở rộng</span>
+                <span class="education-accordion__icon" aria-hidden="true">▾</span>
+              </span>
+            </button>
+            <div
+              id="panel-edu-2"
+              class="education-accordion__panel"
+              role="region"
+              aria-labelledby="btn-edu-2"
+              hidden
+            >
+              <div class="education-accordion__content">
+                <p>
+                  <strong>Phát triển Giao diện Web:</strong> Thành thạo chuẩn ngữ nghĩa HTML5 Semantic, Modern CSS (Flexbox, CSS Grid), JavaScript ES6+ và tiêu chuẩn trợ năng Accessibility (a11y WCAG 2.1).
+                </p>
+                <p>
+                  <strong>Quản trị Dữ liệu:</strong> Thiết kế CSDL quan hệ, tối ưu truy vấn SQL trên MySQL / SQL Server.
+                </p>
+                <p>
+                  <strong>Quy trình &amp; Công cụ:</strong> Sử dụng thành thạo Git/GitHub cho làm việc nhóm, Figma để thiết kế giao diện UI/UX.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mục 3: Mục tiêu nghề nghiệp -->
+          <div class="education-accordion__item">
+            <button
+              type="button"
+              class="education-accordion__btn"
+              id="btn-edu-3"
+              aria-expanded="false"
+              aria-controls="panel-edu-3"
+            >
+              <span class="education-accordion__title">
+                🎯 Kế Hoạch &amp; Mục Tiêu Nghề Nghiệp Tương Lai
+              </span>
+              <span class="education-accordion__meta">
+                <span class="education-accordion__hint">Bấm để mở rộng</span>
+                <span class="education-accordion__icon" aria-hidden="true">▾</span>
+              </span>
+            </button>
+            <div
+              id="panel-edu-3"
+              class="education-accordion__panel"
+              role="region"
+              aria-labelledby="btn-edu-3"
+              hidden
+            >
+              <div class="education-accordion__content">
+                <p>
+                  <strong>Mục tiêu ngắn hạn:</strong> Hoàn thành xuất sắc đồ án học phần Thiết kế &amp; Lập trình Web với điểm số tối đa, làm chủ các kỹ thuật lập trình web hiện đại.
+                </p>
+                <p>
+                  <strong>Mục tiêu dài hạn:</strong> Tốt nghiệp loại Giỏi chuyên ngành Sư phạm Tin học, trở thành Kỹ sư phần mềm Full-stack Web/Mobile và tham gia giảng dạy, phát triển các giải pháp phần mềm chuyển đổi số trong giáo dục.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- KHỐI 4: THỜI KHÓA BIỂU HỌC TẬP (KHUNG CUỘN NGANG RIÊNG BIỆT TRÊN MOBILE) -->
       <section
         id="schedule"
         class="profile-card schedule-section"
@@ -370,5 +498,24 @@
         </p>
       </div>
     </footer>
+
+    <!-- THANH TIẾN ĐỘ CUỘN TRANG (SCROLL INDICATOR) -->
+    <aside class="scroll-tracker" aria-label="Tiến độ cuộn trang">
+      <div class="scroll-tracker__track">
+        <div
+          id="scrollProgressBar"
+          class="scroll-tracker__bar"
+          role="progressbar"
+          aria-label="Tiến độ cuộn trang cá nhân"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+        ></div>
+      </div>
+      <span id="scrollPercentText" class="scroll-tracker__text" aria-live="polite">0%</span>
+    </aside>
+
+    <!-- Kịch bản JavaScript tương tác cá nhân -->
+    <script src="js/canhan.js"></script>
   </body>
 </html>
