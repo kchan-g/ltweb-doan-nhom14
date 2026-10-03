@@ -349,10 +349,10 @@ function dienDuLieuSuKien(sk) {
 
     capNhatNutYeuThich();
 
-    btnYeuThich.onclick = () => {
+    btnYeuThich.addEventListener("click", () => {
       toggleYeuThich(sk.id);
       capNhatNutYeuThich();
-    };
+    });
   }
 
   // Khởi tạo Popup Đăng ký vé sự kiện
@@ -634,7 +634,7 @@ function thietLapModalDangKy(sk) {
   }
 
   // Mở modal khi bấm nút đăng ký (yêu cầu đăng nhập email UED nếu chưa đăng nhập)
-  btnMoDangKy.onclick = () => {
+  btnMoDangKy.addEventListener("click", () => {
     if (!kiemTraDaDangNhap()) {
       moModalDangNhap(() => {
         moModal();
@@ -642,16 +642,16 @@ function thietLapModalDangKy(sk) {
     } else {
       moModal();
     }
-  };
+  });
 
   // Đóng modal khi bấm nút X hoặc nút Hoàn tất
-  if (nutDong) nutDong.onclick = dongModal;
-  if (nutHoanTat) nutHoanTat.onclick = dongModal;
+  if (nutDong) nutDong.addEventListener("click", dongModal);
+  if (nutHoanTat) nutHoanTat.addEventListener("click", dongModal);
 
   // Đóng khi click ngoài hộp thoại modal
-  modal.onclick = (e) => {
+  modal.addEventListener("click", (e) => {
     if (e.target === modal) dongModal();
-  };
+  });
 
   // Đóng khi nhấn phím Escape
   document.addEventListener("keydown", (e) => {
@@ -661,7 +661,7 @@ function thietLapModalDangKy(sk) {
   });
 
   // Xử lý nộp form đăng ký vé
-  form.onsubmit = (e) => {
+  form.addEventListener("submit", (e) => {
     e.preventDefault();
 
     const hopLeHoTen = kiemTraTruong(inputHoTen);
@@ -717,7 +717,7 @@ function thietLapModalDangKy(sk) {
         if (nutHoanTat) nutHoanTat.focus();
       }, 50);
     }
-  };
+  });
 }
 
 /**

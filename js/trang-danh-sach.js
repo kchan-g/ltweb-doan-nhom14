@@ -36,6 +36,23 @@ const modalNutYeuThich = document.getElementById("modal-nut-yeu-thich");
 
 // Biến lưu phần tử vừa kích hoạt để khôi phục focus khi đóng modal
 let phanTuTruocDo = null;
+let suKienDangXemModal = null;
+
+function capNhatNutYeuThichModal(sk) {
+  if (!modalNutYeuThich || !sk) return;
+  const daThich = kiemTraYeuThich(sk.id);
+  modalNutYeuThich.textContent = daThich
+    ? "Đã lưu vào yêu thích"
+    : "Lưu vào sự kiện yêu thích";
+  modalNutYeuThich.classList.toggle("da-thich", daThich);
+  modalNutYeuThich.setAttribute("aria-pressed", String(daThich));
+  modalNutYeuThich.setAttribute(
+    "aria-label",
+    daThich
+      ? `Bỏ lưu sự kiện ${sk.ten}`
+      : `Lưu sự kiện ${sk.ten} vào danh sách yêu thích`,
+  );
+}
 
 // Tạo vùng hiển thị trạng thái và thông báo kết quả có thuộc tính aria-live="polite"
 let vungThongBao = document.getElementById("vung-thong-bao-danh-sach");
@@ -227,44 +244,8 @@ export async function moModalChiTiet(id) {
   }
 
   // Đồng bộ nút yêu thích trong Modal
-  if (modalNutYeuThich) {
-    const capNhatNutYeuThichModal = () => {
-      const daThich = kiemTraYeuThich(sk.id);
-      modalNutYeuThich.textContent = daThich
-        ? "Đã lưu vào yêu thích"
-        : "Lưu vào sự kiện yêu thích";
-      modalNutYeuThich.classList.toggle("da-thich", daThich);
-      modalNutYeuThich.setAttribute("aria-pressed", String(daThich));
-      modalNutYeuThich.setAttribute(
-        "aria-label",
-        daThich
-          ? `Bỏ lưu sự kiện ${sk.ten}`
-          : `Lưu sự kiện ${sk.ten} vào danh sách yêu thích`,
-      );
-    };
-
-    capNhatNutYeuThichModal();
-
-    modalNutYeuThich.onclick = () => {
-      toggleYeuThich(sk.id);
-      capNhatNutYeuThichModal();
-
-      // Đồng bộ trạng thái với nút trên thẻ sự kiện tương ứng ngoài danh sách
-      const nutTrenThe = document.querySelector(
-        `.nut-yeu-thich[data-id="${sk.id}"]`,
-      );
-      if (nutTrenThe) {
-        const daLuu = kiemTraYeuThich(sk.id);
-        nutTrenThe.classList.toggle("da-thich", daLuu);
-        nutTrenThe.setAttribute("aria-pressed", String(daLuu));
-        nutTrenThe.textContent = daLuu ? "Đã lưu" : "Lưu tin";
-      }
-
-      if (dangXemYeuThich && !kiemTraYeuThich(sk.id)) {
-        apDungBoLoc();
-      }
-    };
-  }
+  suKienDangXemModal = sk;
+  capNhatNutYeuThichModal(sk);
 
   // Lưu phần tử đang active để khôi phục focus khi đóng
   phanTuTruocDo = document.activeElement;
@@ -497,6 +478,14 @@ async function taiVaKhoiTao() {
       throw new Error("Dữ liệu sự kiện không đúng định dạng mảng.");
     }
     tatCaSuKien = duLieu;
+
+    // Đọc từ khóa tìm kiếm từ tham số URL (?q=... hoặc ?timkiem=...) khi chuyển từ ô tìm kiếm trên header
+    const thamSoUrl = new URLSearchParams(window.location.search);
+    const tuKhoaUrl = thamSoUrl.get("q") || thamSoUrl.get("timkiem");
+    if (tuKhoaUrl && oTimKiem) {
+      oTimKiem.value = tuKhoaUrl;
+    }
+
     apDungBoLoc();
   } catch (loi) {
     console.error("Lỗi nạp dữ liệu sự kiện:", loi);
@@ -527,6 +516,31 @@ function thietLapSuKien() {
   if (selectSapXep) {
     selectSapXep.addEventListener("change", () => {
       apDungBoLoc();
+    });
+  }
+
+  // Nút Lưu/Bỏ lưu trong Modal Xem nhanh (dùng addEventListener chuẩn DOM Level 2)
+  if (modalNutYeuThich) {
+    modalNutYeuThich.addEventListener("click", () => {
+      if (!suKienDangXemModal) return;
+      const sk = suKienDangXemModal;
+      toggleYeuThich(sk.id);
+      capNhatNutYeuThichModal(sk);
+
+      // Đồng bộ trạng thái với nút trên thẻ sự kiện tương ứng ngoài danh sách
+      const nutTrenThe = document.querySelector(
+        `.nut-yeu-thich[data-id="${sk.id}"]`,
+      );
+      if (nutTrenThe) {
+        const daLuu = kiemTraYeuThich(sk.id);
+        nutTrenThe.classList.toggle("da-thich", daLuu);
+        nutTrenThe.setAttribute("aria-pressed", String(daLuu));
+        nutTrenThe.textContent = daLuu ? "Đã lưu" : "Lưu tin";
+      }
+
+      if (dangXemYeuThich && !kiemTraYeuThich(sk.id)) {
+        apDungBoLoc();
+      }
     });
   }
 
