@@ -1010,7 +1010,13 @@ table {
   overflow: hidden;
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--border-nhat);
-  min-width: 520px;
+  width: 100%;
+}
+
+@media (min-width: 560px) {
+  table {
+    min-width: 520px;
+  }
 }
 
 caption {
@@ -1072,9 +1078,14 @@ article > section:first-of-type {
   padding-top: 0;
 }
 
-article h1 {
+article h1,
+.chi-tiet-header__tieu-de {
   color: var(--mau-chinh-toi);
   margin-bottom: var(--space-3);
+  font-size: clamp(1.35rem, 4.5vw, 2.3rem);
+  line-height: 1.25;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 article h2 {
@@ -1120,12 +1131,19 @@ figcaption {
   height: 100%;
 }
 
+
 .chi-tiet-sidebar {
   display: flex;
   flex-direction: column;
   gap: var(--space-5);
-  position: sticky;
-  top: calc(var(--header-height) + var(--space-5));
+  position: static;
+}
+
+@media (min-width: 1024px) {
+  .chi-tiet-sidebar {
+    position: sticky;
+    top: calc(var(--header-height) + var(--space-5));
+  }
 }
 
 .chi-tiet-highlight {

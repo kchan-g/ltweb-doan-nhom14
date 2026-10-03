@@ -61,11 +61,18 @@ main {
 header.vung-dau {
   grid-area: dau;
   width: 100%;
-  position: sticky;
-  top: 0;
+  position: relative; /* Trên mobile: cuộn theo trang tự nhiên để không che khuất nội dung khi lướt */
   z-index: 40;
   background: var(--nen-surface);
   border-bottom: 1px solid var(--border-nhat);
+}
+
+@media (min-width: 768px) {
+  .vung-dau,
+  header.vung-dau {
+    position: sticky;
+    top: 0;
+  }
 }
 
 .vung-menu,
@@ -111,6 +118,93 @@ footer.vung-chan {
   gap: var(--space-3);
   padding-block: var(--space-3);
   flex-wrap: wrap;
+}
+
+@media (max-width: 767px) {
+  .site-header__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    padding-block: var(--space-2);
+    position: relative;
+  }
+
+  .thuong-hieu {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    max-width: calc(100% - 56px);
+  }
+
+  .thuong-hieu img,
+  .thuong-hieu .logo-img {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+  }
+
+  .thuong-hieu__ten {
+    font-size: 1.15rem;
+    line-height: 1.2;
+  }
+
+  .thuong-hieu__mota {
+    font-size: 0.68rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+  }
+
+  .js .nut-menu {
+    position: absolute;
+    top: 8px;
+    right: var(--space-3);
+    z-index: 10;
+    padding: 6px 12px;
+    font-size: 1.25rem;
+  }
+
+  .header-phai {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: var(--space-2);
+  }
+
+  .search-box {
+    width: 100%;
+    min-width: 0;
+    height: 38px;
+    padding: 2px 2px 2px 14px;
+    order: 1;
+  }
+
+  .search-box input {
+    font-size: 0.8125rem;
+  }
+
+  .search-box button {
+    width: 32px;
+    height: 32px;
+  }
+
+  .nut-yeu-thich-header {
+    order: 2;
+    font-size: 0.8125rem;
+    padding: 4px 10px;
+  }
+
+  .tai-khoan {
+    order: 3;
+    font-size: 0.8125rem;
+    padding: 4px 12px;
+    margin-left: auto;
+  }
 }
 
 nav.site-nav .container {
@@ -170,9 +264,15 @@ nav.site-nav ul {
 /* Layout chi tiết sự kiện 2 cột màn hình rộng, 1 cột mobile */
 .chi-tiet-layout {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-6);
   align-items: start;
+}
+
+.chi-tiet-main,
+.chi-tiet-sidebar {
+  min-width: 0;
+  max-width: 100%;
 }
 
 /* Layout trang liên hệ */

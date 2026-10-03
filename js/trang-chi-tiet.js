@@ -286,12 +286,15 @@ function dienDuLieuSuKien(sk) {
   const sectionVideo = layoutChiTiet.querySelector(
     "article section:nth-of-type(3)",
   );
-  const iframeVideo = layoutChiTiet.querySelector("article iframe");
+  const iframeVideo =
+    document.getElementById("iframe-video-trailer") ||
+    layoutChiTiet.querySelector("article iframe");
+
   if (sectionVideo && iframeVideo) {
     if (sk.video) {
+      sectionVideo.hidden = false;
       iframeVideo.src = sk.video;
       iframeVideo.title = `Video trailer sự kiện ${sk.ten}`;
-      sectionVideo.hidden = false;
     } else {
       sectionVideo.hidden = true;
     }
