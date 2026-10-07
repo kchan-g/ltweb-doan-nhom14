@@ -1,3 +1,12 @@
+<?php
+/**
+ * Danh sách sự kiện sinh viên UniEvent xây dựng bằng Bootstrap 5
+ * Xử lý dữ liệu ở đầu tệp (không echo)
+ */
+require_once __DIR__ . '/inc/data.php';
+
+$tatCaSuKien = layTatCaSuKien();
+?>
 <!doctype html>
 <html lang="vi">
   <head>
@@ -34,7 +43,7 @@
         <!-- Logo & Thương hiệu -->
         <a
           class="navbar-brand d-flex align-items-center gap-2"
-          href="index.html"
+          href="index.php"
         >
           <img
             src="images/logo.png"
@@ -68,10 +77,10 @@
         <div class="collapse navbar-collapse" id="navbarContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
             <li class="nav-item">
-              <a class="nav-link" href="index.html">Trang chủ</a>
+              <a class="nav-link" href="index.php">Trang chủ</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="danh-sach.html"
+              <a class="nav-link" href="danh-sach.php"
                 >Danh sách (Thuần CSS)</a
               >
             </li>
@@ -79,16 +88,16 @@
               <a
                 class="nav-link active fw-semibold"
                 aria-current="page"
-                href="danh-sach-bootstrap.html"
+                href="danh-sach-bootstrap.php"
               >
                 Danh sách (Bootstrap)
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="gioi-thieu.html">Giới thiệu</a>
+              <a class="nav-link" href="gioi-thieu.php">Giới thiệu</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="lien-he.html">Liên hệ</a>
+              <a class="nav-link" href="lien-he.php">Liên hệ</a>
             </li>
           </ul>
 
@@ -123,7 +132,7 @@
       <!-- BREADCRUMB COMPONENT -->
       <nav aria-label="breadcrumb" class="mb-3">
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Trang chủ</a></li>
+          <li class="breadcrumb-item"><a href="index.php">Trang chủ</a></li>
           <li class="breadcrumb-item active" aria-current="page">
             Danh sách sự kiện (Bootstrap 5)
           </li>
@@ -232,16 +241,16 @@
       <section class="mb-5">
         <h2 class="visually-hidden">Danh sách các thẻ sự kiện</h2>
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-          <!-- CARD 1: Workshop AI -->
+                    <?php foreach ($tatCaSuKien as $sk): ?>
           <div class="col">
             <article class="card h-100 border-0">
               <div class="card-media-wrapper">
                 <span class="badge bg-primary card-media-badge">
-                  <i class="bi bi-laptop me-1"></i>Hội thảo AI
+                  <i class="bi bi-laptop me-1"></i><?= htmlspecialchars($sk['tenDanhMuc'] ?? 'Sự kiện') ?>
                 </span>
                 <img
-                  src="images/AI.jpg"
-                  alt="Workshop Trí tuệ Nhân tạo trong thời đại số"
+                  src="<?= htmlspecialchars($sk['hinhAnh']) ?>"
+                  alt="<?= htmlspecialchars($sk['ten']) ?>"
                   loading="lazy"
                 />
               </div>
@@ -250,26 +259,26 @@
               >
                 <div>
                   <h2 class="h5 card-title fw-bold text-primary mb-3">
-                    Workshop: Ứng Dụng AI Để Nâng Cao Hiệu Quả Công Việc
+                    <?= htmlspecialchars($sk['ten']) ?>
                   </h2>
                   <ul class="list-unstyled text-muted small mb-3">
                     <li class="mb-1">
                       <i class="bi bi-calendar3 me-2 text-secondary"></i
-                      ><strong>Thời gian:</strong> 25/08/2026 | 18:00 - 20:30
+                      ><strong>Thời gian:</strong> <?= htmlspecialchars($sk['thoiGian']) ?>
                     </li>
                     <li class="mb-1">
                       <i class="bi bi-geo-alt-fill me-2 text-secondary"></i
-                      ><strong>Địa điểm:</strong> Hội trường A1, ĐH Sư Phạm
+                      ><strong>Địa điểm:</strong> <?= htmlspecialchars($sk['diaDiem']) ?>
                     </li>
                     <li>
                       <i class="bi bi-award-fill me-2 text-success"></i
-                      ><strong>ĐRL:</strong> +5 Điểm rèn luyện
+                      ><strong>ĐRL:</strong> +<?= (int)$sk['diemRenLuyen'] ?> Điểm rèn luyện
                     </li>
                   </ul>
                 </div>
                 <div class="d-flex gap-2 pt-2 border-top">
                   <a
-                    href="chi-tiet.html"
+                    href="chi-tiet.php?id=<?= (int)$sk['id'] ?>"
                     class="btn btn-primary btn-sm flex-grow-1"
                   >
                     Xem chi tiết
@@ -279,7 +288,7 @@
                     class="btn btn-outline-primary btn-sm"
                     data-bs-toggle="modal"
                     data-bs-target="#modalDangKy"
-                    data-bs-title="Workshop AI trong thời đại số"
+                    data-bs-title="<?= htmlspecialchars($sk['ten']) ?>"
                   >
                     Đăng ký nhanh
                   </button>
@@ -287,286 +296,7 @@
               </div>
             </article>
           </div>
-
-          <!-- CARD 2: Định hướng nghề nghiệp Gen Z -->
-          <div class="col">
-            <article class="card h-100 border-0">
-              <div class="card-media-wrapper">
-                <span class="badge bg-warning text-dark card-media-badge">
-                  <i class="bi bi-briefcase me-1"></i>Kỹ năng nghề
-                </span>
-                <img
-                  src="images/nghe.jpg"
-                  alt="Hội thảo Định hướng nghề nghiệp Gen Z"
-                  loading="lazy"
-                />
-              </div>
-              <div
-                class="card-body d-flex flex-direction-column flex-column justify-content-between"
-              >
-                <div>
-                  <h2 class="h5 card-title fw-bold text-primary mb-3">
-                    Hội Thảo: Gen Z Chuyện Chọn Nghề &amp; Phát Triển Bản Thân
-                  </h2>
-                  <ul class="list-unstyled text-muted small mb-3">
-                    <li class="mb-1">
-                      <i class="bi bi-calendar3 me-2 text-secondary"></i
-                      ><strong>Thời gian:</strong> 26/08/2026 | 08:30 - 11:30
-                    </li>
-                    <li class="mb-1">
-                      <i class="bi bi-geo-alt-fill me-2 text-secondary"></i
-                      ><strong>Địa điểm:</strong> Hội trường A, Khu Trung tâm
-                    </li>
-                    <li>
-                      <i class="bi bi-award-fill me-2 text-success"></i
-                      ><strong>ĐRL:</strong> +4 Điểm rèn luyện
-                    </li>
-                  </ul>
-                </div>
-                <div class="d-flex gap-2 pt-2 border-top">
-                  <a
-                    href="chi-tiet.html?id=2"
-                    class="btn btn-primary btn-sm flex-grow-1"
-                  >
-                    Xem chi tiết
-                  </a>
-                  <button
-                    type="button"
-                    class="btn btn-outline-primary btn-sm"
-                    data-bs-toggle="modal"
-                    data-bs-target="#modalDangKy"
-                    data-bs-title="Hội Thảo Gen Z Chuyện Chọn Nghề"
-                  >
-                    Đăng ký nhanh
-                  </button>
-                </div>
-              </div>
-            </article>
-          </div>
-
-          <!-- CARD 3: Đêm nhạc Giai điệu sinh viên -->
-          <div class="col">
-            <article class="card h-100 border-0">
-              <div class="card-media-wrapper">
-                <span class="badge bg-info text-white card-media-badge">
-                  <i class="bi bi-music-note-beamed me-1"></i>Văn hóa nghệ thuật
-                </span>
-                <img
-                  src="images/giaidieu.jpg"
-                  alt="Đêm nhạc Giai điệu sinh viên"
-                  loading="lazy"
-                />
-              </div>
-              <div
-                class="card-body d-flex flex-direction-column flex-column justify-content-between"
-              >
-                <div>
-                  <h2 class="h5 card-title fw-bold text-primary mb-3">
-                    Đêm Nhạc Hội "Giai Điệu Sinh Viên" Sắc Màu Thanh Xuân
-                  </h2>
-                  <ul class="list-unstyled text-muted small mb-3">
-                    <li class="mb-1">
-                      <i class="bi bi-calendar3 me-2 text-secondary"></i
-                      ><strong>Thời gian:</strong> 30/08/2026 | 19:00 - 22:00
-                    </li>
-                    <li class="mb-1">
-                      <i class="bi bi-geo-alt-fill me-2 text-secondary"></i
-                      ><strong>Địa điểm:</strong> Sân khấu Quảng trường trường
-                    </li>
-                    <li>
-                      <i class="bi bi-award-fill me-2 text-success"></i
-                      ><strong>ĐRL:</strong> +5 Điểm rèn luyện
-                    </li>
-                  </ul>
-                </div>
-                <div class="d-flex gap-2 pt-2 border-top">
-                  <a
-                    href="chi-tiet.html?id=3"
-                    class="btn btn-primary btn-sm flex-grow-1"
-                  >
-                    Xem chi tiết
-                  </a>
-                  <button
-                    type="button"
-                    class="btn btn-outline-primary btn-sm"
-                    data-bs-toggle="modal"
-                    data-bs-target="#modalDangKy"
-                    data-bs-title="Đêm Nhạc Giai Điệu Sinh Viên"
-                  >
-                    Đăng ký nhanh
-                  </button>
-                </div>
-              </div>
-            </article>
-          </div>
-
-          <!-- CARD 4: Giải bóng đá sinh viên -->
-          <div class="col">
-            <article class="card h-100 border-0">
-              <div class="card-media-wrapper">
-                <span class="badge bg-success card-media-badge">
-                  <i class="bi bi-trophy-fill me-1"></i>Thể thao
-                </span>
-                <img
-                  src="images/bongda.jpg"
-                  alt="Giải bóng đá sinh viên tranh cúp UniEvent"
-                  loading="lazy"
-                />
-              </div>
-              <div
-                class="card-body d-flex flex-direction-column flex-column justify-content-between"
-              >
-                <div>
-                  <h2 class="h5 card-title fw-bold text-primary mb-3">
-                    Giải Bóng Đá Sinh Viên Tranh Cúp Vô Địch UniEvent 2026
-                  </h2>
-                  <ul class="list-unstyled text-muted small mb-3">
-                    <li class="mb-1">
-                      <i class="bi bi-calendar3 me-2 text-secondary"></i
-                      ><strong>Thời gian:</strong> 05/09/2026 | 15:30 - 18:00
-                    </li>
-                    <li class="mb-1">
-                      <i class="bi bi-geo-alt-fill me-2 text-secondary"></i
-                      ><strong>Địa điểm:</strong> Sân vận động cỏ nhân tạo ĐHSP
-                    </li>
-                    <li>
-                      <i class="bi bi-award-fill me-2 text-success"></i
-                      ><strong>ĐRL:</strong> +4 Điểm rèn luyện
-                    </li>
-                  </ul>
-                </div>
-                <div class="d-flex gap-2 pt-2 border-top">
-                  <a
-                    href="chi-tiet.html?id=4"
-                    class="btn btn-primary btn-sm flex-grow-1"
-                  >
-                    Xem chi tiết
-                  </a>
-                  <button
-                    type="button"
-                    class="btn btn-outline-primary btn-sm"
-                    data-bs-toggle="modal"
-                    data-bs-target="#modalDangKy"
-                    data-bs-title="Giải Bóng Đá Sinh Viên UniEvent 2026"
-                  >
-                    Đăng ký nhanh
-                  </button>
-                </div>
-              </div>
-            </article>
-          </div>
-
-          <!-- CARD 5: Hội thảo Công nghệ 4.0 -->
-          <div class="col">
-            <article class="card h-100 border-0">
-              <div class="card-media-wrapper">
-                <span class="badge bg-primary card-media-badge">
-                  <i class="bi bi-cpu me-1"></i>Công nghệ
-                </span>
-                <img
-                  src="images/event1.jpg"
-                  alt="Hội thảo Công nghệ 4.0 và chuyển đổi số"
-                  loading="lazy"
-                />
-              </div>
-              <div
-                class="card-body d-flex flex-direction-column flex-column justify-content-between"
-              >
-                <div>
-                  <h2 class="h5 card-title fw-bold text-primary mb-3">
-                    Hội Thảo Công Nghệ 4.0: Cơ Hội Việc Làm Lập Trình &amp; IT
-                  </h2>
-                  <ul class="list-unstyled text-muted small mb-3">
-                    <li class="mb-1">
-                      <i class="bi bi-calendar3 me-2 text-secondary"></i
-                      ><strong>Thời gian:</strong> 28/10/2026 | 09:00 - 11:30
-                    </li>
-                    <li class="mb-1">
-                      <i class="bi bi-geo-alt-fill me-2 text-secondary"></i
-                      ><strong>Địa điểm:</strong> Hội trường lớn A1
-                    </li>
-                    <li>
-                      <i class="bi bi-award-fill me-2 text-success"></i
-                      ><strong>ĐRL:</strong> +5 Điểm rèn luyện
-                    </li>
-                  </ul>
-                </div>
-                <div class="d-flex gap-2 pt-2 border-top">
-                  <a
-                    href="chi-tiet.html?id=1"
-                    class="btn btn-primary btn-sm flex-grow-1"
-                  >
-                    Xem chi tiết
-                  </a>
-                  <button
-                    type="button"
-                    class="btn btn-outline-primary btn-sm"
-                    data-bs-toggle="modal"
-                    data-bs-target="#modalDangKy"
-                    data-bs-title="Hội Thảo Công Nghệ 4.0 IT"
-                  >
-                    Đăng ký nhanh
-                  </button>
-                </div>
-              </div>
-            </article>
-          </div>
-
-          <!-- CARD 6: Ngày hội CLB & Sinh viên -->
-          <div class="col">
-            <article class="card h-100 border-0">
-              <div class="card-media-wrapper">
-                <span class="badge bg-secondary text-dark card-media-badge">
-                  <i class="bi bi-people-fill me-1"></i>Câu lạc bộ
-                </span>
-                <img
-                  src="images/hero-image.jpg"
-                  alt="Ngày hội Câu Lạc Bộ và Sinh Viên UniEvent"
-                  loading="lazy"
-                />
-              </div>
-              <div
-                class="card-body d-flex flex-direction-column flex-column justify-content-between"
-              >
-                <div>
-                  <h2 class="h5 card-title fw-bold text-primary mb-3">
-                    Ngày Hội Tuyển Thành Viên Các CLB &amp; Đội Nhóm Sinh Viên
-                  </h2>
-                  <ul class="list-unstyled text-muted small mb-3">
-                    <li class="mb-1">
-                      <i class="bi bi-calendar3 me-2 text-secondary"></i
-                      ><strong>Thời gian:</strong> 12/09/2026 | 07:30 - 17:00
-                    </li>
-                    <li class="mb-1">
-                      <i class="bi bi-geo-alt-fill me-2 text-secondary"></i
-                      ><strong>Địa điểm:</strong> Sân trường ĐH Sư Phạm
-                    </li>
-                    <li>
-                      <i class="bi bi-award-fill me-2 text-success"></i
-                      ><strong>ĐRL:</strong> +3 Điểm rèn luyện
-                    </li>
-                  </ul>
-                </div>
-                <div class="d-flex gap-2 pt-2 border-top">
-                  <a
-                    href="chi-tiet.html?id=5"
-                    class="btn btn-primary btn-sm flex-grow-1"
-                  >
-                    Xem chi tiết
-                  </a>
-                  <button
-                    type="button"
-                    class="btn btn-outline-primary btn-sm"
-                    data-bs-toggle="modal"
-                    data-bs-target="#modalDangKy"
-                    data-bs-title="Ngày Hội Tuyển Thành Viên CLB"
-                  >
-                    Đăng ký nhanh
-                  </button>
-                </div>
-              </div>
-            </article>
-          </div>
+          <?php endforeach; ?>
         </div>
       </section>
 
@@ -614,7 +344,7 @@
             </p>
           </div>
           <div class="col-lg-4 text-lg-end">
-            <a href="lien-he.html" class="btn btn-secondary px-4 py-2">
+            <a href="lien-he.php" class="btn btn-secondary px-4 py-2">
               <i class="bi bi-send-fill me-1"></i> Liên hệ mở sự kiện
             </a>
           </div>
@@ -765,20 +495,20 @@
             <h4 class="text-white h6 fw-bold mb-3">Điều hướng</h4>
             <ul class="list-unstyled small d-flex flex-column gap-2 mb-0">
               <li>
-                <a href="index.html" class="text-decoration-none text-white-50"
+                <a href="index.php" class="text-decoration-none text-white-50"
                   >Trang chủ</a
                 >
               </li>
               <li>
                 <a
-                  href="danh-sach.html"
+                  href="danh-sach.php"
                   class="text-decoration-none text-white-50"
                   >Danh sách CSS</a
                 >
               </li>
               <li>
                 <a
-                  href="danh-sach-bootstrap.html"
+                  href="danh-sach-bootstrap.php"
                   class="text-decoration-none text-warning fw-semibold"
                   >Danh sách Bootstrap</a
                 >
@@ -791,14 +521,14 @@
             <ul class="list-unstyled small d-flex flex-column gap-2 mb-0">
               <li>
                 <a
-                  href="gioi-thieu.html"
+                  href="gioi-thieu.php"
                   class="text-decoration-none text-white-50"
                   >Về chúng tôi</a
                 >
               </li>
               <li>
                 <a
-                  href="lien-he.html"
+                  href="lien-he.php"
                   class="text-decoration-none text-white-50"
                   >Liên hệ ban tổ chức</a
                 >
@@ -896,3 +626,5 @@
     </script>
   </body>
 </html>
+
+

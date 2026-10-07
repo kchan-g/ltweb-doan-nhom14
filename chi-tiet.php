@@ -1,663 +1,327 @@
-<!doctype html>
-<html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Chi tiết sự kiện Hội thảo Trí tuệ Nhân tạo trong kỷ nguyên số tại Trường ĐH Sư Phạm – Đại học Đà Nẵng: thời gian, địa điểm, diễn giả và quyền lợi sinh viên."
-    />
-    <title>Chi Tiết Sự Kiện: Hội Thảo AI 2026 | UniEvent</title>
-    <meta name="theme-color" content="#0284c7" />
-    <link rel="icon" type="image/svg+xml" href="images/favicon.svg" />
+<?php
+/**
+ * chi-tiet.php
+ * Trang chi tiết sự kiện do máy chủ PHP xử lý:
+ * - Kiểm tra tham số ?id= bằng filter_var (FILTER_VALIDATE_INT)
+ * - Nếu id thiếu hoặc không có trong kho: trả mã HTTP 404 và nạp 404.php
+ * - Ghi cookie da_xem (tối đa 4 ID gần nhất, httponly, samesite) TRƯỚC mọi output
+ * - Cung cấp biểu mẫu POST thêm vé vào giỏ hàng (gio-hang.php)
+ */
 
-    <!-- Nạp 5 tệp CSS theo module chuẩn đề bài -->
-    <link rel="stylesheet" href="css/01-bien.css" />
-    <link rel="stylesheet" href="css/02-chuan-hoa.css" />
-    <link rel="stylesheet" href="css/03-bo-cuc.css" />
-    <link rel="stylesheet" href="css/04-thanh-phan.css" />
-    <link rel="stylesheet" href="css/05-tien-ich.css" />
-  </head>
-  <body class="trang">
-    <!-- Header chung -->
-    <header class="vung-dau">
-      <div class="container site-header__inner">
-        <a href="index.html" class="thuong-hieu">
-          <img
-            src="images/logo.png"
-            alt="Logo UniEvent - Cổng sự kiện Đại học Sư phạm Đà Nẵng"
-            class="logo-img"
-            width="44"
-            height="44"
-          />
-          <div>
-            <div class="thuong-hieu__ten">UniEvent</div>
-            <div class="thuong-hieu__mota">
-              Hệ thống Quản lý Sự kiện ĐHSP Đà Nẵng
-            </div>
-          </div>
-        </a>
+declare(strict_types=1);
 
-        <div class="header-phai">
-          <button
-            type="button"
-            class="nut-menu"
-            id="nut-menu"
-            aria-label="Mở menu điều hướng"
-            aria-expanded="false"
-            aria-controls="menu-chinh"
-          >
-            <span aria-hidden="true">☰</span>
-          </button>
-          <div class="search-box" role="search">
-            <label for="tim-kiem-header" class="chi-danh-cho-sr"
-              >Tìm kiếm sự kiện</label
-            >
-            <input
-              type="text"
-              id="tim-kiem-header"
-              placeholder="Tìm sự kiện, hội thảo..."
-            />
-            <button type="button" aria-label="Tìm kiếm">
-              <svg
-                width="15"
-                height="15"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
-            </button>
-          </div>
-          <a href="danh-sach.html#yeu-thich" class="nut-yeu-thich-header">
-            <span>Đã lưu</span>
-            <span class="huy-hieu-dem" id="dem-yeu-thich" aria-live="polite"
-              >0</span
-            >
-          </a>
-          <div class="tai-khoan" role="group" aria-label="Tài khoản đăng nhập">
-            <span>Admin</span>
-          </div>
-        </div>
-      </div>
-    </header>
+require_once __DIR__ . '/inc/config.php';
 
-    <!-- Navigation chung -->
-    <nav
-      class="vung-menu site-nav"
-      id="menu-chinh"
-      aria-label="Điều hướng chính"
-    >
-      <div class="container">
-        <ul>
-          <li>
-            <a href="index.html">Trang chủ</a>
-          </li>
-          <li>
-            <a href="danh-sach.html">Danh sách sự kiện</a>
-          </li>
-          <li>
-            <a href="gioi-thieu.html">Giới thiệu</a>
-          </li>
-          <li>
-            <a href="lien-he.html">Liên hệ</a>
-          </li>
-        </ul>
-      </div>
+use App\Data\KhoSuKien;
+use App\Services\GioHang;
+
+$kho = new KhoSuKien(__DIR__ . '/data/su-kien.json');
+$gio = new GioHang();
+
+// 1. Kiểm tra an toàn mã ID trên URL
+$id = filter_var($_GET['id'] ?? '', FILTER_VALIDATE_INT);
+$sk = ($id !== false && $id > 0) ? $kho->timTheoId($id) : null;
+
+// Nếu ID sai kiểu, không tồn tại hoặc rỗng -> Trả về HTTP 404 Not Found
+if ($sk === null) {
+    http_response_code(404);
+    require __DIR__ . '/404.php';
+    exit;
+}
+
+// 2. Ghi nhận sự kiện đã xem gần đây vào Cookie (Tối đa 4 ID, mới nhất đứng đầu)
+// Phải gọi setcookie() TRƯỚC bất kỳ output HTML nào
+$cu = array_map('intval', explode(',', $_COOKIE['da_xem'] ?? ''));
+$moi = array_unique([$sk->id, ...array_filter($cu, fn($val) => $val > 0)]);
+setcookie('da_xem', implode(',', array_slice($moi, 0, 4)), [
+    'expires'  => time() + 30 * 24 * 3600, // Lưu 30 ngày
+    'path'     => '/',
+    'httponly' => true,
+    'samesite' => 'Lax',
+]);
+
+// 3. Sự kiện liên quan cùng danh mục (loại trừ sự kiện hiện tại)
+$lienQuan = array_filter(
+    $kho->tatCa(),
+    fn($item) => $item->danhMuc === $sk->danhMuc && $item->id !== $sk->id
+);
+$lienQuan = array_slice($lienQuan, 0, 3);
+
+$tieuDe = $sk->ten;
+$trang  = 'danh-sach';
+
+require __DIR__ . '/inc/header.php';
+?>
+
+<main>
+  <div class="container">
+    <!-- Breadcrumb phân cấp -->
+    <nav class="breadcrumb mb-3" aria-label="Đường dẫn phân cấp">
+      <a href="index.php">Trang chủ</a>
+      <span aria-hidden="true">/</span>
+      <a href="danh-sach.php">Danh sách sự kiện</a>
+      <span aria-hidden="true">/</span>
+      <span class="hien-tai"><?= e($sk->ten) ?></span>
     </nav>
 
-    <!-- Nội dung chính -->
-    <main>
-      <div class="container">
-        <!-- Breadcrumb phân cấp -->
-        <nav class="breadcrumb mb-3" aria-label="Đường dẫn phân cấp">
-          <a href="index.html">Trang chủ</a>
-          <span aria-hidden="true">/</span>
-          <a href="danh-sach.html">Danh sách sự kiện</a>
-          <span aria-hidden="true">/</span>
-          <span class="hien-tai">Chi tiết sự kiện AI</span>
-        </nav>
+    <!-- Khung 2 cột màn hình rộng (Grid), dồn 1 cột trên Mobile -->
+    <div class="chi-tiet-layout">
+      <!-- Cột nội dung chi tiết (Article) -->
+      <article>
+        <span class="<?= e($sk->badgeClass) ?> mb-2"><?= e($sk->tenDanhMuc) ?></span>
 
-        <!-- Khung 2 cột màn hình rộng (Grid), dồn 1 cột trên Mobile -->
-        <div class="chi-tiet-layout">
-          <!-- Cột nội dung chi tiết (Article) -->
-          <article>
-            <span class="badge badge--vang mb-2">Hội thảo khoa học</span>
+        <!-- Đúng duy nhất 1 thẻ H1 trên trang -->
+        <h1 class="mb-4">
+          <?= e($sk->ten) ?>
+        </h1>
 
-            <!-- Đúng duy nhất 1 thẻ H1 trên trang -->
-            <h1 class="mb-4">
-              Hội Thảo: Ứng Dụng Trí Tuệ Nhân Tạo Trong Kỷ Nguyên Số
-            </h1>
+        <!-- Section 1: Giới thiệu tổng quan -->
+        <section class="mb-5">
+          <h2 class="h3 mb-3">1. Giới thiệu tổng quan về sự kiện</h2>
+          <p class="do-dai-chuan text-phu mb-3">
+            <?= e($sk->moTaNgan) ?>
+          </p>
+          <p class="do-dai-chuan text-phu mb-4">
+            <?= e($sk->moTaChiTiet) ?>
+          </p>
 
-            <!-- Section 1: Giới thiệu sự kiện -->
-            <section class="mb-5">
-              <h2 class="h3 mb-3">1. Giới thiệu tổng quan về sự kiện</h2>
-              <p class="do-dai-chuan text-phu mb-4">
-                Hội thảo "Ứng Dụng Trí Tuệ Nhân Tạo Trong Kỷ Nguyên Số" là sự
-                kiện học thuật chuyên đề lớn nhất học kỳ này do Khoa Toán - Tin,
-                Trường Đại học Sư phạm – Đại học Đà Nẵng phối hợp cùng các tập
-                đoàn công nghệ tổ chức. Chương trình nhằm trang bị cho sinh viên
-                kiến thức nền tảng vững chắc, tư duy làm chủ công cụ AI hiện đại
-                và cách ứng dụng AI có trách nhiệm, đạo đức trong học tập và
-                nghiên cứu.
-              </p>
+          <!-- Figure + Figcaption chuẩn Semantic HTML -->
+          <figure class="mb-4">
+            <img
+              src="<?= e($sk->hinhAnh) ?>"
+              alt="Poster chính thức của sự kiện <?= e($sk->ten) ?>"
+              width="720"
+              height="450"
+              fetchpriority="high"
+              decoding="async"
+              class="rounded-vua shadow-sm w-full img-cover"
+            />
+            <figcaption class="mt-2 text-phu fs-meta text-center">
+              Hình 1: Poster truyền thông chính thức của sự kiện <?= e($sk->ten) ?> tại <?= e($sk->diaDiem) ?>.
+            </figcaption>
+          </figure>
+        </section>
 
-              <!-- Figure + Figcaption chuẩn Semantic HTML -->
-              <figure class="mb-4">
-                <img
-                  src="images/AI.jpg"
-                  alt="Poster chính thức của Hội thảo Trí tuệ Nhân tạo 2026 với tông màu xanh công nghệ"
-                  width="720"
-                  height="450"
-                  fetchpriority="high"
-                  decoding="async"
-                  class="rounded-vua shadow-sm w-full img-cover"
-                />
-                <figcaption class="mt-2 text-phu fs-meta text-center">
-                  Hình 1: Poster truyền thông chính thức của sự kiện Hội thảo AI
-                  2026 - ĐH Sư Phạm ĐHĐN.
-                </figcaption>
-              </figure>
-            </section>
+        <!-- Section 2: Bảng thông tin chi tiết -->
+        <section class="mb-5">
+          <h2 class="h3 mb-3">2. Thông số và kế hoạch tổ chức chi tiết</h2>
+          <p class="do-dai-chuan text-phu mb-3">
+            Dưới đây là bảng thông số chính thức về thời gian, địa điểm, diễn giả khách mời và quyền lợi sinh viên khi tham gia:
+          </p>
 
-            <!-- Section 2: Bảng thông tin chi tiết -->
-            <section class="mb-5">
-              <h2 class="h3 mb-3">2. Thông số và kế hoạch tổ chức chi tiết</h2>
-              <p class="do-dai-chuan text-phu mb-3">
-                Dưới đây là bảng thông số chính thức về thời gian, địa điểm,
-                diễn giả khách mời và quyền lợi sinh viên khi tham gia:
-              </p>
-
-              <!-- Thẻ Table đúng chuẩn nằm trong div.bang-wrapper -->
-              <div class="bang-wrapper mb-4">
-                <table>
-                  <caption>
-                    Bảng 1: Lịch trình chi tiết và thông tin ban tổ chức hội
-                    thảo
-                  </caption>
-                  <thead>
-                    <tr>
-                      <th scope="col" class="col-width-35">
-                        Hạng mục thông tin
-                      </th>
-                      <th scope="col">Nội dung chi tiết</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <th scope="row">Thời gian diễn ra</th>
-                      <td>08:00 - 11:30, Thứ Bảy, ngày 26/09/2026</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Địa điểm tổ chức</th>
-                      <td>
-                        Hội trường A, Trường Đại học Sư phạm – Đại học Đà Nẵng
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Diễn giả khách mời</th>
-                      <td>
-                        TS. Nguyễn Văn A — Giám đốc Nghiên cứu AI tại Viện Công
-                        nghệ
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Đối tượng tham gia</th>
-                      <td>
-                        Toàn thể sinh viên khối ngành Công nghệ Thông tin, Sư
-                        phạm Tin học và các bạn quan tâm
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Quyền lợi sinh viên</th>
-                      <td>
-                        Được cộng <strong>+5 điểm rèn luyện</strong> cấp Trường
-                        và nhận Chứng nhận tham gia số
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Số lượng tối đa</th>
-                      <td>
-                        300 sinh viên (Hệ thống sẽ tự động đóng khi đủ số lượng
-                        đăng ký)
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </section>
-
-            <!-- Section 3: Video giới thiệu chủ đề -->
-            <section class="mb-4">
-              <h2 class="h3 mb-3">
-                3. Video trailer giới thiệu chủ đề hội thảo
-              </h2>
-              <p class="do-dai-chuan text-phu mb-3">
-                Mời các bạn sinh viên theo dõi video ngắn giới thiệu sơ lược về
-                diễn giả và các điểm nhấn hấp dẫn sẽ được chia sẻ trực tiếp:
-              </p>
-
-              <!-- Khung Video Trailer sự kiện -->
-              <div class="video-wrapper shadow-sm">
-                <iframe
-                  id="iframe-video-trailer"
-                  width="560"
-                  height="315"
-                  src="https://www.youtube-nocookie.com/embed/stybt5KMIh8?si=i3bTvzALOHgR0KJl"
-                  title="YouTube video player"
-                  loading="lazy"
-                  allow="
-                    accelerometer;
-                    autoplay;
-                    clipboard-write;
-                    encrypted-media;
-                    gyroscope;
-                    picture-in-picture;
-                    web-share;
-                  "
-                  referrerpolicy="strict-origin-when-cross-origin"
-                  allowfullscreen
-                ></iframe>
-              </div>
-            </section>
-          </article>
-
-          <!-- Cột phụ Sidebar thông tin nổi bật (Aside) -->
-          <aside
-            class="chi-tiet-sidebar"
-            aria-label="Thông tin nhanh và đăng ký"
-          >
-            <div class="chi-tiet-highlight">
-              <h3 class="h4 mb-2 text-chinh">Tóm Tắt Sự Kiện</h3>
-
-              <div class="chi-tiet-highlight__dong">
-                <div>
-                  <div class="chi-tiet-highlight__nhan">Thời gian tổ chức</div>
-                  <div class="chi-tiet-highlight__gia-tri">
-                    08:00 - 11:30, 26/09/2026
-                  </div>
-                </div>
-              </div>
-
-              <div class="chi-tiet-highlight__dong">
-                <div>
-                  <div class="chi-tiet-highlight__nhan">
-                    Địa điểm hội trường
-                  </div>
-                  <div class="chi-tiet-highlight__gia-tri">
-                    Hội trường A, ĐH Sư Phạm ĐHĐN
-                  </div>
-                </div>
-              </div>
-
-              <div class="chi-tiet-highlight__dong">
-                <div>
-                  <div class="chi-tiet-highlight__nhan">
-                    Quyền lợi rèn luyện
-                  </div>
-                  <div class="chi-tiet-highlight__gia-tri">
-                    +5 Điểm rèn luyện cấp Trường
-                  </div>
-                </div>
-              </div>
-
-              <div class="chi-tiet-highlight__dong">
-                <div>
-                  <div class="chi-tiet-highlight__nhan">Quy mô sự kiện</div>
-                  <div class="chi-tiet-highlight__gia-tri">
-                    Tối đa 300 chỗ ngồi
-                  </div>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                id="btn-mo-dang-ky"
-                class="nut-bam nut-nhan nut-full mt-3"
-                aria-haspopup="dialog"
-              >
-                Đăng Ký Tham Gia Ngay
-              </button>
-            </div>
-
-            <div class="widget mt-4">
-              <h3 class="h5">Lưu ý khi tham gia</h3>
-              <ul>
-                <li>
-                  Sinh viên mang theo thẻ sinh viên hoặc ứng dụng VNeID để quét
-                  mã QR điểm danh.
-                </li>
-                <li>
-                  Vui lòng có mặt trước giờ khai mạc 15 phút để ổn định chỗ
-                  ngồi.
-                </li>
-                <li>Trang phục lịch sự, tác phong văn minh học đường.</li>
-              </ul>
-            </div>
-          </aside>
-        </div>
-
-        <!-- Mục Sự Kiện Cùng Chuyên Mục (Tương tự tin bài liên quan của VnExpress) -->
-        <section
-          class="su-kien-lien-quan mt-5"
-          aria-labelledby="tieu-de-lien-quan"
-        >
-          <div class="section-head mb-3">
-            <div>
-              <h2 id="tieu-de-lien-quan" class="tieu-de-muc">
-                Sự Kiện Cùng Chuyên Mục
-              </h2>
-              <p class="section-head__mota">
-                Khám phá các hoạt động hấp dẫn khác đang diễn ra tại Trường ĐH
-                Sư Phạm.
-              </p>
-            </div>
-          </div>
-          <div class="luoi-3-the-tu-dong" id="danh-sach-lien-quan">
-            <!-- Nạp động qua JavaScript -->
+          <!-- Thẻ Table đúng chuẩn nằm trong div.bang-wrapper -->
+          <div class="bang-wrapper mb-4">
+            <table>
+              <caption>
+                Bảng 1: Lịch trình chi tiết và thông tin ban tổ chức sự kiện <?= e($sk->ten) ?>
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col" class="col-width-35">Hạng mục thông tin</th>
+                  <th scope="col">Nội dung chi tiết</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">Thời gian diễn ra</th>
+                  <td><?= e($sk->thoiGian) ?></td>
+                </tr>
+                <tr>
+                  <th scope="row">Địa điểm tổ chức</th>
+                  <td><?= e($sk->diaDiem) ?></td>
+                </tr>
+                <tr>
+                  <th scope="row">Diễn giả / Khách mời</th>
+                  <td><?= e($sk->dienGia) ?></td>
+                </tr>
+                <tr>
+                  <th scope="row">Quyền lợi sinh viên</th>
+                  <td>
+                    Được cộng <strong>+<?= $sk->diemRenLuyen ?> điểm rèn luyện</strong> cấp Trường và nhận Chứng nhận số
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row">Quy mô số lượng</th>
+                  <td><?= $sk->soLuongVe ?> chỗ ngồi chính thức</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </section>
-      </div>
 
-      <!-- =========================================================
-           POPUP ĐĂNG KÝ VÉ SỰ KIỆN TẠI CHỖ (E-TICKET REGISTRATION)
-           ========================================================= -->
-      <div
-        id="modal-dang-ky-ve"
-        class="modal-overlay"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="tieu-de-modal-dang-ky"
-        tabindex="-1"
-        hidden
-      >
-        <div class="modal-hop-thoai modal-hop-thoai--dang-ky" role="document">
-          <!-- Nút đóng ở góc trên bên phải -->
+        <!-- Section 3: Video giới thiệu chủ đề (nếu có) -->
+        <?php if (!empty($sk->video)): ?>
+          <section class="mb-4">
+            <h2 class="h3 mb-3">3. Video trailer giới thiệu sự kiện</h2>
+            <p class="do-dai-chuan text-phu mb-3">
+              Mời các bạn sinh viên theo dõi video ngắn giới thiệu sơ lược về sự kiện:
+            </p>
+
+            <div class="video-wrapper shadow-sm">
+              <iframe
+                width="560"
+                height="315"
+                src="<?= e($sk->video) ?>"
+                title="Video giới thiệu sự kiện <?= e($sk->ten) ?>"
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen
+              ></iframe>
+            </div>
+          </section>
+        <?php endif; ?>
+      </article>
+
+      <!-- Cột phụ Sidebar thông tin nổi bật (Aside) -->
+      <aside class="chi-tiet-sidebar" aria-label="Thông tin nhanh và đăng ký">
+        <div class="chi-tiet-highlight">
+          <h3 class="h4 mb-2 text-chinh">Tóm Tắt Sự Kiện</h3>
+
+          <div class="chi-tiet-highlight__dong">
+            <div class="chi-tiet-highlight__icon" aria-hidden="true">📅</div>
+            <div>
+              <div class="chi-tiet-highlight__nhan">Thời gian tổ chức</div>
+              <div class="chi-tiet-highlight__gia-tri"><?= e($sk->thoiGian) ?></div>
+            </div>
+          </div>
+
+          <div class="chi-tiet-highlight__dong">
+            <div class="chi-tiet-highlight__icon" aria-hidden="true">📍</div>
+            <div>
+              <div class="chi-tiet-highlight__nhan">Địa điểm hội trường</div>
+              <div class="chi-tiet-highlight__gia-tri"><?= e($sk->diaDiem) ?></div>
+            </div>
+          </div>
+
+          <div class="chi-tiet-highlight__dong">
+            <div class="chi-tiet-highlight__icon" aria-hidden="true">⭐</div>
+            <div>
+              <div class="chi-tiet-highlight__nhan">Quyền lợi rèn luyện</div>
+              <div class="chi-tiet-highlight__gia-tri">+<?= $sk->diemRenLuyen ?> Điểm rèn luyện</div>
+            </div>
+          </div>
+
+          <div class="chi-tiet-highlight__dong">
+            <div class="chi-tiet-highlight__icon" aria-hidden="true">👥</div>
+            <div>
+              <div class="chi-tiet-highlight__nhan">Quy mô chỗ ngồi</div>
+              <div class="chi-tiet-highlight__gia-tri">
+                <?= $sk->soLuongVe ?> sinh viên
+              </div>
+            </div>
+          </div>
+
+          <?php if ($gio->daXacNhan($sk->id)): ?>
+            <div class="mt-3 p-3 text-center" style="background:#f0fdf4; border:1px solid #86efac; border-radius:var(--radius-vua);">
+              <div style="color:#15803d; font-weight:700; margin-bottom:0.25rem;">
+                ✓ Bạn đã đăng ký thành công sự kiện này
+              </div>
+              <p class="fs-meta text-phu mb-2" style="font-size:0.85rem; margin:0 0 8px 0;">
+                Mã vé: <strong><?= e($gio->layMaVe($sk->id) ?? 'Đã xác nhận') ?></strong> (1 vé/sinh viên)
+              </p>
+              <a href="gio-hang.php#da-xac-nhan" class="nut-bam nut-phu nut-full" style="display:block; text-align:center;">
+                Xem vé đã đăng ký →
+              </a>
+            </div>
+          <?php elseif ($gio->dangChoXacNhan($sk->id)): ?>
+            <div class="mt-3 p-3 text-center" style="background:#fffbeb; border:1px solid #fde68a; border-radius:var(--radius-vua);">
+              <div style="color:#b45309; font-weight:700; margin-bottom:0.25rem;">
+                ⏳ Chờ xác nhận đăng ký (1 vé)
+              </div>
+              <p class="fs-meta text-phu mb-2" style="font-size:0.85rem; margin:0 0 8px 0;">
+                Sự kiện đã có trong phiếu. Vui lòng bấm xác nhận để được ghi nhận vào hệ thống (+1 vé).
+              </p>
+              <a href="gio-hang.php" class="nut-bam nut-nhan nut-full" style="display:block; text-align:center;">
+                Đến phiếu xác nhận ngay →
+              </a>
+            </div>
+          <?php else: ?>
+            <!-- Biểu mẫu POST thêm vào danh sách đăng ký giữ chỗ (hỗ trợ Progressive Enhancement) -->
+            <form action="gio-hang.php" method="POST" class="mt-3">
+              <input type="hidden" name="hanh_dong" value="them">
+              <input type="hidden" name="id" value="<?= $sk->id ?>">
+              <input type="hidden" name="so_luong" value="1">
+              <div class="mb-2 fs-meta text-phu" style="font-style: italic;">
+                * Tiêu chuẩn: 1 vé/sinh viên (miễn phí)
+              </div>
+              <button type="submit" class="nut-bam nut-nhan nut-full">
+                📝 Đăng Ký Giữ Chỗ (1 vé)
+              </button>
+            </form>
+          <?php endif; ?>
+
+          <!-- Nút Lưu tin sự kiện (Bookmark qua localStorage) -->
           <button
             type="button"
-            class="modal-nut-dong"
-            id="nut-dong-modal-dang-ky"
-            aria-label="Đóng cửa sổ đăng ký vé"
+            class="nut-yeu-thich nut-full mt-3"
+            data-id="<?= $sk->id ?>"
+            aria-pressed="false"
+            aria-label="Lưu tin - Lưu sự kiện <?= e($sk->ten) ?>"
+            title="Lưu sự kiện vào danh sách yêu thích"
+            style="width:100%; justify-content:center; padding:9px 16px; font-weight:600;"
           >
-            <span aria-hidden="true">&times;</span>
+            ♡ Lưu tin sự kiện
           </button>
+        </div>
 
-          <!-- BƯỚC 1: Biểu mẫu điền thông tin sinh viên nhận vé -->
-          <div id="modal-buoc-form" class="modal-than">
-            <div class="modal-header-dang-ky">
-              <span class="badge" id="dang-ky-badge">Hội thảo</span>
-              <h2 id="tieu-de-modal-dang-ky" class="h3 mt-2 mb-1">
-                Đăng Ký Vé Tham Gia Sự Kiện
-              </h2>
-              <p class="fs-meta text-phu mb-1" id="dang-ky-ten-su-kien"></p>
-              <p
-                class="fs-meta text-chinh mb-0"
-                id="dang-ky-thoi-gian-dia-diem"
-              ></p>
-            </div>
+        <div class="widget mt-4">
+          <h3 class="h5">Lưu ý khi tham gia</h3>
+          <ul>
+            <li>Sinh viên mang theo thẻ sinh viên hoặc mã QR vé để quét điểm danh.</li>
+            <li>Vui lòng có mặt trước giờ khai mạc 15 phút để ổn định chỗ ngồi.</li>
+            <li>Trang phục lịch sự, tác phong văn minh học đường.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
 
-            <form id="form-dang-ky-ve" novalidate class="mt-3">
-              <div class="form-luoi-modal">
-                <div class="form-nhom">
-                  <label for="dk-hoten">Họ và tên sinh viên *</label>
-                  <input
-                    type="text"
-                    id="dk-hoten"
-                    name="hoten"
-                    required
-                    minlength="3"
-                    placeholder="Họ và tên sinh viên"
-                    autocomplete="name"
-                  />
-                  <span class="thong-bao-loi" aria-live="polite"></span>
-                </div>
-
-                <div class="form-nhom">
-                  <label for="dk-mssv">Mã số sinh viên (MSSV) *</label>
-                  <input
-                    type="text"
-                    id="dk-mssv"
-                    name="mssv"
-                    required
-                    pattern="[0-9]{10}"
-                    placeholder="Mã số sinh viên (10 số)"
-                    autocomplete="off"
-                  />
-                  <span class="thong-bao-loi" aria-live="polite"></span>
-                </div>
-
-                <div class="form-nhom">
-                  <label for="dk-email">Email sinh viên (*@ued.udn.vn) *</label>
-                  <input
-                    type="email"
-                    id="dk-email"
-                    name="email"
-                    required
-                    placeholder="sinhvien@ued.udn.vn"
-                    autocomplete="email"
-                  />
-                  <span class="thong-bao-loi" aria-live="polite"></span>
-                </div>
-
-                <div class="form-nhom">
-                  <label for="dk-sdt">Số điện thoại liên hệ *</label>
-                  <input
-                    type="tel"
-                    id="dk-sdt"
-                    name="sdt"
-                    required
-                    pattern="0[0-9]{9}"
-                    placeholder="Số điện thoại"
-                    autocomplete="tel"
-                  />
-                  <span class="thong-bao-loi" aria-live="polite"></span>
-                </div>
-
-                <div class="form-nhom form-nhom--full">
-                  <label for="dk-khoa">Khoa đang theo học *</label>
-                  <select id="dk-khoa" name="khoa" required>
-                    <option value="">-- Chọn Khoa của bạn --</option>
-                    <option value="toan-tin">Khoa Toán - Tin</option>
-                    <option value="khtn">Khoa Sư phạm Khoa học Tự nhiên</option>
-                    <option value="ngu-van">Khoa Ngữ Văn</option>
-                    <option value="lich-su">Khoa Lịch sử</option>
-                    <option value="dia-ly">Khoa Địa lý</option>
-                    <option value="gdth-mn">
-                      Khoa GD Tiểu học &amp; Mầm non
-                    </option>
-                    <option value="tam-ly">Khoa Tâm lý - Giáo dục</option>
-                    <option value="gdtc">Khoa Giáo dục Thể chất</option>
-                  </select>
-                  <span class="thong-bao-loi" aria-live="polite"></span>
-                </div>
-              </div>
-
-              <div
-                class="d-flex justify-between align-center mt-4 pt-2 border-top"
-              >
-                <button
-                  type="submit"
-                  class="nut-bam nut-nhan"
-                  id="nut-xac-nhan-ve"
-                >
-                  Xác Nhận Đăng Ký Vé
-                </button>
-              </div>
-            </form>
+    <!-- Mục Sự Kiện Cùng Chuyên Mục -->
+    <?php if (!empty($lienQuan)): ?>
+      <section class="su-kien-lien-quan mt-5" aria-labelledby="tieu-de-lien-quan">
+        <div class="section-head mb-3">
+          <div>
+            <h2 id="tieu-de-lien-quan" class="tieu-de-muc">
+              Sự Kiện Cùng Chuyên Mục
+            </h2>
+            <p class="section-head__mota">
+              Khám phá các hoạt động hấp dẫn khác đang diễn ra tại Trường ĐH Sư Phạm.
+            </p>
           </div>
-
-          <!-- BƯỚC 2: Thẻ vé điện tử E-Ticket khi đăng ký thành công -->
-          <div id="modal-buoc-ve" class="modal-than text-center" hidden>
-            <div class="ve-dien-tu shadow-sm">
-              <div class="ve-dien-tu__dau">
-                <div class="ve-dien-tu__logo">UniEvent • E-TICKET</div>
-                <span class="badge badge--success">ĐÃ XÁC NHẬN</span>
+        </div>
+        <div class="luoi-3-the-tu-dong">
+          <?php foreach ($lienQuan as $lq): ?>
+            <article class="the-tin the-tin--doc">
+              <div class="the-tin__media">
+                <img
+                  src="<?= e($lq->hinhAnh) ?>"
+                  alt="<?= e($lq->ten) ?>"
+                  width="360"
+                  height="200"
+                  loading="lazy"
+                />
+                <span class="<?= e($lq->badgeClass) ?> the-tin__badge">
+                  <?= e($lq->tenDanhMuc) ?>
+                </span>
               </div>
-              <div class="ve-dien-tu__than">
-                <h3 id="ve-ten-su-kien" class="ve-tieu-de">
-                  Vé Tham Gia Sự Kiện
+              <div class="the-tin__body">
+                <div class="the-tin__meta">
+                  <span>📅 <?= e($lq->thoiGian) ?></span>
+                </div>
+                <h3 class="the-tin__tieu-de">
+                  <a href="chi-tiet.php?id=<?= $lq->id ?>"><?= e($lq->ten) ?></a>
                 </h3>
-                <div class="ve-thong-tin-grid">
-                  <div>
-                    <span class="ve-nhan">Sinh viên:</span>
-                    <strong id="ve-ho-ten"></strong>
-                  </div>
-                  <div>
-                    <span class="ve-nhan">MSSV:</span>
-                    <strong id="ve-mssv"></strong>
-                  </div>
-                  <div>
-                    <span class="ve-nhan">Thời gian:</span>
-                    <span id="ve-thoi-gian"></span>
-                  </div>
-                  <div>
-                    <span class="ve-nhan">Địa điểm:</span>
-                    <span id="ve-dia-diem"></span>
-                  </div>
+                <p class="the-tin__tom-tat"><?= e($lq->moTaNgan) ?></p>
+                <div class="the-tin__actions mt-3">
+                  <a href="chi-tiet.php?id=<?= $lq->id ?>" class="nut-bam nut-nhan nut-nho">Xem chi tiết</a>
                 </div>
-
-                <!-- Mã QR điểm danh (SVG) -->
-                <div class="ve-qr-wrapper mt-3">
-                  <svg
-                    id="ve-qr-code"
-                    role="img"
-                    width="120"
-                    height="120"
-                    viewBox="0 0 120 120"
-                    class="mx-auto"
-                    aria-label="Mã QR điểm danh vé sự kiện"
-                  ></svg>
-                  <p class="ve-ma-so mt-2" id="ve-ma-so"></p>
-                </div>
-
-                <p class="text-thanh-cong fs-meta mt-2 mb-0">
-                  Đã ghi nhận quyền lợi cộng điểm rèn luyện cấp Trường.
-                </p>
               </div>
-            </div>
-
-            <div class="d-flex gap-2 justify-center mt-3">
-              <a
-                id="link-google-calendar"
-                href="#"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="nut-bam nut-phu nut-nho"
-              >
-                Thêm vào Google Calendar
-              </a>
-              <button
-                type="button"
-                class="nut-bam nut-nhan nut-nho"
-                id="nut-hoan-tat-ve"
-              >
-                Xong &amp; Đóng vé
-              </button>
-            </div>
-          </div>
+            </article>
+          <?php endforeach; ?>
         </div>
-      </div>
-    </main>
+      </section>
+    <?php endif; ?>
+  </div>
+</main>
 
-    <!-- Footer 4 cột chung -->
-    <footer class="vung-chan">
-      <div class="container footer-grid">
-        <!-- Cột 1: Về UniEvent -->
-        <div>
-          <div class="footer-brand">
-            <img
-              src="images/logo.png"
-              alt="Logo UniEvent Footer"
-              class="logo-img"
-              width="32"
-              height="32"
-            />
-            <span>UniEvent</span>
-          </div>
-          <p>
-            Nền tảng quản lý và kết nối sự kiện đại học toàn diện dành cho sinh
-            viên và giảng viên Trường Đại học Sư phạm – Đại học Đà Nẵng.
-          </p>
-          <p class="mt-2">
-            Địa chỉ: 459 Tôn Đức Thắng, Hòa Khánh Nam, Liên Chiểu, Đà Nẵng
-          </p>
-          <p>Email: support@unievent.edu.vn | Hotline: 0236 3841 323</p>
-        </div>
-
-        <!-- Cột 2: Điều hướng nhanh -->
-        <div>
-          <h3>Điều hướng nhanh</h3>
-          <ul>
-            <li><a href="index.html">Trang chủ</a></li>
-            <li><a href="danh-sach.html">Danh sách sự kiện</a></li>
-            <li><a href="gioi-thieu.html">Giới thiệu nhóm phát triển</a></li>
-            <li><a href="lien-he.html">Liên hệ hỗ trợ</a></li>
-          </ul>
-        </div>
-
-        <!-- Cột 3: Hỗ trợ sinh viên -->
-        <div>
-          <h3>Hỗ trợ sinh viên</h3>
-          <ul>
-            <li><a href="lien-he.html">Hướng dẫn đăng ký vé</a></li>
-            <li>
-              <a href="danh-sach.html">Quy định tích lũy điểm rèn luyện</a>
-            </li>
-            <li><a href="lien-he.html">Câu hỏi thường gặp (FAQ)</a></li>
-            <li><a href="lien-he.html">Bảo mật thông tin sinh viên</a></li>
-          </ul>
-        </div>
-
-        <!-- Cột 4: Mạng xã hội & Bản quyền -->
-        <div>
-          <h3>Kết nối mạng xã hội</h3>
-          <p>
-            Theo dõi các kênh thông tin chính thức của Đoàn - Hội trường ĐHSP:
-          </p>
-          <div class="mang-xa-hoi mt-3">
-            <a
-              href="https://www.facebook.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Facebook UniEvent"
-              >f</a
-            >
-            <a
-              href="https://www.youtube.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Kênh YouTube UniEvent"
-              >▶</a
-            >
-            <a
-              href="https://twitter.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Twitter UniEvent"
-              >t</a
-            >
-          </div>
-        </div>
-      </div>
-
-      <div class="footer-bottom">
-        <div class="container">
-          <p>
-            © 2026 UniEvent — Hệ thống Quản lý Sự kiện | Khoa Toán - Tin, Trường
-            Đại học Sư phạm – Đại học Đà Nẵng.
-          </p>
-        </div>
-      </div>
-    </footer>
-
-    <!-- JavaScript ES6 Modules -->
-    <script type="module" src="js/main.js"></script>
-    <script type="module" src="js/trang-chi-tiet.js"></script>
-  </body>
-</html>
+<?php require __DIR__ . '/inc/footer.php'; ?>

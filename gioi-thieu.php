@@ -1,396 +1,202 @@
-<!doctype html>
-<html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Giới thiệu về nền tảng UniEvent và danh sách thành viên nhóm sinh viên phát triển - Trường Đại học Sư phạm Đà Nẵng."
-    />
-    <title>Giới Thiệu Hệ Thống &amp; Đội Ngũ Phát Triển | UniEvent</title>
-    <meta name="theme-color" content="#0284c7" />
-    <link rel="icon" type="image/svg+xml" href="images/favicon.svg" />
+<?php
+/**
+ * gioi-thieu.php
+ * Trang giới thiệu hệ thống UniEvent và đội ngũ phát triển Nhóm 14.
+ * Sử dụng khung trang dùng chung (header.php, footer.php) và giữ nguyên 100% cấu trúc CSS Design System gốc.
+ */
 
-    <!-- Nạp 5 tệp CSS theo module chuẩn đề bài -->
-    <link rel="stylesheet" href="css/01-bien.css" />
-    <link rel="stylesheet" href="css/02-chuan-hoa.css" />
-    <link rel="stylesheet" href="css/03-bo-cuc.css" />
-    <link rel="stylesheet" href="css/04-thanh-phan.css" />
-    <link rel="stylesheet" href="css/05-tien-ich.css" />
-  </head>
-  <body class="trang">
-    <!-- Header chung -->
-    <header class="vung-dau">
-      <div class="container site-header__inner">
-        <a href="index.html" class="thuong-hieu">
-          <img
-            src="images/logo.png"
-            alt="Logo UniEvent - Cổng sự kiện Đại học Sư phạm Đà Nẵng"
-            class="logo-img"
-            width="44"
-            height="44"
-          />
-          <div>
-            <div class="thuong-hieu__ten">UniEvent</div>
-            <div class="thuong-hieu__mota">
-              Hệ thống Quản lý Sự kiện ĐHSP Đà Nẵng
-            </div>
-          </div>
-        </a>
+declare(strict_types=1);
 
-        <div class="header-phai">
-          <button
-            type="button"
-            class="nut-menu"
-            id="nut-menu"
-            aria-label="Mở menu điều hướng"
-            aria-expanded="false"
-            aria-controls="menu-chinh"
-          >
-            <span aria-hidden="true">☰</span>
-          </button>
-          <div class="search-box" role="search">
-            <label for="tim-kiem-header" class="chi-danh-cho-sr"
-              >Tìm kiếm sự kiện</label
-            >
-            <input
-              type="text"
-              id="tim-kiem-header"
-              placeholder="Tìm sự kiện, hội thảo..."
-            />
-            <button type="button" aria-label="Tìm kiếm">
-              <svg
-                width="15"
-                height="15"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
-            </button>
-          </div>
-          <a href="danh-sach.html#yeu-thich" class="nut-yeu-thich-header">
-            <span>Đã lưu</span>
-            <span class="huy-hieu-dem" id="dem-yeu-thich" aria-live="polite"
-              >0</span
-            >
-          </a>
-          <div class="tai-khoan" role="group" aria-label="Tài khoản đăng nhập">
-            <span>Admin</span>
-          </div>
-        </div>
-      </div>
-    </header>
+require_once __DIR__ . '/inc/config.php';
 
-    <!-- Navigation chung -->
-    <nav
-      class="vung-menu site-nav"
-      id="menu-chinh"
-      aria-label="Điều hướng chính"
-    >
-      <div class="container">
-        <ul>
-          <li>
-            <a href="index.html">Trang chủ</a>
-          </li>
-          <li>
-            <a href="danh-sach.html">Danh sách sự kiện</a>
-          </li>
-          <li>
-            <a href="gioi-thieu.html" class="active" aria-current="page"
-              >Giới thiệu</a
-            >
-          </li>
-          <li>
-            <a href="lien-he.html">Liên hệ</a>
-          </li>
-        </ul>
-      </div>
+$tieuDe = 'Giới Thiệu Về Hệ Thống UniEvent';
+$trang  = 'gioi-thieu';
+
+require __DIR__ . '/inc/header.php';
+?>
+
+<main>
+  <div class="container">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb mb-3" aria-label="Đường dẫn phân cấp">
+      <a href="index.php">Trang chủ</a>
+      <span aria-hidden="true">/</span>
+      <span class="hien-tai">Giới thiệu hệ thống</span>
     </nav>
 
-    <!-- Main Content -->
-    <main>
-      <div class="container">
-        <!-- Breadcrumb -->
-        <nav class="breadcrumb mb-3" aria-label="Đường dẫn phân cấp">
-          <a href="index.html">Trang chủ</a>
-          <span aria-hidden="true">/</span>
-          <span class="hien-tai">Giới thiệu hệ thống</span>
-        </nav>
+    <!-- Section 1: Giới thiệu dự án UniEvent -->
+    <section class="gioi-thieu mb-5">
+      <div class="noi-dung">
+        <!-- Thẻ H1 duy nhất của trang -->
+        <h1 class="mb-3">Giới Thiệu Về Hệ Thống UniEvent</h1>
+        <p class="do-dai-chuan text-phu mb-3">
+          UniEvent là nền tảng số hỗ trợ quản lý, kết nối và tổ chức các
+          hoạt động sự kiện học thuật, văn hóa, thể thao dành riêng cho cộng
+          đồng sinh viên và cán bộ giảng viên Trường Đại học Sư phạm – Đại
+          học Đà Nẵng.
+        </p>
+        <p class="do-dai-chuan text-phu mb-4">
+          Mục tiêu của dự án là xây dựng môi trường gắn kết năng động, giúp
+          sinh viên chủ động cập nhật các hoạt động phong trào, đăng ký vé
+          trực tuyến thuận tiện và tự động hóa quy trình ghi nhận điểm rèn
+          luyện thông qua mã QR cá nhân hóa.
+        </p>
 
-        <!-- Section 1: Giới thiệu dự án UniEvent -->
-        <section class="gioi-thieu mb-5">
-          <div class="noi-dung">
-            <!-- Thẻ H1 duy nhất của trang -->
-            <h1 class="mb-3">Giới Thiệu Về Hệ Thống UniEvent</h1>
-            <p class="do-dai-chuan text-phu mb-3">
-              UniEvent là nền tảng số hỗ trợ quản lý, kết nối và tổ chức các
-              hoạt động sự kiện học thuật, văn hóa, thể thao dành riêng cho cộng
-              đồng sinh viên và cán bộ giảng viên Trường Đại học Sư phạm – Đại
-              học Đà Nẵng.
-            </p>
-            <p class="do-dai-chuan text-phu mb-4">
-              Mục tiêu của dự án là xây dựng môi trường gắn kết năng động, giúp
-              sinh viên chủ động cập nhật các hoạt động phong trào, đăng ký vé
-              trực tuyến thuận tiện và tự động hóa quy trình ghi nhận điểm rèn
-              luyện thông qua mã QR cá nhân hóa.
-            </p>
-
-            <div class="hero__cta">
-              <a href="danh-sach.html" class="nut-bam nut-nhan">
-                Khám phá sự kiện ngay →
-              </a>
-              <a href="lien-he.html" class="nut-bam"> Liên hệ hợp tác </a>
-            </div>
-          </div>
-
-          <!-- Hình ảnh hoạt động -->
-          <div class="hinh-anh">
-            <img
-              src="images/anhsukien.jpg"
-              alt="Toàn cảnh không khí sự kiện sinh viên sôi động tại ĐH Sư Phạm Đà Nẵng"
-              width="480"
-              height="300"
-              loading="lazy"
-              class="rounded-vua img-cover"
-            />
-            <img
-              src="images/anhnhom.jpg"
-              alt="Các thành viên nhóm sinh viên phát triển dự án công nghệ"
-              width="240"
-              height="180"
-              loading="lazy"
-              class="rounded-vua img-cover"
-            />
-            <img
-              src="images/anhsinhvien.jpg"
-              alt="Sinh viên tham gia các hoạt động ngoại khóa hào hứng"
-              width="240"
-              height="180"
-              loading="lazy"
-              class="rounded-vua img-cover"
-            />
-          </div>
-        </section>
-
-        <!-- Section 2: Danh sách thành viên nhóm phát triển (Bố cục bằng Flexbox) -->
-        <section class="thanh-vien-nhom mb-5" aria-labelledby="tieu-de-nhom">
-          <div class="section-head justify-center text-center">
-            <div>
-              <h2 id="tieu-de-nhom" class="tieu-de-muc">
-                Nhóm Sinh Viên Phát Triển Dự Án
-              </h2>
-              <p class="section-head__mota do-dai-chuan mx-auto text-phu">
-                Đội ngũ sinh viên thực hiện đồ án môn Thiết kế &amp; Lập trình
-                Web — Khoa Toán - Tin, Trường Đại học Sư phạm – Đại học Đà Nẵng.
-              </p>
-            </div>
-          </div>
-
-          <!-- Bố cục bằng Flexbox -->
-          <div class="danh-sach-thanh-vien">
-            <!-- Thành viên 1: Đinh Trịnh Ngọc Hưng -->
-            <article class="thanh-vien">
-              <img
-                src="images/anhthanhvien1.jpg"
-                alt="Chân dung thành viên Đinh Trịnh Ngọc Hưng"
-                width="96"
-                height="96"
-                loading="lazy"
-              />
-              <h3>Đinh Trịnh Ngọc Hưng</h3>
-              <p class="mssv">MSSV: 3120224065</p>
-              <p class="vai-tro">Khung chung &amp; Trang chủ</p>
-              <a
-                href="thanhvien/3120224065_Hung/gioithieu.html"
-                class="nut-bam nut-nho"
-              >
-                Xem trang cá nhân →
-              </a>
-            </article>
-
-            <!-- Thành viên 2: Nguyễn Hoài Bảo -->
-            <article class="thanh-vien">
-              <img
-                src="images/anhthanhvien2.jpg"
-                alt="Chân dung thành viên Nguyễn Hoài Bảo"
-                width="96"
-                height="96"
-                loading="lazy"
-              />
-              <h3>Nguyễn Hoài Bảo</h3>
-              <p class="mssv">MSSV: 3120224011</p>
-              <p class="vai-tro">Code trang Giới thiệu</p>
-              <a
-                href="thanhvien/3120224011_Bao/gioithieu.html"
-                class="nut-bam nut-nho"
-              >
-                Xem trang cá nhân →
-              </a>
-            </article>
-
-            <!-- Thành viên 3: Lê Phú Đạt -->
-            <article class="thanh-vien">
-              <img
-                src="images/anhthanhvien3.jpg"
-                alt="Chân dung thành viên Lê Phú Đạt"
-                width="96"
-                height="96"
-                loading="lazy"
-              />
-              <h3>Lê Phú Đạt</h3>
-              <p class="mssv">MSSV: 3120224024</p>
-              <p class="vai-tro">Code trang Chi tiết</p>
-              <a
-                href="thanhvien/3120224024_Dat/gioithieu.html"
-                class="nut-bam nut-nho"
-              >
-                Xem trang cá nhân →
-              </a>
-            </article>
-
-            <!-- Thành viên 4: Nguyễn Thị Kiểu Trang -->
-            <article class="thanh-vien">
-              <img
-                src="images/anhthanhvien4.jpg"
-                alt="Chân dung thành viên Nguyễn Thị Kiểu Trang"
-                width="96"
-                height="96"
-                loading="lazy"
-              />
-              <h3>Nguyễn Thị Kiểu Trang</h3>
-              <p class="mssv">MSSV: 3120224153</p>
-              <p class="vai-tro">Thiết kế UX / UI</p>
-              <a
-                href="thanhvien/3120224153_Trang/gioithieu.html"
-                class="nut-bam nut-nho"
-              >
-                Xem trang cá nhân →
-              </a>
-            </article>
-
-            <!-- Thành viên 5: Phan Nhuận -->
-            <article class="thanh-vien">
-              <img
-                src="images/anhthanhvien5.jpg"
-                alt="Chân dung thành viên Phan Nhuận"
-                width="96"
-                height="96"
-                loading="lazy"
-              />
-              <h3>Phan Nhuận</h3>
-              <p class="mssv">MSSV: 3120224106</p>
-              <p class="vai-tro">Code trang Danh sách</p>
-              <a
-                href="thanhvien/3120224106_Nhuan/gioithieu.html"
-                class="nut-bam nut-nho"
-              >
-                Xem trang cá nhân →
-              </a>
-            </article>
-          </div>
-        </section>
-      </div>
-    </main>
-
-    <!-- Footer 4 cột chung -->
-    <footer class="vung-chan">
-      <div class="container footer-grid">
-        <!-- Cột 1: Về UniEvent -->
-        <div>
-          <div class="footer-brand">
-            <img
-              src="images/logo.png"
-              alt="Logo UniEvent Footer"
-              class="logo-img"
-              width="32"
-              height="32"
-            />
-            <span>UniEvent</span>
-          </div>
-          <p>
-            Nền tảng quản lý và kết nối sự kiện đại học toàn diện dành cho sinh
-            viên và giảng viên Trường Đại học Sư phạm – Đại học Đà Nẵng.
-          </p>
-          <p class="mt-2">
-            Địa chỉ: 459 Tôn Đức Thắng, Hòa Khánh Nam, Liên Chiểu, Đà Nẵng
-          </p>
-          <p>Email: support@unievent.edu.vn | Hotline: 0236 3841 323</p>
-        </div>
-
-        <!-- Cột 2: Điều hướng nhanh -->
-        <div>
-          <h3>Điều hướng nhanh</h3>
-          <ul>
-            <li><a href="index.html">Trang chủ</a></li>
-            <li><a href="danh-sach.html">Danh sách sự kiện</a></li>
-            <li><a href="gioi-thieu.html">Giới thiệu nhóm phát triển</a></li>
-            <li><a href="lien-he.html">Liên hệ hỗ trợ</a></li>
-          </ul>
-        </div>
-
-        <!-- Cột 3: Hỗ trợ sinh viên -->
-        <div>
-          <h3>Hỗ trợ sinh viên</h3>
-          <ul>
-            <li><a href="lien-he.html">Hướng dẫn đăng ký vé</a></li>
-            <li>
-              <a href="danh-sach.html">Quy định tích lũy điểm rèn luyện</a>
-            </li>
-            <li><a href="lien-he.html">Câu hỏi thường gặp (FAQ)</a></li>
-            <li><a href="lien-he.html">Bảo mật thông tin sinh viên</a></li>
-          </ul>
-        </div>
-
-        <!-- Cột 4: Mạng xã hội & Bản quyền -->
-        <div>
-          <h3>Kết nối mạng xã hội</h3>
-          <p>
-            Theo dõi các kênh thông tin chính thức của Đoàn - Hội trường ĐHSP:
-          </p>
-          <div class="mang-xa-hoi mt-3">
-            <a
-              href="https://www.facebook.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Facebook UniEvent"
-              >f</a
-            >
-            <a
-              href="https://www.youtube.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Kênh YouTube UniEvent"
-              >▶</a
-            >
-            <a
-              href="https://twitter.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Twitter UniEvent"
-              >t</a
-            >
-          </div>
+        <div class="hero__cta">
+          <a href="danh-sach.php" class="nut-bam nut-nhan">
+            Khám phá sự kiện ngay →
+          </a>
+          <a href="lien-he.php" class="nut-bam"> Liên hệ hợp tác </a>
         </div>
       </div>
 
-      <div class="footer-bottom">
-        <div class="container">
-          <p>
-            © 2026 UniEvent — Hệ thống Quản lý Sự kiện | Khoa Toán - Tin, Trường
-            Đại học Sư phạm – Đại học Đà Nẵng.
+      <!-- Hình ảnh hoạt động -->
+      <div class="hinh-anh">
+        <img
+          src="images/anhsukien.jpg"
+          alt="Toàn cảnh không khí sự kiện sinh viên sôi động tại ĐH Sư Phạm Đà Nẵng"
+          width="480"
+          height="300"
+          loading="lazy"
+          class="rounded-vua img-cover"
+        />
+        <img
+          src="images/anhnhom.jpg"
+          alt="Các thành viên nhóm sinh viên phát triển dự án công nghệ"
+          width="240"
+          height="180"
+          loading="lazy"
+          class="rounded-vua img-cover"
+        />
+        <img
+          src="images/anhsinhvien.jpg"
+          alt="Sinh viên tham gia các hoạt động ngoại khóa hào hứng"
+          width="240"
+          height="180"
+          loading="lazy"
+          class="rounded-vua img-cover"
+        />
+      </div>
+    </section>
+
+    <!-- Section 2: Danh sách thành viên nhóm phát triển (Bố cục bằng Flexbox) -->
+    <section class="thanh-vien-nhom mb-5" aria-labelledby="tieu-de-nhom">
+      <div class="section-head justify-center text-center">
+        <div>
+          <h2 id="tieu-de-nhom" class="tieu-de-muc">
+            Nhóm Sinh Viên Phát Triển Dự Án
+          </h2>
+          <p class="section-head__mota do-dai-chuan mx-auto text-phu">
+            Đội ngũ sinh viên thực hiện đồ án môn Thiết kế &amp; Lập trình
+            Web — Khoa Toán - Tin, Trường Đại học Sư phạm – Đại học Đà Nẵng.
           </p>
         </div>
       </div>
-    </footer>
 
-    <!-- JavaScript ES6 Modules -->
-    <script type="module" src="js/main.js"></script>
-  </body>
-</html>
+      <!-- Bố cục bằng Flexbox -->
+      <div class="danh-sach-thanh-vien">
+        <!-- Thành viên 1: Đinh Trịnh Ngọc Hưng -->
+        <article class="thanh-vien">
+          <img
+            src="images/anhthanhvien1.jpg"
+            alt="Chân dung thành viên Đinh Trịnh Ngọc Hưng"
+            width="96"
+            height="96"
+            loading="lazy"
+          />
+          <h3>Đinh Trịnh Ngọc Hưng</h3>
+          <p class="mssv">MSSV: 3120224065</p>
+          <p class="vai-tro">Khung chung &amp; Trang chủ</p>
+          <a
+            href="thanhvien/3120224065_Hung/gioithieu.php"
+            class="nut-bam nut-nho"
+          >
+            Xem trang cá nhân →
+          </a>
+        </article>
+
+        <!-- Thành viên 2: Nguyễn Hoài Bảo -->
+        <article class="thanh-vien">
+          <img
+            src="images/anhthanhvien2.jpg"
+            alt="Chân dung thành viên Nguyễn Hoài Bảo"
+            width="96"
+            height="96"
+            loading="lazy"
+          />
+          <h3>Nguyễn Hoài Bảo</h3>
+          <p class="mssv">MSSV: 3120224011</p>
+          <p class="vai-tro">Code trang Giới thiệu</p>
+          <a
+            href="thanhvien/3120224011_Bao/gioithieu.html"
+            class="nut-bam nut-nho"
+          >
+            Xem trang cá nhân →
+          </a>
+        </article>
+
+        <!-- Thành viên 3: Lê Phú Đạt -->
+        <article class="thanh-vien">
+          <img
+            src="images/anhthanhvien3.jpg"
+            alt="Chân dung thành viên Lê Phú Đạt"
+            width="96"
+            height="96"
+            loading="lazy"
+          />
+          <h3>Lê Phú Đạt</h3>
+          <p class="mssv">MSSV: 3120224024</p>
+          <p class="vai-tro">Code trang Chi tiết</p>
+          <a
+            href="thanhvien/3120224024_Dat/gioithieu.html"
+            class="nut-bam nut-nho"
+          >
+            Xem trang cá nhân →
+          </a>
+        </article>
+
+        <!-- Thành viên 4: Nguyễn Thị Kiểu Trang -->
+        <article class="thanh-vien">
+          <img
+            src="images/anhthanhvien4.jpg"
+            alt="Chân dung thành viên Nguyễn Thị Kiểu Trang"
+            width="96"
+            height="96"
+            loading="lazy"
+          />
+          <h3>Nguyễn Thị Kiểu Trang</h3>
+          <p class="mssv">MSSV: 3120224153</p>
+          <p class="vai-tro">Thiết kế UX / UI</p>
+          <a
+            href="thanhvien/3120224153_Trang/gioithieu.html"
+            class="nut-bam nut-nho"
+          >
+            Xem trang cá nhân →
+          </a>
+        </article>
+
+        <!-- Thành viên 5: Phan Nhuận -->
+        <article class="thanh-vien">
+          <img
+            src="images/anhthanhvien5.jpg"
+            alt="Chân dung thành viên Phan Nhuận"
+            width="96"
+            height="96"
+            loading="lazy"
+          />
+          <h3>Phan Nhuận</h3>
+          <p class="mssv">MSSV: 3120224106</p>
+          <p class="vai-tro">Code trang Danh sách</p>
+          <a
+            href="thanhvien/3120224106_Nhuan/gioithieu.html"
+            class="nut-bam nut-nho"
+          >
+            Xem trang cá nhân →
+          </a>
+        </article>
+      </div>
+    </section>
+  </div>
+</main>
+
+<?php require __DIR__ . '/inc/footer.php'; ?>

@@ -1,434 +1,319 @@
-<!doctype html>
-<html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="UniEvent - Cổng sự kiện Đại học Sư phạm Đà Nẵng. Khám phá, đăng ký và tham gia các hoạt động học thuật, văn hóa, thể thao sôi động."
-    />
-    <title>UniEvent - Cổng Sự Kiện Đại Học Sư Phạm Đà Nẵng</title>
-    <meta name="theme-color" content="#0284c7" />
-    <link rel="icon" type="image/svg+xml" href="images/favicon.svg" />
+<?php
+/**
+ * index.php
+ * Trang chủ hệ thống UniEvent.
+ * Sinh giao diện động từ PHP và dữ liệu data/su-kien.json,
+ * hiển thị khối "Sự kiện đã xem gần đây" từ cookie da_xem được kiểm tra an toàn ở máy chủ.
+ * Giữ nguyên 100% cấu trúc HTML Semantic & CSS Design System gốc.
+ */
 
-    <!-- Nạp 5 tệp CSS theo module chuẩn đề bài -->
-    <link rel="stylesheet" href="css/01-bien.css" />
-    <link rel="stylesheet" href="css/02-chuan-hoa.css" />
-    <link rel="stylesheet" href="css/03-bo-cuc.css" />
-    <link rel="stylesheet" href="css/04-thanh-phan.css" />
-    <link rel="stylesheet" href="css/05-tien-ich.css" />
-  </head>
-  <body class="trang khung-trang-grid">
-    <!-- Header (Vùng "dau") -->
-    <header class="vung-dau">
-      <div class="container site-header__inner">
-        <a href="index.html" class="thuong-hieu">
-          <img
-            src="images/logo.png"
-            alt="Logo UniEvent - Cổng sự kiện Đại học Sư phạm Đà Nẵng"
-            class="logo-img"
-            width="44"
-            height="44"
-          />
-          <div>
-            <div class="thuong-hieu__ten">UniEvent</div>
-            <div class="thuong-hieu__mota">
-              Hệ thống Quản lý Sự kiện ĐHSP Đà Nẵng
-            </div>
-          </div>
+declare(strict_types=1);
+
+require_once __DIR__ . '/inc/config.php';
+
+use App\Data\KhoSuKien;
+use App\Services\GioHang;
+
+$kho = new KhoSuKien(__DIR__ . '/data/su-kien.json');
+$gio = new GioHang();
+$tatCa = $kho->tatCa();
+
+// 3 sự kiện tiêu biểu cho phần nổi bật
+$noiBat = array_slice($tatCa, 0, 3);
+
+// Đọc cookie 'da_xem' (tối đa 4 ID xem gần nhất)
+// Tuyệt đối không tin giá trị cookie, kiểm tra từng ID qua FILTER_VALIDATE_INT và đối chiếu trong kho
+$daXem = [];
+$cookieDaXem = $_COOKIE['da_xem'] ?? '';
+if ($cookieDaXem !== '') {
+    $cacId = explode(',', $cookieDaXem);
+    foreach ($cacId as $idStr) {
+        $idInt = filter_var($idStr, FILTER_VALIDATE_INT);
+        if ($idInt !== false && $idInt > 0) {
+            $sk = $kho->timTheoId($idInt);
+            if ($sk !== null) {
+                $daXem[] = $sk;
+            }
+        }
+    }
+}
+
+$tieuDe    = 'Trang chủ - Cổng thông tin sự kiện sinh viên UED';
+$trang     = 'index';
+$bodyClass = 'khung-trang-grid';
+
+require __DIR__ . '/inc/header.php';
+?>
+
+<!-- Main (Vùng "chinh") -->
+<main class="vung-chinh noi-dung-chinh">
+  <!-- 1. Hero Section Nổi Bật -->
+  <section class="hero">
+    <div class="hero__noi-dung">
+      <span class="hero__badge">Cổng sự kiện sinh viên UED</span>
+      <h1>
+        Khám phá &amp; Khởi tạo
+        <span class="text-highlight">Sự kiện Đại học</span> cùng UniEvent
+      </h1>
+      <p class="hero__mota">
+        Trải nghiệm cuộc sống sinh viên sôi động, kết nối mạng lưới bạn bè
+        và phát triển kỹ năng toàn diện thông qua hàng trăm hoạt động học
+        thuật, thể thao và văn hóa đặc sắc tại Trường ĐH Sư Phạm – Đại học
+        Đà Nẵng.
+      </p>
+      <div class="hero__cta">
+        <a href="danh-sach.php" class="nut-bam nut-nhan">
+          Khám phá sự kiện ngay →
         </a>
-
-        <div class="header-phai">
-          <button
-            type="button"
-            class="nut-menu"
-            id="nut-menu"
-            aria-label="Mở menu điều hướng"
-            aria-expanded="false"
-            aria-controls="menu-chinh"
-          >
-            <span aria-hidden="true">☰</span>
-          </button>
-          <div class="search-box" role="search">
-            <label for="tim-kiem-header" class="chi-danh-cho-sr"
-              >Tìm kiếm sự kiện</label
-            >
-            <input
-              type="text"
-              id="tim-kiem-header"
-              placeholder="Tìm kiếm sự kiện, hội thảo..."
-            />
-            <button type="button" aria-label="Tìm kiếm">
-              <svg
-                width="15"
-                height="15"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
-            </button>
-          </div>
-          <a href="danh-sach.html#yeu-thich" class="nut-yeu-thich-header">
-            <span>Đã lưu</span>
-            <span class="huy-hieu-dem" id="dem-yeu-thich" aria-live="polite"
-              >0</span
-            >
-          </a>
-          <div class="tai-khoan" role="group" aria-label="Tài khoản đăng nhập">
-            <span>Admin</span>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <!-- Navigation (Vùng "menu") -->
-    <nav
-      class="vung-menu site-nav"
-      id="menu-chinh"
-      aria-label="Điều hướng chính"
-    >
-      <div class="container">
-        <ul>
-          <li>
-            <a href="index.html" class="active" aria-current="page"
-              >Trang chủ</a
-            >
-          </li>
-          <li>
-            <a href="danh-sach.html">Danh sách sự kiện</a>
-          </li>
-          <li>
-            <a href="gioi-thieu.html">Giới thiệu</a>
-          </li>
-          <li>
-            <a href="lien-he.html">Liên hệ</a>
-          </li>
-        </ul>
-      </div>
-    </nav>
-
-    <!-- Main (Vùng "chinh") -->
-    <main class="vung-chinh noi-dung-chinh">
-      <!-- 1. Hero Section Nổi Bật -->
-      <section class="hero">
-        <div class="hero__noi-dung">
-          <span class="hero__badge">Cổng sự kiện sinh viên UED</span>
-          <h1>
-            Khám phá &amp; Khởi tạo
-            <span class="text-highlight">Sự kiện Đại học</span> cùng UniEvent
-          </h1>
-          <p class="hero__mota">
-            Trải nghiệm cuộc sống sinh viên sôi động, kết nối mạng lưới bạn bè
-            và phát triển kỹ năng toàn diện thông qua hàng trăm hoạt động học
-            thuật, thể thao và văn hóa đặc sắc tại Trường ĐH Sư Phạm – Đại học
-            Đà Nẵng.
-          </p>
-          <div class="hero__cta">
-            <a href="danh-sach.html" class="nut-bam nut-nhan">
-              Khám phá sự kiện ngay →
-            </a>
-            <a href="gioi-thieu.html" class="nut-bam"> Tìm hiểu thêm </a>
-          </div>
-
-          <!-- Khối thống kê nổi bật trên Hero -->
-          <div class="hero__thong-ke">
-            <div class="hero__thong-ke-item">
-              <span class="hero__thong-ke-so">50+</span>
-              <span class="hero__thong-ke-chu">Sự kiện mỗi tháng</span>
-            </div>
-            <div class="hero__thong-ke-item">
-              <span class="hero__thong-ke-so">10.000+</span>
-              <span class="hero__thong-ke-chu">Sinh viên tham gia</span>
-            </div>
-            <div class="hero__thong-ke-item">
-              <span class="hero__thong-ke-so">100%</span>
-              <span class="hero__thong-ke-chu">Cộng điểm rèn luyện</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="hero__hinh-anh">
-          <img
-            src="images/hero-image.jpg"
-            alt="Sinh viên năng động tham gia hoạt động tại trường Đại học Sư phạm Đà Nẵng"
-            width="560"
-            height="420"
-            fetchpriority="high"
-            decoding="async"
-          />
-          <div class="hero__the-noi">
-            <div>
-              <strong>Tiêu điểm tuần này</strong>
-              <span>Đang mở cổng đăng ký trực tuyến</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Khối dữ liệu từ REST API công khai: Thời tiết khuôn viên ĐH Sư Phạm Đà Nẵng (Open-Meteo) -->
-      <section class="thoi-tiet-section" aria-labelledby="tieu-de-thoi-tiet">
-        <div class="section-head mb-3">
-          <div>
-            <h2 id="tieu-de-thoi-tiet" class="tieu-de-muc">
-              Thời Tiết &amp; Hoạt Động Hôm Nay
-            </h2>
-            <p class="section-head__mota">
-              Dữ liệu quan trắc thời gian thực tại khuôn viên Trường ĐH Sư Phạm
-              – Đại học Đà Nẵng từ Open-Meteo REST API.
-            </p>
-          </div>
-        </div>
-        <div id="khoi-thoi-tiet-widget">
-          <noscript>
-            <div class="thoi-tiet-card" style="padding: 1.25rem; border: 1px dashed var(--border-nhat, #cbd5e1); border-radius: var(--radius-vua, 8px); background: var(--nen-surface, #ffffff);">
-              <p class="mb-1" style="color: var(--chu-chinh, #0f172a); font-weight: 600;">
-                ⚠️ Tiện ích thời tiết yêu cầu JavaScript để nạp dữ liệu động:
-              </p>
-              <p class="mb-0" style="color: var(--chu-phu, #475569); font-size: var(--co-chu-nho, 0.875rem);">
-                Vui lòng bật JavaScript trên trình duyệt của bạn để xem nhiệt độ và gợi ý hoạt động ngoài trời theo thời gian thực tại khuôn viên Trường ĐH Sư phạm Đà Nẵng (Open-Meteo REST API).
-              </p>
-            </div>
-          </noscript>
-        </div>
-      </section>
-
-      <!-- 2. Featured Events (Lưới 3 thẻ tự xuống dòng) -->
-      <section>
-        <div class="section-head">
-          <div>
-            <h2 class="tieu-de-muc">Sự kiện nổi bật</h2>
-            <p class="section-head__mota">
-              3 hoạt động tiêu biểu được sinh viên quan tâm nhiều nhất tuần này
-              — Lưới thẻ tự động co giãn và xuống dòng linh hoạt.
-            </p>
-          </div>
-          <a href="danh-sach.html" class="nut-bam nut-nho"
-            >Xem tất cả sự kiện →</a
-          >
-        </div>
-
-        <div class="luoi-3-the-tu-dong">
-          <!-- Thẻ 1: Hội thảo Công nghệ 4.0 -->
-          <article class="the-tin">
-            <div class="the-tin__media">
-              <span class="badge">Hội thảo</span>
-              <img
-                src="images/event1.jpg"
-                alt="Hội thảo Công nghệ 4.0 và Trí tuệ Nhân tạo trong giáo dục"
-                width="360"
-                height="225"
-                loading="lazy"
-              />
-            </div>
-            <div class="the-tin__body">
-              <h3>Hội thảo Công nghệ 4.0 &amp; Trí tuệ Nhân tạo (AI)</h3>
-              <p class="event-meta">Thời gian: 28/10/2026, 08:30 - 11:30</p>
-              <p class="event-meta">
-                Địa điểm: Hội trường A1 - Khu hiệu bộ ĐHSP
-              </p>
-              <p class="event-meta">Quyền lợi: +5 điểm rèn luyện</p>
-              <a href="chi-tiet.html?id=1" class="nut-bam nut-nhan nut-nho">
-                Xem chi tiết &amp; Đăng ký
-              </a>
-            </div>
-          </article>
-
-          <!-- Thẻ 2: Giải bóng đá sinh viên -->
-          <article class="the-tin">
-            <div class="the-tin__media">
-              <span class="badge badge--vang">Thể thao</span>
-              <img
-                src="images/event2.jpg"
-                alt="Giải Bóng Đá Sinh Viên Tranh Cúp UniEvent 2026"
-                width="360"
-                height="225"
-                loading="lazy"
-              />
-            </div>
-            <div class="the-tin__body">
-              <h3>Giải Bóng Đá Sinh Viên Tranh Cúp UniEvent 2026</h3>
-              <p class="event-meta">Thời gian: 22/10/2026, 15:00 - 18:00</p>
-              <p class="event-meta">Địa điểm: Sân vận động trường ĐH Sư Phạm</p>
-              <p class="event-meta">Quyền lợi: +4 điểm rèn luyện</p>
-              <a href="chi-tiet.html?id=4" class="nut-bam nut-nhan nut-nho">
-                Xem chi tiết &amp; Đăng ký
-              </a>
-            </div>
-          </article>
-
-          <!-- Thẻ 3: Nhạc hội mùa thu -->
-          <article class="the-tin">
-            <div class="the-tin__media">
-              <span class="badge badge--info">Văn nghệ</span>
-              <img
-                src="images/event3.jpg"
-                alt="Nhạc Hội Mùa Thu Autumn Music Festival 2026"
-                width="360"
-                height="225"
-                loading="lazy"
-              />
-            </div>
-            <div class="the-tin__body">
-              <h3>Nhạc Hội Mùa Thu — Autumn Music Festival 2026</h3>
-              <p class="event-meta">Thời gian: 30/10/2026, 19:00 - 22:00</p>
-              <p class="event-meta">Địa điểm: Quảng trường Trung tâm ĐHSP</p>
-              <p class="event-meta">Quyền lợi: +5 điểm rèn luyện</p>
-              <a href="chi-tiet.html?id=3" class="nut-bam nut-nhan nut-nho">
-                Xem chi tiết &amp; Đăng ký
-              </a>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <!-- 3. Khối giới thiệu / Kêu gọi hành động -->
-      <section class="khung-gioi-thieu">
-        <h2>Giới thiệu UniEvent</h2>
-        <p>
-          UniEvent là nền tảng quản lý sự kiện toàn diện cho sinh viên và cán bộ
-          giảng viên Trường Đại học Sư phạm – Đại học Đà Nẵng. Giúp bạn dễ dàng
-          khám phá, tham gia và lưu giữ những kỷ niệm thời thanh xuân ý nghĩa
-          nhất.
-        </p>
-        <a href="lien-he.html" class="nut-bam nut-vang">
-          Tham gia cùng chúng tôi
-        </a>
-      </section>
-    </main>
-
-    <!-- Aside (Vùng "ben" - Cột tiện ích phụ hiển thị trên màn hình máy tính) -->
-    <aside class="vung-ben chi-hien-tren-may-tinh">
-      <div class="widget">
-        <h3>Thông báo mới</h3>
-        <ul>
-          <li>Hạn đăng ký giải bóng đá sinh viên kết thúc vào 20/10.</li>
-          <li>
-            Hội trường A1 đang hoàn tất bảo trì hệ thống âm thanh, ánh sáng.
-          </li>
-          <li>Mở cổng đăng ký tình nguyện viên tiếp sức mùa thi 2026.</li>
-        </ul>
+        <a href="gioi-thieu.php" class="nut-bam"> Tìm hiểu thêm </a>
       </div>
 
-      <div class="widget">
-        <h3>Lưu ý sinh viên</h3>
-        <p class="mt-2 text-phu fs-nho lh-vua">
-          Quét mã QR tại cổng vào sự kiện để được điểm danh tự động và cộng điểm
-          rèn luyện trực tiếp vào tài khoản đào tạo!
-        </p>
+      <!-- Khối thống kê nổi bật trên Hero -->
+      <div class="hero__thong-ke">
+        <div class="hero__thong-ke-item">
+          <span class="hero__thong-ke-so">50+</span>
+          <span class="hero__thong-ke-chu">Sự kiện mỗi tháng</span>
+        </div>
+        <div class="hero__thong-ke-item">
+          <span class="hero__thong-ke-so">10.000+</span>
+          <span class="hero__thong-ke-chu">Sinh viên tham gia</span>
+        </div>
+        <div class="hero__thong-ke-item">
+          <span class="hero__thong-ke-so">100%</span>
+          <span class="hero__thong-ke-chu">Cộng điểm rèn luyện</span>
+        </div>
       </div>
+    </div>
 
-      <div class="widget">
-        <h3>Lịch sự kiện trong tuần</h3>
-        <p class="mt-2 text-phu fs-nho lh-vua">
-          Đã có 12 sự kiện đang diễn ra trong tuần này. Hãy kiểm tra lịch trình
-          để không bỏ lỡ các hoạt động hấp dẫn.
-        </p>
-        <a href="danh-sach.html" class="nut-bam nut-nho mt-3 w-full">
-          Xem tất cả sự kiện →
-        </a>
-      </div>
-    </aside>
-
-    <!-- Footer 4 cột chung (Vùng "chan") -->
-    <footer class="vung-chan">
-      <div class="container footer-grid">
-        <!-- Cột 1: Về UniEvent -->
+    <div class="hero__hinh-anh">
+      <img
+        src="images/hero-image.jpg"
+        alt="Sinh viên năng động tham gia hoạt động tại trường Đại học Sư phạm Đà Nẵng"
+        width="560"
+        height="420"
+        fetchpriority="high"
+        decoding="async"
+      />
+      <div class="hero__the-noi">
         <div>
-          <div class="footer-brand">
+          <strong>Tiêu điểm tuần này</strong>
+          <span>Đang mở cổng đăng ký trực tuyến</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Khối dữ liệu từ REST API công khai: Thời tiết khuôn viên ĐH Sư Phạm Đà Nẵng (Open-Meteo) -->
+  <section class="thoi-tiet-section" aria-labelledby="tieu-de-thoi-tiet">
+    <div class="section-head mb-3">
+      <div>
+        <h2 id="tieu-de-thoi-tiet" class="tieu-de-muc">
+          Thời Tiết &amp; Hoạt Động Hôm Nay
+        </h2>
+        <p class="section-head__mota">
+          Dữ liệu quan trắc thời gian thực tại khuôn viên Trường ĐH Sư Phạm – Đại học Đà Nẵng từ Open-Meteo REST API.
+        </p>
+      </div>
+    </div>
+    <div id="khoi-thoi-tiet-widget">
+      <noscript>
+        <div class="thoi-tiet-card" style="padding: 1.25rem; border: 1px dashed var(--border-nhat, #cbd5e1); border-radius: var(--radius-vua, 8px); background: var(--nen-surface, #ffffff);">
+          <p class="mb-1" style="color: var(--chu-chinh, #0f172a); font-weight: 600;">
+            ⚠️ Tiện ích thời tiết yêu cầu JavaScript để nạp dữ liệu động:
+          </p>
+          <p class="mb-0" style="color: var(--chu-phu, #475569); font-size: var(--co-chu-nho, 0.875rem);">
+            Vui lòng bật JavaScript trên trình duyệt của bạn để xem nhiệt độ và gợi ý hoạt động ngoài trời theo thời gian thực tại khuôn viên Trường ĐH Sư phạm Đà Nẵng (Open-Meteo REST API).
+          </p>
+        </div>
+      </noscript>
+    </div>
+  </section>
+
+  <!-- 2. Featured Events (Lưới 3 thẻ chuẩn CSS UniEvent) -->
+  <section>
+    <div class="section-head">
+      <div>
+        <h2 class="tieu-de-muc">Sự kiện nổi bật</h2>
+        <p class="section-head__mota">
+          3 hoạt động tiêu biểu được sinh viên quan tâm nhiều nhất tuần này — Lưới thẻ tự động co giãn và xuống dòng linh hoạt.
+        </p>
+      </div>
+      <a href="danh-sach.php" class="nut-bam nut-nho">Xem tất cả sự kiện →</a>
+    </div>
+
+    <div class="luoi-3-the-tu-dong">
+      <?php foreach ($noiBat as $sp): ?>
+        <article class="the-tin">
+          <div class="the-tin__media">
+            <span class="<?= e($sp->badgeClass ?: 'badge') ?>"><?= e($sp->tenDanhMuc) ?></span>
             <img
-              src="images/logo.png"
-              alt="Logo UniEvent Footer"
-              class="logo-img"
-              width="32"
-              height="32"
+              src="<?= e($sp->hinhAnh) ?>"
+              alt="<?= e($sp->ten) ?>"
+              width="360"
+              height="225"
+              loading="lazy"
             />
-            <span>UniEvent</span>
           </div>
-          <p>
-            Nền tảng quản lý và kết nối sự kiện đại học toàn diện dành cho sinh
-            viên và giảng viên Trường Đại học Sư phạm – Đại học Đà Nẵng.
-          </p>
-          <p class="mt-2">
-            Địa chỉ: 459 Tôn Đức Thắng, Hòa Khánh Nam, Liên Chiểu, Đà Nẵng
-          </p>
-          <p>Email: support@unievent.edu.vn | Hotline: 0236 3841 323</p>
-        </div>
-
-        <!-- Cột 2: Điều hướng nhanh -->
-        <div>
-          <h3>Điều hướng nhanh</h3>
-          <ul>
-            <li><a href="index.html">Trang chủ</a></li>
-            <li><a href="danh-sach.html">Danh sách sự kiện</a></li>
-            <li><a href="gioi-thieu.html">Giới thiệu nhóm phát triển</a></li>
-            <li><a href="lien-he.html">Liên hệ hỗ trợ</a></li>
-          </ul>
-        </div>
-
-        <!-- Cột 3: Hỗ trợ sinh viên -->
-        <div>
-          <h3>Hỗ trợ sinh viên</h3>
-          <ul>
-            <li><a href="lien-he.html">Hướng dẫn đăng ký vé</a></li>
-            <li>
-              <a href="danh-sach.html">Quy định tích lũy điểm rèn luyện</a>
-            </li>
-            <li><a href="lien-he.html">Câu hỏi thường gặp (FAQ)</a></li>
-            <li><a href="lien-he.html">Bảo mật thông tin sinh viên</a></li>
-          </ul>
-        </div>
-
-        <!-- Cột 4: Mạng xã hội & Bản quyền -->
-        <div>
-          <h3>Kết nối mạng xã hội</h3>
-          <p>
-            Theo dõi các kênh thông tin chính thức của Đoàn - Hội trường ĐHSP:
-          </p>
-          <div class="mang-xa-hoi mt-3">
-            <a
-              href="https://www.facebook.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Facebook UniEvent"
-              >f</a
-            >
-            <a
-              href="https://www.youtube.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Kênh YouTube UniEvent"
-              >▶</a
-            >
-            <a
-              href="https://twitter.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Twitter UniEvent"
-              >t</a
-            >
+          <div class="the-tin__body">
+            <h3><?= e($sp->ten) ?></h3>
+            <p class="event-meta">Thời gian: <?= e($sp->thoiGian) ?>, <?= e($sp->ngay) ?></p>
+            <p class="event-meta">Địa điểm: <?= e($sp->diaDiem) ?></p>
+            <p class="event-meta">Quyền lợi: +<?= (int)$sp->diemRenLuyen ?> điểm rèn luyện</p>
+            <div class="the-tin__actions mt-3">
+              <a href="chi-tiet.php?id=<?= $sp->id ?>" class="nut-bam nut-nhan nut-nho">
+                Xem chi tiết &amp; Đăng ký
+              </a>
+              <?php if ($gio->daXacNhan($sp->id)): ?>
+                <a href="gio-hang.php#da-xac-nhan" class="nut-bam nut-phu nut-nho" style="color:#15803d; background:#f0fdf4; border-color:#86efac; font-weight:700;" title="Bạn đã đăng ký thành công sự kiện này (1 vé)">
+                  ✓ Đã đăng ký
+                </a>
+              <?php elseif ($gio->dangChoXacNhan($sp->id)): ?>
+                <a href="gio-hang.php" class="nut-bam nut-phu nut-nho" style="color:#b45309; background:#fffbeb; border-color:#fde68a; font-weight:700;" title="Sự kiện đang chờ xác nhận - Bấm để xác nhận">
+                  ⏳ Chờ xác nhận
+                </a>
+              <?php else: ?>
+                <form action="gio-hang.php" method="POST" style="margin:0; display:inline;">
+                  <input type="hidden" name="hanh_dong" value="them">
+                  <input type="hidden" name="id" value="<?= $sp->id ?>">
+                  <input type="hidden" name="so_luong" value="1">
+                  <button type="submit" class="nut-bam nut-nho" title="Đăng ký tham gia sự kiện (1 vé)" style="cursor:pointer;">
+                    + Đăng ký
+                  </button>
+                </form>
+              <?php endif; ?>
+              <button
+                type="button"
+                class="nut-yeu-thich"
+                data-id="<?= $sp->id ?>"
+                aria-pressed="false"
+                aria-label="Lưu tin - Lưu sự kiện <?= e($sp->ten) ?>"
+                title="Lưu sự kiện vào danh sách yêu thích"
+              >
+                ♡ Lưu tin
+              </button>
+            </div>
           </div>
-        </div>
-      </div>
+        </article>
+      <?php endforeach; ?>
+    </div>
+  </section>
 
-      <div class="footer-bottom">
-        <div class="container">
-          <p>
-            © 2026 UniEvent — Hệ thống Quản lý Sự kiện | Khoa Toán - Tin, Trường
-            Đại học Sư phạm – Đại học Đà Nẵng.
+  <?php if (!empty($daXem)): ?>
+    <!-- Khối sự kiện đã xem gần đây (từ Cookie da_xem) -->
+    <section class="mt-5">
+      <div class="section-head mb-3">
+        <div>
+          <h2 class="tieu-de-muc">Sự kiện đã xem gần đây</h2>
+          <p class="section-head__mota">
+            Các sự kiện bạn đã quan tâm và truy cập trong các phiên duyệt web vừa qua (lưu bằng Cookie an toàn).
           </p>
         </div>
       </div>
-    </footer>
+      <div class="luoi-3-the-tu-dong">
+        <?php foreach ($daXem as $sp): ?>
+          <article class="the-tin">
+            <div class="the-tin__media">
+              <span class="<?= e($sp->badgeClass ?: 'badge') ?>"><?= e($sp->tenDanhMuc) ?></span>
+              <img
+                src="<?= e($sp->hinhAnh) ?>"
+                alt="<?= e($sp->ten) ?>"
+                width="360"
+                height="225"
+                loading="lazy"
+              />
+            </div>
+            <div class="the-tin__body">
+              <h3><?= e($sp->ten) ?></h3>
+              <p class="event-meta">Thời gian: <?= e($sp->thoiGian) ?>, <?= e($sp->ngay) ?></p>
+              <p class="event-meta">Địa điểm: <?= e($sp->diaDiem) ?></p>
+              <p class="event-meta">Quyền lợi: +<?= (int)$sp->diemRenLuyen ?> điểm rèn luyện</p>
+              <div class="the-tin__actions mt-3">
+                <a href="chi-tiet.php?id=<?= $sp->id ?>" class="nut-bam nut-nhan nut-nho">
+                  Xem chi tiết &amp; Đăng ký
+                </a>
+                <?php if ($gio->daXacNhan($sp->id)): ?>
+                  <a href="gio-hang.php#da-xac-nhan" class="nut-bam nut-phu nut-nho" style="color:#15803d; background:#f0fdf4; border-color:#86efac; font-weight:700;" title="Bạn đã đăng ký thành công sự kiện này (1 vé)">
+                    ✓ Đã đăng ký
+                  </a>
+                <?php elseif ($gio->dangChoXacNhan($sp->id)): ?>
+                  <a href="gio-hang.php" class="nut-bam nut-phu nut-nho" style="color:#b45309; background:#fffbeb; border-color:#fde68a; font-weight:700;" title="Sự kiện đang chờ xác nhận - Bấm để xác nhận">
+                    ⏳ Chờ xác nhận
+                  </a>
+                <?php else: ?>
+                  <form action="gio-hang.php" method="POST" style="margin:0; display:inline;">
+                    <input type="hidden" name="hanh_dong" value="them">
+                    <input type="hidden" name="id" value="<?= $sp->id ?>">
+                    <input type="hidden" name="so_luong" value="1">
+                    <button type="submit" class="nut-bam nut-nho" title="Đăng ký tham gia sự kiện (1 vé)" style="cursor:pointer;">
+                      + Đăng ký
+                    </button>
+                  </form>
+                <?php endif; ?>
+                <button
+                  type="button"
+                  class="nut-yeu-thich"
+                  data-id="<?= $sp->id ?>"
+                  aria-pressed="false"
+                  aria-label="Lưu tin - Lưu sự kiện <?= e($sp->ten) ?>"
+                  title="Lưu sự kiện vào danh sách yêu thích"
+                >
+                  ♡ Lưu tin
+                </button>
+              </div>
+            </div>
+          </article>
+        <?php endforeach; ?>
+      </div>
+    </section>
+  <?php endif; ?>
 
-    <!-- JavaScript ES6 Modules -->
-    <script type="module" src="js/main.js"></script>
-    <script type="module" src="js/trang-chu.js"></script>
-  </body>
-</html>
+  <!-- 3. Khối giới thiệu / Kêu gọi hành động -->
+  <section class="khung-gioi-thieu">
+    <h2>Giới thiệu UniEvent</h2>
+    <p>
+      UniEvent là nền tảng quản lý sự kiện toàn diện cho sinh viên và cán bộ
+      giảng viên Trường Đại học Sư phạm – Đại học Đà Nẵng. Giúp bạn dễ dàng
+      khám phá, tham gia và lưu giữ những kỷ niệm thời thanh xuân ý nghĩa
+      nhất.
+    </p>
+    <a href="lien-he.php" class="nut-bam nut-vang">
+      Tham gia cùng chúng tôi
+    </a>
+  </section>
+</main>
+
+<!-- Aside (Vùng "ben" - Cột tiện ích phụ hiển thị trên màn hình máy tính) -->
+<aside class="vung-ben chi-hien-tren-may-tinh">
+  <div class="widget">
+    <h3>Thông báo mới</h3>
+    <ul>
+      <li>Hạn đăng ký giải bóng đá sinh viên kết thúc vào 20/10.</li>
+      <li>
+        Hội trường A1 đang hoàn tất bảo trì hệ thống âm thanh, ánh sáng.
+      </li>
+      <li>Mở cổng đăng ký tình nguyện viên tiếp sức mùa thi 2026.</li>
+    </ul>
+  </div>
+
+  <div class="widget">
+    <h3>Lưu ý sinh viên</h3>
+    <p>
+      Mỗi sinh viên cần tham gia tối thiểu 3 hoạt động/học kỳ để đủ điều kiện
+      xét điểm rèn luyện loại Khá trở lên.
+    </p>
+  </div>
+
+  <div class="widget">
+    <h3>Lịch tuần này</h3>
+    <ol>
+      <li>22/10: Bóng đá nam</li>
+      <li>28/10: Hội thảo AI</li>
+      <li>30/10: Nhạc hội</li>
+    </ol>
+  </div>
+</aside>
+
+<!-- Nạp JS thời tiết cho trang chủ -->
+<script type="module" src="js/trang-chu.js"></script>
+
+<?php require __DIR__ . '/inc/footer.php'; ?>
