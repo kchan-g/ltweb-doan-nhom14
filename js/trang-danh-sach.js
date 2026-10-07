@@ -222,10 +222,10 @@ export async function moModalChiTiet(id) {
     modalMoTa.textContent = sk.moTaChiTiet || sk.moTaNgan;
   }
 
-  // Cập nhật link sang trang chi-tiet.html?id=... trong chân Modal
+  // Cập nhật link sang trang chi-tiet.php?id=... trong chân Modal
   const modalLinkChiTiet = document.getElementById("modal-link-chi-tiet");
   if (modalLinkChiTiet) {
-    modalLinkChiTiet.href = `chi-tiet.html?id=${sk.id}`;
+    modalLinkChiTiet.href = `chi-tiet.php?id=${sk.id}`;
   }
 
   // Khối nội dung nổi bật
@@ -297,7 +297,7 @@ function taoTheSuKien(sk) {
   badge.textContent = sk.tenDanhMuc || "Sự kiện";
 
   const aImg = document.createElement("a");
-  aImg.href = `chi-tiet.html?id=${sk.id}`;
+  aImg.href = `chi-tiet.php?id=${sk.id}`;
   aImg.setAttribute("aria-label", sk.ten);
 
   const img = document.createElement("img");
@@ -317,7 +317,7 @@ function taoTheSuKien(sk) {
 
   const h3 = document.createElement("h3");
   const aTieuDe = document.createElement("a");
-  aTieuDe.href = `chi-tiet.html?id=${sk.id}`;
+  aTieuDe.href = `chi-tiet.php?id=${sk.id}`;
   aTieuDe.textContent = sk.ten;
   aTieuDe.style.color = "inherit";
   aTieuDe.style.textDecoration = "none";

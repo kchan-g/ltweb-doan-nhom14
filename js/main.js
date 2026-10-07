@@ -8,7 +8,7 @@
 // Đánh dấu tài liệu đang kích hoạt JavaScript (hỗ trợ Progressive Enhancement)
 document.documentElement.classList.add("js");
 
-import { capNhatSoDemHeader } from "./yeu-thich.js";
+import { capNhatSoDemHeader, khoiTaoYeuThich } from "./yeu-thich.js";
 import { khoiTaoAuth } from "./xac-thuc.js";
 
 /**
@@ -73,7 +73,7 @@ function khoiTaoTimKiemHeader() {
     if (!tuKhoa) return;
 
     const duongDan = window.location.pathname;
-    const laTrangDanhSach = duongDan.endsWith("danh-sach.html");
+    const laTrangDanhSach = duongDan.endsWith("danh-sach.php") || duongDan.endsWith("danh-sach.html");
 
     if (laTrangDanhSach) {
       const oTimKiemDs = document.getElementById("tim-kiem-danh-sach");
@@ -83,7 +83,7 @@ function khoiTaoTimKiemHeader() {
         oTimKiemDs.focus();
       }
     } else {
-      window.location.href = `danh-sach.html?q=${encodeURIComponent(tuKhoa)}`;
+      window.location.href = `danh-sach.php?q=${encodeURIComponent(tuKhoa)}`;
     }
   };
 
@@ -107,13 +107,13 @@ if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", () => {
     khoiTaoMenu();
     khoiTaoTimKiemHeader();
-    capNhatSoDemHeader();
+    khoiTaoYeuThich();
     khoiTaoAuth();
   });
 } else {
   khoiTaoMenu();
   khoiTaoTimKiemHeader();
-  capNhatSoDemHeader();
+  khoiTaoYeuThich();
   khoiTaoAuth();
 }
 

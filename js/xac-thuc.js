@@ -128,6 +128,11 @@ export function dangXuatUED() {
  * Cập nhật khối tài khoản trên thanh Header ở mọi trang.
  */
 export function capNhatGiaoDienHeader() {
+  // Nếu PHP đã render khối đăng nhập (Quản trị hoặc Sinh viên) -> giữ nguyên giao diện chuẩn máy chủ
+  if (document.querySelector(".tai-khoan-admin, .tai-khoan-sinhvien")) {
+    return;
+  }
+
   const khuVucTaiKhoan =
     document.getElementById("khu-vuc-tai-khoan") ||
     document.querySelector(".header-phai .tai-khoan");
@@ -135,64 +140,25 @@ export function capNhatGiaoDienHeader() {
   if (!khuVucTaiKhoan) return;
 
   const sv = laySinhVienHienTai();
-  khuVucTaiKhoan.textContent = "";
-
   if (sv) {
-    // Đã đăng nhập: Hiển thị Avatar + Tên + MSSV + Nút Đăng xuất
+    khuVucTaiKhoan.textContent = "";
+    // Đã đăng nhập: Hiển thị Avatar + Tên + Nút Đăng xuất
     const wrap = document.createElement("div");
-    wrap.className = "user-badge-ued";
-
-    const avatar = document.createElement("span");
-    avatar.className = "user-badge-ued__avatar";
-    avatar.setAttribute("aria-hidden", "true");
-    avatar.textContent = (sv.hoTen || "SV").trim().charAt(0).toUpperCase();
-
-    const info = document.createElement("div");
-    info.className = "user-badge-ued__info";
-
-    const name = document.createElement("span");
-    name.className = "user-badge-ued__name";
-    name.textContent = sv.hoTen;
-
-    const mssv = document.createElement("span");
-    mssv.className = "user-badge-ued__mssv";
-    mssv.textContent = `MSSV: ${sv.mssv}`;
-
-    info.appendChild(name);
-    info.appendChild(mssv);
-
-    const btnLogout = document.createElement("button");
-    btnLogout.type = "button";
-    btnLogout.id = "btn-dang-xuat-ued";
-    btnLogout.className = "user-badge-ued__logout";
-    btnLogout.setAttribute("title", "Đăng xuất tài khoản UED");
-    btnLogout.setAttribute("aria-label", "Đăng xuất tài khoản sinh viên");
-    btnLogout.textContent = "Đăng xuất";
-    btnLogout.addEventListener("click", () => {
-      dangXuatUED();
-    });
-
-    wrap.appendChild(avatar);
-    wrap.appendChild(info);
-    wrap.appendChild(btnLogout);
+    wrap.className = "tai-khoan-sinhvien d-flex align-items-center gap-2";
+    wrap.innerHTML = `
+      <span class="fw-bold" style="font-size:0.8125rem; color:var(--mau-chinh);">👤 ${sv.hoTen || sv.email}</span>
+      <a href="dang-xuat.php" class="nut-bam nut-canh-bao nut-nho" style="padding:3px 8px; font-size:0.75rem;" title="Đăng xuất tài khoản">Đăng xuất</a>
+    `;
     khuVucTaiKhoan.appendChild(wrap);
   } else {
-    // Chưa đăng nhập: Hiển thị nút Đăng nhập UED
-    const btnLogin = document.createElement("button");
-    btnLogin.type = "button";
-    btnLogin.id = "btn-mo-dang-nhap-ued";
-    btnLogin.className = "nut-login-ued";
-    btnLogin.setAttribute("aria-haspopup", "dialog");
-    btnLogin.setAttribute(
-      "aria-label",
-      "Đăng nhập UED - Tài khoản email sinh viên trường",
-    );
-    btnLogin.textContent = "Đăng nhập UED";
-    btnLogin.addEventListener("click", () => {
-      moModalDangNhap();
-    });
-
-    khuVucTaiKhoan.appendChild(btnLogin);
+    // Chưa đăng nhập: Đảm bảo có nút Đăng nhập chung
+    if (!khuVucTaiKhoan.querySelector("a, button")) {
+      khuVucTaiKhoan.innerHTML = `
+        <a href="dang-nhap.php" class="nut-login-ued" style="text-decoration:none; display:inline-block;" title="Đăng nhập hệ thống UniEvent">
+          Đăng nhập
+        </a>
+      `;
+    }
   }
 }
 

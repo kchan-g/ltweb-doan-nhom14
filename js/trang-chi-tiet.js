@@ -101,7 +101,7 @@ function hienThiKhongTimThay(tieuDe, moTa, choPhepThuLai = false) {
   divNut.className = "d-flex gap-3 justify-center";
 
   const aQuayLai = document.createElement("a");
-  aQuayLai.href = "danh-sach.html";
+  aQuayLai.href = "danh-sach.php";
   aQuayLai.className = "nut-bam nut-nhan";
   aQuayLai.textContent = "← Quay lại danh sách sự kiện";
   divNut.appendChild(aQuayLai);
@@ -396,7 +396,7 @@ function renderSuKienLienQuan(tatCa, hienTai) {
     badge.textContent = sk.tenDanhMuc || "Sự kiện";
 
     const aImg = document.createElement("a");
-    aImg.href = `chi-tiet.html?id=${sk.id}`;
+    aImg.href = `chi-tiet.php?id=${sk.id}`;
     aImg.setAttribute("aria-label", sk.ten);
 
     const img = document.createElement("img");
@@ -415,7 +415,7 @@ function renderSuKienLienQuan(tatCa, hienTai) {
 
     const h3 = document.createElement("h3");
     const aTieuDe = document.createElement("a");
-    aTieuDe.href = `chi-tiet.html?id=${sk.id}`;
+    aTieuDe.href = `chi-tiet.php?id=${sk.id}`;
     aTieuDe.textContent = sk.ten;
     aTieuDe.style.color = "inherit";
     aTieuDe.style.textDecoration = "none";
@@ -437,7 +437,7 @@ function renderSuKienLienQuan(tatCa, hienTai) {
     actionsDiv.className = "the-tin__actions mt-3";
 
     const aChiTiet = document.createElement("a");
-    aChiTiet.href = `chi-tiet.html?id=${sk.id}`;
+    aChiTiet.href = `chi-tiet.php?id=${sk.id}`;
     aChiTiet.className = "nut-bam nut-nhan nut-nho";
     aChiTiet.textContent = "Xem chi tiết sự kiện";
 
