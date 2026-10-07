@@ -1,0 +1,7 @@
+/vendor/
+/logs/*
+!/logs/.htaccess
+/storage/*
+!/storage/.htaccess
+/uploads/*
+!/uploads/.gitkeep
