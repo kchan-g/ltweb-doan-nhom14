@@ -1,80 +1,38 @@
 <?php
-// inc/tai-khoan.php — Danh sách tài khoản người dùng hệ thống UniEvent
+/**
+ * inc/tai-khoan.php
+ * Danh sách tài khoản thử nghiệm của website UniEvent.
+ * Mật khẩu luôn được lưu dưới dạng băm an toàn bằng hàm password_hash().
+ */
+
 declare(strict_types=1);
 
 return [
-    // ---------------------------------------------------------
-    // 1. TÀI KHOẢN QUẢN TRỊ VIÊN (ADMIN)
-    // ---------------------------------------------------------
+    // 1. TÀI KHOẢN QUẢN TRỊ VIÊN -> Chuyển vào giao diện quản trị (quan-tri.php)
     'admin' => [
-        'ten'           => 'Quản trị viên UniEvent',
-        'mat_khau'      => password_hash('admin123', PASSWORD_BCRYPT),
-        'vai_tro'       => 'admin',
-        'email'         => 'admin@ued.udn.vn',
+        'matKhau' => password_hash('123456', PASSWORD_DEFAULT),
+        'tenHienThi' => 'Quản trị viên UniEvent',
+        'vaiTro' => 'admin',
     ],
-    'trang' => [
-        'ten'           => 'Nguyễn Thị Kiều Trang (Admin)',
-        'mat_khau'      => password_hash('trang123', PASSWORD_BCRYPT),
-        'vai_tro'       => 'admin',
-        'email'         => '3120224153@mssv.ued.udn.vn',
-        'mssv'          => '3120224153',
+    'hung' => [
+        'matKhau' => password_hash('123456', PASSWORD_DEFAULT),
+        'tenHienThi' => 'Đinh Trịnh Ngọc Hưng (Admin)',
+        'vaiTro' => 'admin',
     ],
 
-    // ---------------------------------------------------------
-    // 2. TÀI KHOẢN SINH VIÊN (SINH_VIEN) — Email chuẩn: mssv@mssv.ued.udn.vn
-    // ---------------------------------------------------------
-    'sinhvien' => [
-        'ten'           => 'Nguyễn Văn A',
-        'mat_khau'      => password_hash('sinhvien123', PASSWORD_BCRYPT),
-        'vai_tro'       => 'sinh_vien',
-        'email'         => '1234567899@mssv.ued.udn.vn',
-        'mssv'          => '1234567899',
-        'lop'           => '24CNTT2',
-        'diem_ren_luyen'=> 90,
+    // 2. TÀI KHOẢN SINH VIÊN -> Chuyển vào giao diện người dùng (index.php)
+    '3120224065@ued.udn.vn' => [
+        'matKhau' => password_hash('123456', PASSWORD_DEFAULT),
+        'tenHienThi' => 'Đinh Trịnh Ngọc Hưng',
+        'mssv' => '3120224065',
+        'khoa' => 'Khoa Toán - Tin',
+        'vaiTro' => 'sinhvien',
     ],
-    '3120224153' => [
-        'ten'           => 'Nguyễn Thị Kiều Trang',
-        'mat_khau'      => password_hash('12345678', PASSWORD_BCRYPT),
-        'vai_tro'       => 'sinh_vien',
-        'email'         => '3120224153@mssv.ued.udn.vn',
-        'mssv'          => '3120224153',
-        'lop'           => '24CNTT2',
-        'diem_ren_luyen'=> 90,
+    'sinhvien@ued.udn.vn' => [
+        'matKhau' => password_hash('123456', PASSWORD_DEFAULT),
+        'tenHienThi' => 'Nguyễn Văn A',
+        'mssv' => '3120220001',
+        'khoa' => 'Khoa Sư phạm KHTN',
+        'vaiTro' => 'sinhvien',
     ],
-    '3120224065' => [
-        'ten'           => 'Đinh Trịnh Ngọc Hưng',
-        'mat_khau'      => password_hash('12345678', PASSWORD_BCRYPT),
-        'vai_tro'       => 'sinh_vien',
-        'email'         => '3120224065@mssv.ued.udn.vn',
-        'mssv'          => '3120224065',
-        'lop'           => '24CNTT2',
-        'diem_ren_luyen'=> 92,
-    ],
-    '3120224011' => [
-        'ten'           => 'Nguyễn Hoài Bảo',
-        'mat_khau'      => password_hash('12345678', PASSWORD_BCRYPT),
-        'vai_tro'       => 'sinh_vien',
-        'email'         => '3120224011@mssv.ued.udn.vn',
-        'mssv'          => '3120224011',
-        'lop'           => '24CNTT2',
-        'diem_ren_luyen'=> 88,
-    ],
-    '3120224106' => [
-        'ten'           => 'Phan Nhuận',
-        'mat_khau'      => password_hash('12345678', PASSWORD_BCRYPT),
-        'vai_tro'       => 'sinh_vien',
-        'email'         => '3120224106@mssv.ued.udn.vn',
-        'mssv'          => '3120224106',
-        'lop'           => '24CNTT2',
-        'diem_ren_luyen'=> 89,
-    ],
-    '3120224024' => [
-        'ten'           => 'Lê Phú Đạt',
-        'mat_khau'      => password_hash('12345678', PASSWORD_BCRYPT),
-        'vai_tro'       => 'sinh_vien',
-        'email'         => '3120224024@mssv.ued.udn.vn',
-        'mssv'          => '3120224024',
-        'lop'           => '24CNTT2',
-        'diem_ren_luyen'=> 87,
-    ]
 ];

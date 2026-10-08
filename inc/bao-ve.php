@@ -1,31 +1,28 @@
 <?php
-// Middleware bảo vệ trang quản trị
+/**
+ * inc/bao-ve.php
+ * Tệp kiểm tra quyền truy cập bảo vệ các trang quản trị (quan-tri.php).
+ * Bắt buộc người dùng phải đăng nhập hợp lệ mới được tiếp tục,
+ * nếu chưa sẽ chuyển hướng sang dang-nhap.php kèm tham số quay lại.
+ */
+
 declare(strict_types=1);
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// 1. Chưa đăng nhập -> lưu URL hiện tại để chuyển tiếp sau khi đăng nhập thành công
-if (empty($_SESSION['nguoi_dung'])) {
-    $_SESSION['redirect_url'] = $_SERVER['REQUEST_URI'];
-    header('Location: dang-nhap.php');
+$goc ??= '';
+
+if (empty($_SESSION['user'])) {
+    $uriHienTai = $_SERVER['REQUEST_URI'] ?? 'quan-tri.php';
+    header('Location: ' . $goc . 'dang-nhap.php?tieptuc=' . urlencode($uriHienTai));
     exit;
 }
 
-// 2. Đã đăng nhập nhưng không phải admin -> từ chối quyền truy cập (HTTP 403)
-if (($_SESSION['nguoi_dung']['vai_tro'] ?? '') !== 'admin') {
-    http_response_code(403);
-    $tieuDe = '403 Forbidden - Từ chối truy cập';
-    $trang  = '403';
-    if (file_exists(__DIR__ . '/../403.php')) {
-        require_once __DIR__ . '/../403.php';
-    } else {
-        echo '<div style="font-family:sans-serif; text-align:center; padding:50px;">';
-        echo '<h1 style="color:#b91c1c;">403 Forbidden</h1>';
-        echo '<p>Khu vực này chỉ dành riêng cho Quản trị viên hệ thống UniEvent.</p>';
-        echo '<p><a href="index.php">&larr; Quay lại trang chủ</a></p>';
-        echo '</div>';
-    }
+// Nếu đã đăng nhập nhưng không phải quản trị viên -> chuyển về giao diện người dùng
+if (($_SESSION['user_role'] ?? '') !== 'admin') {
+    flash('Tài khoản sinh viên không có quyền truy cập vào giao diện Quản trị.');
+    header('Location: ' . $goc . 'index.php');
     exit;
 }
