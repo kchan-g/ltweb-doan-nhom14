@@ -379,6 +379,7 @@ require __DIR__ . '/../../inc/header.php';
               class="form-control <?= isset($loiDuToan['loai_web']) ? 'is-invalid' : '' ?>"
               required
             >
+              <option value="">-- Chọn loại hình website --</option>
               <?php foreach ($loaiWebMap as $maWeb => $thongTinWeb): ?>
                 <option
                   value="<?= e($maWeb) ?>"
@@ -624,6 +625,7 @@ require __DIR__ . '/../../inc/header.php';
               Chuyên đề quan tâm <span class="bat-buoc">*</span>
             </label>
             <select id="chuyen_de" name="chuyen_de" class="form-control" required>
+              <option value="">-- Chọn chuyên đề quan tâm --</option>
               <option value="Web Dev & UI/UX" <?= ($duLieuCu['chuyen_de'] ?? '') === 'Web Dev & UI/UX' ? 'selected' : '' ?>>Web Dev &amp; UI/UX (Frontend, Design System)</option>
               <option value="IoT & Hệ thống nhúng" <?= ($duLieuCu['chuyen_de'] ?? '') === 'IoT & Hệ thống nhúng' ? 'selected' : '' ?>>IoT &amp; Hệ thống nhúng (ESP8266, Arduino)</option>
               <option value="AI & Khai phá dữ liệu" <?= ($duLieuCu['chuyen_de'] ?? '') === 'AI & Khai phá dữ liệu' ? 'selected' : '' ?>>AI &amp; Khai phá dữ liệu (Machine Learning, Python)</option>
