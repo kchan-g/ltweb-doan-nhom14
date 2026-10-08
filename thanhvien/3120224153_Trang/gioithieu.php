@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="vi">
   <head>
     <meta charset="UTF-8" />
@@ -55,7 +55,7 @@
               phạm – Đại học Đà Nẵng
             </p>
             <p>
-              <strong>Vai trò dự án:</strong> Phụ trách xây dựng trang Chi tiết (chi-tiet.html)
+              <strong>Vai trò dự án:</strong> Phụ trách xây dựng trang Chi tiết (chi-tiet.php)
             </p>
           </div>
         </section>
@@ -337,7 +337,7 @@
 
     <footer class="profile-footer">
       <div class="container">
-        <a href="../../index.html" class="btn-back"
+        <a href="../../index.php" class="btn-back"
           >&larr; Quay lại Trang chủ UniEvent</a
         >
         <p>

@@ -1,16 +1,105 @@
-<!doctype html>
-<html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Profile cá nhân - Nguyễn Hoài Bảo | UniEvent</title>
-    <meta name="theme-color" content="#0284c7" />
-    <link rel="icon" type="image/svg+xml" href="../../images/favicon.svg" />
-    <!-- Nhúng biến Design System & CSS trang cá nhân -->
-    <link rel="stylesheet" href="../../css/01-bien.css" />
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
-  <body>
+<?php
+/**
+ * Trang cá nhân Nguyễn Hoài Bảo, dùng chung header/footer UniEvent.
+ * Có sổ lưu bút JSONL và bộ đếm lượt mở trang trong phiên hiện tại.
+ * Thử tại /thanhvien/3120224011_Bao/gioithieu.php; gửi lời nhắn rồi tải lại.
+ */
+declare(strict_types=1);
+
+require_once __DIR__ . '/../../inc/config.php';
+
+$goc = '../../';
+$tieuDe = 'Profile cá nhân - Nguyễn Hoài Bảo';
+$trang = '';
+$cssThem = [$goc . 'thanhvien/3120224011_Bao/css/style.css'];
+$tepLuuBut = __DIR__ . '/../../storage/bao_luubut.jsonl';
+$tepDem = __DIR__ . '/../../storage/bao_luot_xem.txt';
+$khoaDem = 'bao_da_tinh_luot_xem_profile';
+$tongLuotXem = null;
+if (empty($_SESSION[$khoaDem])) {
+  $tepDemMo = @fopen($tepDem, 'c+');
+  if ($tepDemMo !== false) {
+    if (flock($tepDemMo, LOCK_EX)) {
+      $tongLuotXem = (int) trim(stream_get_contents($tepDemMo));
+      $tongLuotXem++;
+      rewind($tepDemMo);
+      ftruncate($tepDemMo, 0);
+      fwrite($tepDemMo, (string) $tongLuotXem);
+      fflush($tepDemMo);
+      $_SESSION[$khoaDem] = true;
+      flock($tepDemMo, LOCK_UN);
+    }
+    fclose($tepDemMo);
+  }
+}
+$tepDemDoc = @file_get_contents($tepDem);
+if ($tepDemDoc !== false) {
+  $tongLuotXem = (int) trim($tepDemDoc);
+}
+
+if (empty($_SESSION['bao_luubut_csrf'])) {
+  $_SESSION['bao_luubut_csrf'] = bin2hex(random_bytes(32));
+}
+$csrfToken = $_SESSION['bao_luubut_csrf'];
+$loiLuuBut = '';
+$tenNhap = '';
+$loiNhan = '';
+$thongBao = (string) ($_SESSION['bao_luubut_thong_bao'] ?? '');
+unset($_SESSION['bao_luubut_thong_bao']);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  $tenNhap = isset($_POST['ten']) && is_string($_POST['ten']) ? trim($_POST['ten']) : '';
+  $loiNhan = isset($_POST['loi_nhan']) && is_string($_POST['loi_nhan']) ? trim($_POST['loi_nhan']) : '';
+  $tokenGui = isset($_POST['csrf_token']) && is_string($_POST['csrf_token']) ? $_POST['csrf_token'] : '';
+
+  if (!hash_equals($csrfToken, $tokenGui)) {
+    $loiLuuBut = 'Yêu cầu không hợp lệ. Vui lòng tải lại trang và thử lại.';
+  } elseif (preg_match('/\A.{2,60}\z/us', $tenNhap) !== 1) {
+    $loiLuuBut = 'Tên cần có từ 2 đến 60 ký tự hợp lệ.';
+  } elseif (preg_match('/\A.{1,500}\z/us', $loiNhan) !== 1) {
+    $loiLuuBut = 'Lời nhắn không được để trống và tối đa 500 ký tự.';
+  } else {
+    $dongLuu = json_encode(
+      ['ten' => $tenNhap, 'loi_nhan' => $loiNhan, 'thoi_gian' => date(DATE_ATOM)],
+      JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+    );
+
+    if ($dongLuu === false || @file_put_contents($tepLuuBut, $dongLuu . PHP_EOL, FILE_APPEND | LOCK_EX) === false) {
+      $loiLuuBut = 'Chưa thể lưu lời nhắn. Vui lòng thử lại sau.';
+    } else {
+      $_SESSION['bao_luubut_thong_bao'] = 'Lời nhắn của bạn đã được lưu.';
+      header('Location: gioithieu.php#guestbook', true, 303);
+      exit;
+    }
+  }
+}
+
+$danhSachLuuBut = [];
+if (is_file($tepLuuBut) && is_readable($tepLuuBut)) {
+  $tep = @fopen($tepLuuBut, 'rb');
+  if ($tep !== false) {
+    if (flock($tep, LOCK_SH)) {
+      while (($dong = fgets($tep)) !== false) {
+        $muc = json_decode($dong, true);
+        if (
+          is_array($muc)
+          && isset($muc['ten'], $muc['loi_nhan'], $muc['thoi_gian'])
+          && is_string($muc['ten'])
+          && is_string($muc['loi_nhan'])
+          && is_string($muc['thoi_gian'])
+        ) {
+          $danhSachLuuBut[] = $muc;
+        }
+      }
+      flock($tep, LOCK_UN);
+    }
+    fclose($tep);
+  }
+}
+$danhSachLuuBut = array_slice(array_reverse($danhSachLuuBut), 0, 5);
+
+require __DIR__ . '/../../inc/header.php';
+?>
     <!-- HEADER PROFILE -->
     <header class="profile-header">
       <div class="container">
@@ -19,6 +108,7 @@
         >
         <h1>Profile cá nhân</h1>
         <p>Chào mừng bạn đến trang giới thiệu của Nguyễn Hoài Bảo</p>
+        <p>Tổng lượt xem: <?= e($tongLuotXem ?? 'Chưa khả dụng') ?> (mỗi phiên chỉ tính một lần)</p>
       </div>
     </header>
 
@@ -32,6 +122,7 @@
           <li><a href="#skills">Kỹ năng</a></li>
           <li><a href="#schedule">Thời khóa biểu</a></li>
           <li><a href="#contact">Liên hệ</a></li>
+          <li><a href="#guestbook">Sổ lưu bút</a></li>
         </ul>
       </div>
     </nav>
@@ -484,12 +575,48 @@
           </table>
         </div>
       </section>
+
+      <section id="guestbook" class="profile-card" aria-labelledby="guestbook-heading">
+        <h2 id="guestbook-heading">Sổ lưu bút</h2>
+        <p>Gửi lời nhắn đến Nguyễn Hoài Bảo.</p>
+        <?php if ($thongBao !== ''): ?>
+          <p role="status"><?= e($thongBao) ?></p>
+        <?php endif; ?>
+        <?php if ($loiLuuBut !== ''): ?>
+          <p role="alert"><?= e($loiLuuBut) ?></p>
+        <?php endif; ?>
+        <form method="post" action="gioithieu.php#guestbook">
+          <input type="hidden" name="csrf_token" value="<?= e($csrfToken) ?>">
+          <p>
+            <label for="ten">Tên của bạn</label><br>
+            <input id="ten" name="ten" type="text" minlength="2" maxlength="60" required value="<?= e($tenNhap) ?>">
+          </p>
+          <p>
+            <label for="loi_nhan">Lời nhắn</label><br>
+            <textarea id="loi_nhan" name="loi_nhan" rows="4" maxlength="500" required><?= e($loiNhan) ?></textarea>
+          </p>
+          <button type="submit">Gửi lời nhắn</button>
+        </form>
+
+        <h3>Năm lời nhắn mới nhất</h3>
+        <?php if ($danhSachLuuBut === []): ?>
+          <p>Chưa có lời nhắn nào.</p>
+        <?php else: ?>
+          <ol>
+            <?php foreach ($danhSachLuuBut as $muc): ?>
+              <li>
+                <p><strong><?= e($muc['ten']) ?></strong> · <?= e($muc['thoi_gian']) ?></p>
+                <p><?= nl2br(e($muc['loi_nhan'])) ?></p>
+              </li>
+            <?php endforeach; ?>
+          </ol>
+        <?php endif; ?>
+      </section>
     </main>
 
-    <!-- FOOTER PROFILE -->
     <footer class="profile-footer">
       <div class="container">
-        <a href="../../index.html" class="btn-back"
+        <a href="<?= e($goc) ?>index.php" class="btn-back"
           >&larr; Quay lại Trang chủ UniEvent</a
         >
         <p>
@@ -517,5 +644,4 @@
 
     <!-- Kịch bản JavaScript tương tác cá nhân -->
     <script src="js/canhan.js"></script>
-  </body>
-</html>
+<?php require __DIR__ . '/../../inc/footer.php'; ?>

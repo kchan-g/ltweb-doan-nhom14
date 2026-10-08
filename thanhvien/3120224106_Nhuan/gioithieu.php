@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="vi">
   <head>
     <meta charset="UTF-8" />
@@ -365,7 +365,7 @@
     <!-- FOOTER PROFILE -->
     <footer class="profile-footer">
       <div class="container">
-        <a href="../../index.html" class="btn-back"
+        <a href="../../index.php" class="btn-back"
           >&larr; Quay lại Trang chủ UniEvent</a
         >
         <p>
@@ -377,3 +377,4 @@
     <script src="js/canhan.js"></script>
   </body>
 </html>
+
