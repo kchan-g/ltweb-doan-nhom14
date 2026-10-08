@@ -23,7 +23,7 @@ $menu = [
     'lien-he' => 'Liên hệ',
 ];
 
-if (daDangNhap()) {
+if (!empty($_SESSION['nguoi_dung']) && (($_SESSION['nguoi_dung']['vai_tro'] ?? '') === 'admin' || (function_exists('laAdmin') && laAdmin()))) {
     $menu['quan-tri'] = 'Quản trị';
 }
 ?>
@@ -117,18 +117,24 @@ if (daDangNhap()) {
         </a>
 
         <!-- Khối Đăng nhập chung cho Quản trị viên và Sinh viên -->
-        <?php if (daDangNhap()): ?>
-          <?php if (laAdmin()): ?>
+        <?php 
+          $u = $_SESSION['nguoi_dung'] ?? null;
+          $daLogin = !empty($u) || (function_exists('daDangNhap') && daDangNhap());
+          $isAdmin = ($u['vai_tro'] ?? '') === 'admin' || (function_exists('laAdmin') && laAdmin());
+          $tenHienThi = $u['ten'] ?? (function_exists('tenNguoiDung') ? tenNguoiDung() : 'Người dùng');
+        ?>
+        <?php if ($daLogin): ?>
+          <?php if ($isAdmin): ?>
             <!-- Giao diện khi đăng nhập bằng tài khoản Quản trị -->
             <div class="tai-khoan-admin d-flex align-items-center gap-2" role="group" aria-label="Tài khoản Quản trị">
-              <span class="fw-bold text-chinh" style="font-size: 0.8125rem;">🛡️ <?= e(tenNguoiDung()) ?></span>
+              <span class="fw-bold text-chinh" style="font-size: 0.8125rem;">🛡️ <?= e($tenHienThi) ?></span>
               <a href="<?= $goc ?>quan-tri.php" class="nut-bam nut-phu nut-nho" style="padding: 3px 8px; font-size: 0.75rem;" title="Mở trang Quản trị">Quản trị</a>
               <a href="<?= $goc ?>dang-xuat.php" class="nut-bam nut-canh-bao nut-nho" style="padding: 3px 8px; font-size: 0.75rem;" title="Đăng xuất khỏi hệ thống">Thoát</a>
             </div>
           <?php else: ?>
             <!-- Giao diện khi đăng nhập bằng email Sinh viên -->
             <div class="tai-khoan-sinhvien d-flex align-items-center gap-2" role="group" aria-label="Tài khoản Sinh viên">
-              <span class="fw-bold" style="font-size: 0.8125rem; color: var(--mau-chinh);">👤 <?= e(tenNguoiDung()) ?></span>
+              <span class="fw-bold" style="font-size: 0.8125rem; color: var(--mau-chinh);">👤 <?= e($tenHienThi) ?></span>
               <a href="<?= $goc ?>dang-xuat.php" class="nut-bam nut-canh-bao nut-nho" style="padding: 3px 8px; font-size: 0.75rem;" title="Đăng xuất tài khoản">Đăng xuất</a>
             </div>
           <?php endif; ?>
