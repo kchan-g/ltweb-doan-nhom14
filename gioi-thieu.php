@@ -128,7 +128,7 @@ require __DIR__ . '/inc/header.php';
           <p class="mssv">MSSV: 3120224011</p>
           <p class="vai-tro">Code trang Giới thiệu</p>
           <a
-            href="thanhvien/3120224011_Bao/gioithieu.html"
+            href="thanhvien/3120224011_Bao/gioithieu.php"
             class="nut-bam nut-nho"
           >
             Xem trang cá nhân →
@@ -148,7 +148,7 @@ require __DIR__ . '/inc/header.php';
           <p class="mssv">MSSV: 3120224024</p>
           <p class="vai-tro">Code trang Chi tiết</p>
           <a
-            href="thanhvien/3120224024_Dat/gioithieu.html"
+            href="thanhvien/3120224024_Dat/gioithieu.php"
             class="nut-bam nut-nho"
           >
             Xem trang cá nhân →
@@ -168,7 +168,7 @@ require __DIR__ . '/inc/header.php';
           <p class="mssv">MSSV: 3120224153</p>
           <p class="vai-tro">Thiết kế UX / UI</p>
           <a
-            href="thanhvien/3120224153_Trang/gioithieu.html"
+            href="thanhvien/3120224153_Trang/gioithieu.php"
             class="nut-bam nut-nho"
           >
             Xem trang cá nhân →
@@ -188,7 +188,7 @@ require __DIR__ . '/inc/header.php';
           <p class="mssv">MSSV: 3120224106</p>
           <p class="vai-tro">Code trang Danh sách</p>
           <a
-            href="thanhvien/3120224106_Nhuan/gioithieu.html"
+            href="thanhvien/3120224106_Nhuan/gioithieu.php"
             class="nut-bam nut-nho"
           >
             Xem trang cá nhân →
