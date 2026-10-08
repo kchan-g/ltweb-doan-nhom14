@@ -982,3 +982,315 @@ footer.profile-footer p {
   }
 
 }
+
+/* ============================================================
+   19. PHẦN B: CHỨC NĂNG MÁY CHỦ CỦA PHAN NHUẬN
+   ============================================================ */
+.header-theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.btn-theme-cookie {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 0.85rem;
+  background: var(--mau-nhan);
+  color: #1e293b;
+  border-radius: var(--radius-pill);
+  font-size: 0.85rem;
+  font-weight: var(--dam-day);
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.btn-theme-cookie:hover {
+  opacity: 0.9;
+}
+
+/* Dark Theme qua Cookie */
+.nhuan-dark-theme {
+  background-color: #0f172a;
+  color: #f8fafc;
+}
+
+.nhuan-dark-theme .profile-card {
+  background-color: #1e293b;
+  border-color: #334155;
+  color: #f8fafc;
+}
+
+.nhuan-dark-theme h1,
+.nhuan-dark-theme h2,
+.nhuan-dark-theme h3 {
+  color: #38bdf8;
+}
+
+.nhuan-dark-theme p {
+  color: #cbd5e1;
+}
+
+.nhuan-dark-theme .nhuan-form-card,
+.nhuan-dark-theme .nhuan-history-card {
+  background-color: #0f172a;
+  border-color: #334155;
+}
+
+.nhuan-dark-theme .nhuan-form .form-control {
+  background-color: #1e293b;
+  color: #f8fafc;
+  border-color: #475569;
+}
+
+.nhuan-dark-theme .nhuan-review-item {
+  background-color: #1e293b;
+  border-color: #334155;
+}
+
+/* Khối đánh giá kỹ năng */
+.nhuan-card-section {
+  scroll-margin-top: calc(var(--header-cao, 70px) + 1.5rem);
+  border-top: 4px solid var(--mau-chinh);
+  margin-bottom: var(--space-6);
+}
+
+.nhuan-card-header {
+  margin-bottom: var(--space-4);
+}
+
+.nhuan-card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.35rem 0.85rem;
+  background: rgba(2, 132, 199, 0.1);
+  color: var(--mau-chinh);
+  border-radius: var(--radius-pill);
+  font-size: 0.8rem;
+  font-weight: var(--dam-day);
+  margin-bottom: var(--space-2);
+}
+
+.nhuan-card-desc {
+  color: var(--chu-phu);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.nhuan-alert-success {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  border-radius: var(--radius-vua);
+  padding: var(--space-3) var(--space-4);
+  color: #166534;
+  margin-bottom: var(--space-4);
+}
+
+.nhuan-alert-icon {
+  font-size: 1.3rem;
+}
+
+.nhuan-grid-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+}
+
+@media (min-width: 860px) {
+  .nhuan-grid-layout {
+    grid-template-columns: 1.2fr 1fr;
+  }
+}
+
+.nhuan-form-card,
+.nhuan-history-card {
+  background: var(--nen-the);
+  border: 1px solid var(--border-nhat);
+  border-radius: var(--radius-vua);
+  padding: var(--space-4);
+}
+
+.nhuan-form-card h3,
+.nhuan-history-card h3 {
+  font-size: 1.15rem;
+  color: var(--mau-chinh);
+  margin-bottom: var(--space-3);
+}
+
+.nhuan-history-desc {
+  font-size: 0.85rem;
+  color: var(--chu-phu);
+  margin-bottom: var(--space-3);
+}
+
+.nhuan-form .form-label {
+  display: block;
+  font-weight: var(--dam-day);
+  font-size: 0.9rem;
+  margin-bottom: 0.35rem;
+}
+
+.nhuan-form .form-control {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--border-dam);
+  border-radius: var(--radius-nho);
+  font-family: inherit;
+  font-size: 0.95rem;
+  background-color: var(--nen-chinh);
+  color: var(--chu-chinh);
+}
+
+.nhuan-form .form-control:focus {
+  outline: none;
+  border-color: var(--mau-chinh-sang);
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);
+}
+
+.nhuan-form .form-control.is-invalid {
+  border-color: #dc2626;
+  background-color: #fff8f8;
+}
+
+.nhuan-empty-box {
+  text-align: center;
+  padding: var(--space-5) var(--space-2);
+  color: var(--chu-phu);
+}
+
+.nhuan-empty-box span {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.nhuan-review-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.nhuan-review-item {
+  background: var(--nen-chinh);
+  border: 1px solid var(--border-nhat);
+  border-radius: var(--radius-nho);
+  padding: var(--space-3);
+}
+
+.nhuan-review-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+
+.nhuan-stars {
+  font-size: 0.9rem;
+}
+
+.nhuan-review-skill {
+  font-size: 0.8rem;
+  color: var(--mau-chinh);
+  font-weight: var(--dam-day);
+  margin-bottom: 0.25rem;
+}
+
+.nhuan-review-text {
+  font-size: 0.875rem;
+  font-style: italic;
+  margin-bottom: 0.25rem;
+}
+
+.nhuan-review-date {
+  font-size: 0.75rem;
+  color: var(--chu-phu);
+}
+
+/* CSS cho Trắc nghiệm Web */
+.nhuan-quiz-result {
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  border-radius: var(--radius-vua);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.nhuan-quiz-result-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.nhuan-quiz-score {
+  font-size: 1.1rem;
+  font-weight: var(--dam-rat-day);
+  background: #15803d;
+  color: #ffffff;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-pill);
+}
+
+.nhuan-quiz-feedback {
+  font-size: 0.95rem;
+  color: #166534;
+  margin-bottom: var(--space-2);
+}
+
+.nhuan-quiz-details {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-2) 0;
+  font-size: 0.875rem;
+}
+
+.nhuan-quiz-details li {
+  padding: 0.25rem 0;
+  border-bottom: 1px dashed #bbf7d0;
+}
+
+.quiz-question-box {
+  background: var(--nen-chinh);
+  border: 1px solid var(--border-nhat);
+  border-radius: var(--radius-nho);
+  padding: var(--space-3);
+}
+
+.quiz-q-title {
+  margin-bottom: var(--space-2);
+  color: var(--chu-chinh);
+  font-size: 0.95rem;
+}
+
+.quiz-radio-label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.9rem;
+  color: var(--chu-chinh);
+  cursor: pointer;
+}
+
+.quiz-radio-label input[type="radio"] {
+  margin-right: var(--space-2);
+}
+
+.nhuan-alert-error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  border-radius: var(--radius-vua);
+  padding: var(--space-3) var(--space-4);
+  color: #991b1b;
+  margin-bottom: var(--space-4);
+}
+
