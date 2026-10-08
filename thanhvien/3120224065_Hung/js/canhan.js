@@ -56,7 +56,8 @@
       }
     }
 
-    // Đọc cài đặt từ localStorage (mặc định là light nếu chưa lưu)
+    // Đọc cài đặt từ cookie hung_theme hoặc class có sẵn từ máy chủ render
+    const hasServerDarkClass = document.body.classList.contains("dark-theme");
     let savedTheme = null;
     try {
       savedTheme = localStorage.getItem(STORAGE_KEY);
@@ -64,12 +65,12 @@
       // Bảo vệ nếu localStorage bị chặn
     }
 
-    const isInitiallyDark = savedTheme === "dark";
-
+    const isInitiallyDark = savedTheme ? savedTheme === "dark" : hasServerDarkClass;
     applyTheme(isInitiallyDark);
 
-    // Gán sự kiện click qua addEventListener (nút type="button" kích hoạt được bằng cả bàn phím)
-    themeBtn.addEventListener("click", () => {
+    // Gán sự kiện click: ngăn chặn hành vi điều hướng mặc định khi đã có JS
+    themeBtn.addEventListener("click", (evt) => {
+      evt.preventDefault();
       const willBeDark = !document.body.classList.contains("dark-theme");
       applyTheme(willBeDark);
       try {
@@ -77,6 +78,8 @@
       } catch {
         // Dự phòng an toàn
       }
+      // Đồng bộ cookie hung_theme phía máy chủ (hạn dùng 30 ngày)
+      document.cookie = `hung_theme=${willBeDark ? "dark" : "light"}; path=/; max-age=2592000; SameSite=Lax`;
     });
   }
 

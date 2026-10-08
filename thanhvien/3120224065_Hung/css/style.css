@@ -1149,3 +1149,297 @@ body.dark-theme .btn-back:hover {
     width: 100%;
   }
 }
+
+/* ============================================================
+   18. XỬ LÝ MÁY CHỦ: BỘ ĐẾM LƯỢT XEM & SỔ LƯU BÚT (PRG)
+   ============================================================ */
+.profile-header__top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.profile-view-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-pill);
+  font-size: var(--co-chu-meta);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(4px);
+}
+
+.profile-view-badge strong {
+  color: var(--gold-400);
+  font-size: 1.05rem;
+  font-weight: var(--dam-rat-day);
+}
+
+/* Khối sổ lưu bút */
+.luubut-section {
+  margin-top: var(--space-6);
+}
+
+.luubut-header {
+  margin-bottom: var(--space-5);
+}
+
+.luubut-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--navy-50);
+  color: var(--navy-800);
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-pill);
+  font-size: var(--co-chu-meta);
+  font-weight: var(--dam-day);
+  margin-bottom: var(--space-2);
+  border: 1px solid var(--navy-200);
+}
+
+.luubut-desc {
+  color: var(--chu-phu);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.luubut-desc code {
+  background: rgba(0, 0, 0, 0.05);
+  padding: 0.15rem 0.35rem;
+  border-radius: var(--radius-nho);
+  font-size: 0.875rem;
+  color: var(--mau-chinh);
+}
+
+.luubut-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+@media (min-width: 768px) {
+  .luubut-grid {
+    grid-template-columns: 1.1fr 1.3fr;
+  }
+}
+
+.luubut-form-card,
+.luubut-list-card {
+  background: var(--nen-the);
+  border: 1px solid var(--border-nhat);
+  border-radius: var(--radius-vua);
+  padding: var(--space-5);
+}
+
+.luubut-form-card h3,
+.luubut-list-card__header h3 {
+  font-size: 1.15rem;
+  color: var(--mau-chinh);
+  margin-bottom: var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.luubut-list-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+
+.luubut-list-card__header h3 {
+  margin-bottom: 0;
+}
+
+.luubut-total-pill {
+  background: var(--navy-100);
+  color: var(--navy-800);
+  font-size: 0.8rem;
+  font-weight: var(--dam-day);
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-pill);
+}
+
+.form-label {
+  display: block;
+  font-weight: var(--dam-day);
+  font-size: 0.9rem;
+  margin-bottom: 0.35rem;
+  color: var(--chu-chinh);
+}
+
+.bat-buoc {
+  color: #dc2626;
+}
+
+.luubut-form .form-control {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--border-dam);
+  border-radius: var(--radius-nho);
+  font-family: inherit;
+  font-size: 0.95rem;
+  background-color: var(--nen-chinh);
+  color: var(--chu-chinh);
+  transition: border-color var(--transition-nhanh), box-shadow var(--transition-nhanh);
+}
+
+.luubut-form .form-control:focus {
+  outline: none;
+  border-color: var(--mau-chinh-sang);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+.luubut-form .form-control.is-invalid {
+  border-color: #dc2626;
+  background-color: #fff8f8;
+}
+
+.luubut-items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.luubut-card-item {
+  background: var(--nen-chinh);
+  border: 1px solid var(--border-nhat);
+  border-left: 3px solid var(--mau-chinh);
+  border-radius: var(--radius-nho);
+  padding: var(--space-3) var(--space-4);
+  transition: transform var(--transition-nhanh), box-shadow var(--transition-nhanh);
+}
+
+.luubut-card-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.luubut-card-item__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.luubut-card-item__sender {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.luubut-card-item__sender strong {
+  color: var(--chu-chinh);
+  font-size: 0.95rem;
+}
+
+.luubut-role-tag {
+  background: var(--navy-50);
+  color: var(--navy-700);
+  font-size: 0.75rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--navy-200);
+}
+
+.luubut-time {
+  font-size: 0.8rem;
+  color: var(--chu-phu);
+}
+
+.luubut-card-item__content {
+  color: var(--chu-chinh);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 0;
+}
+
+.luubut-empty {
+  font-style: italic;
+  color: var(--chu-phu);
+  text-align: center;
+  padding: var(--space-5);
+}
+
+/* Dark Theme Overrides */
+body.dark-theme .luubut-badge {
+  background: #17273e;
+  color: #93c5fd;
+  border-color: #263e63;
+}
+
+body.dark-theme .luubut-desc code {
+  background: #1e293b;
+  color: #93c5fd;
+}
+
+body.dark-theme .luubut-form-card,
+body.dark-theme .luubut-list-card {
+  background: #0d182b;
+  border-color: #23354e;
+}
+
+body.dark-theme .luubut-form-card h3,
+body.dark-theme .luubut-list-card__header h3 {
+  color: #93c5fd;
+}
+
+body.dark-theme .luubut-total-pill {
+  background: #1e3352;
+  color: #93c5fd;
+}
+
+body.dark-theme .form-label {
+  color: #e2e8f0;
+}
+
+body.dark-theme .luubut-form .form-control {
+  background-color: #0b1322;
+  border-color: #2d456d;
+  color: #f8fafc;
+}
+
+body.dark-theme .luubut-form .form-control:focus {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.25);
+}
+
+body.dark-theme .luubut-form .form-control.is-invalid {
+  border-color: #f87171;
+  background-color: #201315;
+}
+
+body.dark-theme .luubut-card-item {
+  background: #0b1322;
+  border-color: #23354e;
+  border-left-color: #3b82f6;
+}
+
+body.dark-theme .luubut-card-item__sender strong {
+  color: #f8fafc;
+}
+
+body.dark-theme .luubut-role-tag {
+  background: #17273e;
+  color: #93c5fd;
+  border-color: #263e63;
+}
+
+body.dark-theme .luubut-time {
+  color: #94a3b8;
+}
+
+body.dark-theme .luubut-card-item__content {
+  color: #cbd5e1;
+}
