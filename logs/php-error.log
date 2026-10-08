@@ -1,0 +1,27 @@
+[05-Oct-2026 04:11:43 UTC] [2026-10-05 04:11:43] CẢNH BÁO BẢO MẬT: Đăng nhập thất bại với tài khoản 'hung' từ IP ::1
+
+[05-Oct-2026 04:11:44 UTC] [2026-10-05 04:11:44] Lỗi ngoại lệ: Không tìm thấy tệp dữ liệu E:\ltweb-doan-nhom14/data/su-kien.json tại E:\ltweb-doan-nhom14\src\Data\KhoSuKien.php:38
+Stack trace:
+#0 E:\ltweb-doan-nhom14\src\Data\KhoSuKien.php(88): App\Data\KhoSuKien->tatCa()
+#1 E:\ltweb-doan-nhom14\danh-sach.php(31): App\Data\KhoSuKien->timKiem(NULL, NULL, 'moi-nhat')
+#2 {main}
+[05-Oct-2026 04:52:41 UTC] [2026-10-05 04:52:41] CẢNH BÁO BẢO MẬT: Đăng nhập thất bại với tài khoản 'admin' từ IP ::1
+
+[05-Oct-2026 05:19:06 UTC] [2026-10-05 05:19:06] CẢNH BÁO BẢO MẬT: Đăng nhập thất bại với tài khoản 'hung' từ IP ::1
+
+[05-Oct-2026 05:19:07 UTC] [2026-10-05 05:19:07] Lỗi ngoại lệ: Không tìm thấy tệp dữ liệu E:\ltweb-doan-nhom14/data/su-kien.json tại E:\ltweb-doan-nhom14\src\Data\KhoSuKien.php:38
+Stack trace:
+#0 E:\ltweb-doan-nhom14\src\Data\KhoSuKien.php(88): App\Data\KhoSuKien->tatCa()
+#1 E:\ltweb-doan-nhom14\danh-sach.php(31): App\Data\KhoSuKien->timKiem(NULL, NULL, 'moi-nhat')
+#2 {main}
+[05-Oct-2026 08:44:43 UTC] [2026-10-05 08:44:43] CẢNH BÁO BẢO MẬT: Đăng nhập thất bại với tài khoản 'admin' từ IP ::1
+
+[05-Oct-2026 08:45:01 UTC] [2026-10-05 08:45:01] CẢNH BÁO BẢO MẬT: Đăng nhập thất bại với tài khoản '3120224065@ued.udn.vn' từ IP ::1
+
+[05-Oct-2026 08:47:29 UTC] [2026-10-05 08:47:29] CẢNH BÁO BẢO MẬT: Đăng nhập thất bại với tài khoản 'hung' từ IP ::1
+
+[05-Oct-2026 08:47:30 UTC] [2026-10-05 08:47:30] Lỗi ngoại lệ: Không tìm thấy tệp dữ liệu E:\ltweb-doan-nhom14/data/su-kien.json tại E:\ltweb-doan-nhom14\src\Data\KhoSuKien.php:38
+Stack trace:
+#0 E:\ltweb-doan-nhom14\src\Data\KhoSuKien.php(88): App\Data\KhoSuKien->tatCa()
+#1 E:\ltweb-doan-nhom14\danh-sach.php(33): App\Data\KhoSuKien->timKiem(NULL, NULL, 'moi-nhat')
+#2 {main}
