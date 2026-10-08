@@ -827,3 +827,494 @@ footer.profile-footer p {
   }
 }
 
+/* ============================================================
+   18. XỬ LÝ MÁY CHỦ: BỘ LỌC DỰ ÁN (GET) & MÁY TÍNH ĐIỂM (PRG)
+   ============================================================ */
+
+/* Khối dự án lọc GET */
+.projects-filter-section {
+  margin-top: var(--space-6);
+}
+
+.projects-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.projects-desc {
+  color: var(--chu-phu);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-top: var(--space-2);
+}
+
+.project-count-pill {
+  background: var(--navy-100);
+  color: var(--navy-800);
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-pill);
+  font-size: var(--co-chu-meta);
+  font-weight: var(--dam-day);
+  border: 1px solid var(--navy-200);
+  white-space: nowrap;
+}
+
+.projects-filter-bar {
+  background: var(--nen-the);
+  padding: var(--space-4);
+  border-radius: var(--radius-vua);
+  border: 1px solid var(--border-nhat);
+}
+
+.filter-categories-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.filter-tab-btn {
+  display: inline-block;
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.875rem;
+  font-weight: var(--dam-day);
+  color: var(--chu-chinh);
+  background: var(--nen-chinh);
+  border: 1px solid var(--border-dam);
+  text-decoration: none;
+  transition: all var(--transition-nhanh);
+}
+
+.filter-tab-btn:hover {
+  background: var(--navy-50);
+  color: var(--mau-chinh);
+  border-color: var(--mau-chinh);
+}
+
+.filter-tab-btn.active {
+  background: var(--mau-chinh);
+  color: #ffffff;
+  border-color: var(--mau-chinh);
+  box-shadow: 0 2px 4px rgba(2, 132, 199, 0.25);
+}
+
+.filter-controls-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.filter-search-box {
+  flex: 1;
+  min-width: 220px;
+}
+
+.filter-sort-box {
+  min-width: 170px;
+}
+
+.btn-action--compact {
+  padding: 0.55rem 1rem;
+  font-size: 0.9rem;
+}
+
+.btn-reset-filter {
+  color: #dc2626;
+  font-size: 0.875rem;
+  font-weight: var(--dam-day);
+  text-decoration: none;
+  padding: 0.4rem 0.7rem;
+  border-radius: var(--radius-nho);
+  transition: background var(--transition-nhanh);
+}
+
+.btn-reset-filter:hover {
+  background: #fef2f2;
+}
+
+.projects-cards-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .projects-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.project-card-item {
+  background: var(--nen-chinh);
+  border: 1px solid var(--border-nhat);
+  border-radius: var(--radius-vua);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--transition-nhanh), box-shadow var(--transition-nhanh);
+}
+
+.project-card-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+  border-color: var(--mau-chinh-sang);
+}
+
+.project-card-item__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-2);
+}
+
+.project-category-badge {
+  font-size: 0.75rem;
+  font-weight: var(--dam-rat-day);
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-pill);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.project-category-badge--fullstack {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
+.project-category-badge--frontend {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.project-category-badge--backend {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.project-category-badge--mobile {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.project-year-badge {
+  font-size: 0.8rem;
+  color: var(--chu-phu);
+  font-weight: var(--dam-vua);
+}
+
+.project-card-item__title {
+  font-size: 1.1rem;
+  color: var(--mau-chinh-toi);
+  margin-bottom: var(--space-2);
+}
+
+.project-card-item__desc {
+  font-size: 0.9rem;
+  color: var(--chu-phu);
+  line-height: 1.5;
+  flex: 1;
+  margin-bottom: var(--space-3);
+}
+
+.project-card-item__meta {
+  padding-top: var(--space-3);
+  border-top: 1px dashed var(--border-nhat);
+}
+
+.project-role-text {
+  font-size: 0.85rem;
+  color: var(--chu-chinh);
+  margin-bottom: var(--space-2);
+}
+
+.project-tech-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.tech-chip {
+  background: var(--nen-the);
+  border: 1px solid var(--border-nhat);
+  color: var(--chu-chinh);
+  font-size: 0.75rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: var(--radius-nho);
+}
+
+.filter-empty-state {
+  text-align: center;
+  padding: var(--space-6) var(--space-4);
+  background: var(--nen-the);
+  border-radius: var(--radius-vua);
+  border: 1px dashed var(--border-dam);
+}
+
+.empty-icon {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: var(--space-2);
+}
+
+/* ============================================================
+   KHỐI MÁY TÍNH ĐIỂM HỌC PHẦN (GRADE CALCULATOR)
+   ============================================================ */
+.grade-calc-section {
+  margin-top: var(--space-6);
+}
+
+.grade-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--navy-50);
+  color: var(--navy-800);
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-pill);
+  font-size: var(--co-chu-meta);
+  font-weight: var(--dam-day);
+  margin-bottom: var(--space-2);
+  border: 1px solid var(--navy-200);
+}
+
+.grade-desc {
+  color: var(--chu-phu);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.grade-result-card {
+  border-radius: var(--radius-vua);
+  padding: var(--space-5);
+  margin-bottom: var(--space-5);
+  border: 2px solid transparent;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.grade-result-card--thanh-cong {
+  background: #f0fdf4;
+  border-color: #22c55e;
+}
+
+.grade-result-card--canh-bao {
+  background: #fefce8;
+  border-color: #eab308;
+}
+
+.grade-result-card--that-bai {
+  background: #fef2f2;
+  border-color: #ef4444;
+}
+
+.grade-result-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.grade-result-time {
+  font-size: 0.8rem;
+  color: var(--chu-phu);
+  display: block;
+}
+
+.grade-result-course {
+  font-size: 1.25rem;
+  color: var(--chu-chinh);
+  margin-top: 2px;
+}
+
+.grade-pill {
+  font-weight: var(--dam-rat-day);
+  font-size: 0.9rem;
+/* --- Bổ sung Phần B: 1. Đặt lịch tư vấn & Kết nối dự án (POST - PRG - JSONL) --- */
+.tuvan-section {
+  scroll-margin-top: calc(var(--header-cao, 70px) + 1.5rem);
+  border-top: 4px solid var(--mau-chinh);
+}
+
+.tuvan-header {
+  margin-bottom: var(--space-4);
+}
+
+.tuvan-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.35rem 0.85rem;
+  background: rgba(2, 132, 199, 0.1);
+  color: var(--mau-chinh);
+  border-radius: var(--radius-pill);
+  font-size: 0.8rem;
+  font-weight: var(--dam-day);
+  margin-bottom: var(--space-2);
+}
+
+.tuvan-desc {
+  color: var(--chu-phu);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.tuvan-alert-success {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  border-radius: var(--radius-vua);
+  padding: var(--space-4);
+  margin-bottom: var(--space-5);
+  color: #166534;
+}
+
+.tuvan-alert-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.tuvan-layout-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+}
+
+@media (min-width: 860px) {
+  .tuvan-layout-grid {
+    grid-template-columns: 1.2fr 1fr;
+  }
+}
+
+.tuvan-form-card,
+.tuvan-history-card {
+  background: var(--nen-the);
+  border: 1px solid var(--border-nhat);
+  border-radius: var(--radius-vua);
+  padding: var(--space-5);
+}
+
+.tuvan-form-card h3,
+.tuvan-history-card h3 {
+  font-size: 1.15rem;
+  color: var(--mau-chinh);
+  margin-bottom: var(--space-3);
+}
+
+.tuvan-history-sub {
+  font-size: 0.85rem;
+  color: var(--chu-phu);
+  margin-bottom: var(--space-4);
+}
+
+.form-label {
+  display: block;
+  font-weight: var(--dam-day);
+  font-size: 0.9rem;
+  margin-bottom: 0.35rem;
+  color: var(--chu-chinh);
+}
+
+.bat-buoc {
+  color: #dc2626;
+}
+
+.tuvan-form .form-control {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--border-dam);
+  border-radius: var(--radius-nho);
+  font-family: inherit;
+  font-size: 0.95rem;
+  background-color: var(--nen-chinh);
+  color: var(--chu-chinh);
+  transition: border-color var(--transition-nhanh), box-shadow var(--transition-nhanh);
+}
+
+.tuvan-form .form-control:focus {
+  outline: none;
+  border-color: var(--mau-chinh-sang);
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);
+}
+
+.tuvan-form .form-control.is-invalid {
+  border-color: #dc2626;
+  background-color: #fff8f8;
+}
+
+.thong-bao-loi {
+  color: #dc2626;
+  font-size: 0.825rem;
+  margin-top: 4px;
+}
+
+.tuvan-empty-state {
+  text-align: center;
+  padding: var(--space-5) var(--space-3);
+  color: var(--chu-phu);
+}
+
+.tuvan-empty-icon {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: var(--space-2);
+}
+
+.tuvan-history-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.tuvan-history-item {
+  background: var(--nen-chinh);
+  border: 1px solid var(--border-nhat);
+  border-radius: var(--radius-nho);
+  padding: var(--space-3) var(--space-4);
+}
+
+.tuvan-history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.35rem;
+}
+
+.tuvan-history-badge {
+  background: rgba(2, 132, 199, 0.1);
+  color: var(--mau-chinh);
+  font-size: 0.75rem;
+  font-weight: var(--dam-day);
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-pill);
+}
+
+.tuvan-history-msg {
+  font-size: 0.875rem;
+  color: var(--chu-chinh);
+  line-height: 1.5;
+  margin-bottom: 0.4rem;
+  font-style: italic;
+}
+
+.tuvan-history-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--chu-phu);
+}
+
+
