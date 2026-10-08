@@ -731,3 +731,274 @@ footer.profile-footer p {
     }
   }
 }
+
+/* ============================================================
+   10. PHẦN B: CHỨC NĂNG MÁY CHỦ (SERVER-SIDE) CỦA LÊ PHÚ ĐẠT
+   ============================================================ */
+.dat-card-section {
+  scroll-margin-top: calc(var(--header-cao, 70px) + 1.5rem);
+  border-top: 4px solid var(--mau-chinh);
+  margin-bottom: var(--space-6);
+}
+
+.dat-card-header {
+  margin-bottom: var(--space-4);
+}
+
+.dat-card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.35rem 0.85rem;
+  background: rgba(2, 132, 199, 0.1);
+  color: var(--mau-chinh);
+  border-radius: var(--radius-pill);
+  font-size: 0.8rem;
+  font-weight: var(--dam-day);
+  margin-bottom: var(--space-2);
+}
+
+.dat-card-desc {
+  color: var(--chu-phu);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.dat-alert-success {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  border-radius: var(--radius-vua);
+  padding: var(--space-3) var(--space-4);
+  color: #166534;
+  margin-bottom: var(--space-4);
+}
+
+.dat-alert-error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  border-radius: var(--radius-vua);
+  padding: var(--space-3) var(--space-4);
+  color: #991b1b;
+  margin-bottom: var(--space-4);
+}
+
+.dat-alert-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.dat-form .form-label {
+  display: block;
+  font-weight: var(--dam-day);
+  font-size: 0.9rem;
+  margin-bottom: 0.35rem;
+  color: var(--chu-chinh);
+}
+
+.dat-form .form-control {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--border-dam);
+  border-radius: var(--radius-nho);
+  font-family: inherit;
+  font-size: 0.95rem;
+  background-color: var(--nen-chinh);
+  color: var(--chu-chinh);
+  transition: border-color var(--transition-nhanh), box-shadow var(--transition-nhanh);
+}
+
+.dat-form .form-control:focus {
+  outline: none;
+  border-color: var(--mau-chinh-sang);
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);
+}
+
+.dat-form .form-control.is-invalid {
+  border-color: #dc2626;
+  background-color: #fff8f8;
+}
+
+.form-hint {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--chu-phu);
+  margin-top: 0.25rem;
+}
+
+.bat-buoc {
+  color: #dc2626;
+}
+
+.thong-bao-loi {
+  color: #dc2626;
+  font-size: 0.825rem;
+  margin-top: 4px;
+}
+
+.btn-action {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.75rem 1.5rem;
+  background: var(--mau-chinh);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-vua);
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: var(--dam-day);
+  cursor: pointer;
+  transition: background-color var(--transition-nhanh);
+}
+
+.btn-action:hover {
+  background: var(--mau-chinh-toi);
+}
+
+/* Máy tính điểm */
+.dat-form-card {
+  background: var(--nen-the);
+  border: 1px solid var(--border-nhat);
+  border-radius: var(--radius-vua);
+  padding: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+.dat-form-card h3 {
+  font-size: 1.1rem;
+  color: var(--mau-chinh);
+  margin-bottom: var(--space-3);
+}
+
+.dat-inputs-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+}
+
+@media (min-width: 640px) {
+  .dat-inputs-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.dat-grade-result {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: var(--radius-vua);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.dat-grade-result--thanh-cong {
+  border-left: 5px solid #22c55e;
+  background: #f0fdf4;
+}
+
+.dat-grade-result--canh-bao {
+  border-left: 5px solid #eab308;
+  background: #fefce8;
+}
+
+.dat-grade-result--that-bai {
+  border-left: 5px solid #ef4444;
+  background: #fef2f2;
+}
+
+.dat-grade-result-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.dat-time-badge {
+  font-size: 0.75rem;
+  color: var(--chu-phu);
+  display: block;
+  margin-bottom: 2px;
+}
+
+.dat-course-name {
+  font-size: 1.1rem;
+  color: var(--chu-chinh);
+}
+
+.dat-status-pill {
+  font-size: 0.8rem;
+  font-weight: var(--dam-rat-day);
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-pill);
+}
+
+.dat-status-pill--thanh-cong {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+}
+
+.dat-status-pill--canh-bao {
+  background: #fef08a;
+  color: #854d0e;
+  border: 1px solid #fde047;
+}
+
+.dat-status-pill--that-bai {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+}
+
+.dat-grade-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+}
+
+@media (min-width: 640px) {
+  .dat-grade-grid {
+    grid-template-columns: repeat(3, 1fr) 1.2fr 1.2fr 1.5fr;
+  }
+}
+
+.dat-grade-box {
+  background: #ffffff;
+  padding: var(--space-3);
+  border-radius: var(--radius-nho);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.dat-grade-box span {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--chu-phu);
+  margin-bottom: 2px;
+}
+
+.dat-grade-box strong {
+  font-size: 1.2rem;
+  color: var(--chu-chinh);
+  font-weight: var(--dam-rat-day);
+}
+
+.dat-grade-box.highlight-10 strong {
+  color: var(--mau-chinh);
+}
+
+.dat-grade-box.highlight-4 strong {
+  color: #15803d;
+}
+
+.dat-grade-box.highlight-letter strong {
+  color: #b45309;
+}
+
