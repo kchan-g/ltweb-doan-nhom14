@@ -23,7 +23,7 @@ $menu = [
     'lien-he' => 'Liên hệ',
 ];
 
-if (daDangNhap()) {
+if (laAdmin()) {
     $menu['quan-tri'] = 'Quản trị';
 }
 ?>
