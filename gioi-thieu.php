@@ -159,12 +159,12 @@ require __DIR__ . '/inc/header.php';
         <article class="thanh-vien">
           <img
             src="images/anhthanhvien4.jpg"
-            alt="Chân dung thành viên Nguyễn Thị Kiểu Trang"
+            alt="Chân dung thành viên Nguyễn Thị Kiều Trang"
             width="96"
             height="96"
             loading="lazy"
           />
-          <h3>Nguyễn Thị Kiểu Trang</h3>
+          <h3>Nguyễn Thị Kiều Trang</h3>
           <p class="mssv">MSSV: 3120224153</p>
           <p class="vai-tro">Thiết kế UX / UI</p>
           <a
