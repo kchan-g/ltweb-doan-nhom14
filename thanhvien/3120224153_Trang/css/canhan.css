@@ -725,3 +725,341 @@ footer.profile-footer p {
     gap: var(--space-3);
   }
 }
+
+/* ============================================================
+   16. PHẦN B: CHỨC NĂNG MÁY CHỦ CỦA NGUYỄN THỊ KIỀU TRANG
+   ============================================================ */
+.header-view-counter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.view-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.35rem 0.85rem;
+  background: rgba(2, 132, 199, 0.1);
+  color: var(--mau-chinh);
+  border-radius: var(--radius-pill);
+  font-size: 0.85rem;
+  font-weight: var(--dam-day);
+}
+
+/* Khối nhận bản tin */
+.trang-card-section {
+  scroll-margin-top: calc(var(--header-cao, 70px) + 1.5rem);
+  border-top: 4px solid var(--mau-chinh);
+  margin-bottom: var(--space-6);
+}
+
+.trang-card-header {
+  margin-bottom: var(--space-4);
+}
+
+.trang-card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.35rem 0.85rem;
+  background: rgba(2, 132, 199, 0.1);
+  color: var(--mau-chinh);
+  border-radius: var(--radius-pill);
+  font-size: 0.8rem;
+  font-weight: var(--dam-day);
+  margin-bottom: var(--space-2);
+}
+
+.trang-card-desc {
+  color: var(--chu-phu);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.trang-alert-success {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  border-radius: var(--radius-vua);
+  padding: var(--space-3) var(--space-4);
+  color: #166534;
+  margin-bottom: var(--space-4);
+}
+
+.trang-alert-icon {
+  font-size: 1.4rem;
+}
+
+.trang-layout-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+}
+
+@media (min-width: 860px) {
+  .trang-layout-grid {
+    grid-template-columns: 1.2fr 1fr;
+  }
+}
+
+.trang-form-card,
+.trang-history-card {
+  background: var(--nen-the);
+  border: 1px solid var(--border-nhat);
+  border-radius: var(--radius-vua);
+  padding: var(--space-4);
+}
+
+.trang-form-card h3,
+.trang-history-card h3 {
+  font-size: 1.15rem;
+  color: var(--mau-chinh);
+  margin-bottom: var(--space-3);
+}
+
+.trang-history-desc {
+  font-size: 0.85rem;
+  color: var(--chu-phu);
+  margin-bottom: var(--space-3);
+}
+
+.trang-form .form-label {
+  display: block;
+  font-weight: var(--dam-day);
+  font-size: 0.9rem;
+  margin-bottom: 0.35rem;
+  color: var(--chu-chinh);
+}
+
+.bat-buoc {
+  color: #dc2626;
+}
+
+.trang-form .form-control {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--border-dam);
+  border-radius: var(--radius-nho);
+  font-family: inherit;
+  font-size: 0.95rem;
+  background-color: var(--nen-chinh);
+  color: var(--chu-chinh);
+}
+
+.trang-form .form-control:focus {
+  outline: none;
+  border-color: var(--mau-chinh-sang);
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);
+}
+
+.trang-form .form-control.is-invalid {
+  border-color: #dc2626;
+  background-color: #fff8f8;
+}
+
+.thong-bao-loi {
+  color: #dc2626;
+  font-size: 0.825rem;
+  margin-top: 4px;
+}
+
+.trang-empty-box {
+  text-align: center;
+  padding: var(--space-5) var(--space-2);
+  color: var(--chu-phu);
+}
+
+.trang-empty-box span {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.trang-subscriber-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.trang-sub-item {
+  background: var(--nen-chinh);
+  border: 1px solid var(--border-nhat);
+  border-radius: var(--radius-nho);
+  padding: var(--space-3);
+}
+
+.trang-sub-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.35rem;
+}
+
+.trang-sub-tag {
+  background: rgba(2, 132, 199, 0.1);
+  color: var(--mau-chinh);
+  font-size: 0.75rem;
+  font-weight: var(--dam-day);
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-pill);
+}
+
+.trang-sub-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--chu-phu);
+}
+
+/* CSS cho Công cụ dự toán chi phí & tiến độ website */
+.trang-estimator-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+}
+
+@media (min-width: 900px) {
+  .trang-estimator-layout {
+    grid-template-columns: 1.15fr 0.85fr;
+  }
+}
+
+.trang-options-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: 0.35rem;
+}
+
+.trang-radio-item,
+.trang-checkbox-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  background: var(--nen-chinh);
+  border: 1px solid var(--border-nhat);
+  padding: 0.6rem 0.85rem;
+  border-radius: var(--radius-nho);
+  cursor: pointer;
+  transition: border-color var(--transition-nhanh), background var(--transition-nhanh);
+}
+
+.trang-radio-item:hover,
+.trang-checkbox-item:hover {
+  border-color: var(--mau-chinh-sang);
+  background: #f0f9ff;
+}
+
+.trang-radio-item input,
+.trang-checkbox-item input {
+  margin-top: 0.2rem;
+  cursor: pointer;
+}
+
+.trang-option-label {
+  font-size: 0.9rem;
+  color: var(--chu-chinh);
+  cursor: pointer;
+}
+
+.trang-option-sub {
+  display: block;
+  font-size: 0.775rem;
+  color: var(--chu-phu);
+}
+
+.trang-result-box {
+  background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 100%);
+  border: 1px solid #bae6fd;
+  border-radius: var(--radius-vua);
+  padding: var(--space-4);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.trang-result-box h3 {
+  font-size: 1.2rem;
+  color: #0369a1;
+  margin-bottom: var(--space-3);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.trang-total-banner {
+  background: #ffffff;
+  border: 2px solid #0284c7;
+  border-radius: var(--radius-nho);
+  padding: var(--space-3);
+  text-align: center;
+  margin-bottom: var(--space-4);
+}
+
+.trang-total-banner .total-label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--chu-phu);
+  text-transform: uppercase;
+  font-weight: var(--dam-day);
+  margin-bottom: 0.25rem;
+}
+
+.trang-total-banner .total-amount {
+  display: block;
+  font-size: 1.85rem;
+  font-weight: var(--dam-rat-day);
+  color: #0284c7;
+  line-height: 1.1;
+}
+
+.trang-timeline-note {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: rgba(2, 132, 199, 0.1);
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-nho);
+  font-size: 0.85rem;
+  color: #075985;
+  margin-bottom: var(--space-3);
+}
+
+.trang-breakdown-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  background: #ffffff;
+  border-radius: var(--radius-nho);
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+
+.trang-breakdown-table th,
+.trang-breakdown-table td {
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.trang-breakdown-table th {
+  background: #f8fafc;
+  color: var(--mau-chinh);
+  text-align: left;
+  font-weight: var(--dam-day);
+}
+
+.trang-breakdown-table td.text-right,
+.trang-breakdown-table th.text-right {
+  text-align: right;
+}
+
+.trang-breakdown-table tr:last-child td {
+  border-bottom: none;
+}
+
