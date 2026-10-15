@@ -110,7 +110,7 @@ if (!file_exists($tepLuuBut)) {
 
 // Xử lý khi người dùng gửi biểu mẫu POST Sổ lưu bút
 $loiLuuBut = $_SESSION['hung_luubut_loi'] ?? [];
-$duLieuCu = $_SESSION['hung_luubut_cu'] ?? ['ho_ten' => '', 'vai_tro' => 'Bạn cùng lớp', 'loi_nhan' => ''];
+$duLieuCu = $_SESSION['hung_luubut_cu'] ?? ['ho_ten' => '', 'vai_tro' => '', 'loi_nhan' => ''];
 unset($_SESSION['hung_luubut_loi'], $_SESSION['hung_luubut_cu']);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['gui_luu_but'])) {
@@ -706,6 +706,7 @@ require __DIR__ . '/../../inc/header.php';
               required
               <?= isset($loiLuuBut['vai_tro']) ? 'aria-invalid="true" aria-describedby="loi-vai-tro"' : '' ?>
             >
+              <option value="" <?= empty($duLieuCu['vai_tro']) ? 'selected' : '' ?>>-- Chọn mối quan hệ / vai trò --</option>
               <?php
               $cacVaiTro = [
                   'Bạn cùng nhóm 14' => 'Bạn cùng nhóm 14',
@@ -714,7 +715,7 @@ require __DIR__ . '/../../inc/header.php';
                   'Đồng nghiệp / Bạn bè' => 'Đồng nghiệp / Bạn bè',
                   'Khách ghé thăm' => 'Khách ghé thăm',
               ];
-              $vaiTroChon = $duLieuCu['vai_tro'] ?? 'Bạn cùng lớp';
+              $vaiTroChon = $duLieuCu['vai_tro'] ?? '';
               foreach ($cacVaiTro as $val => $nhan):
               ?>
                 <option value="<?= e($val) ?>" <?= $vaiTroChon === $val ? 'selected' : '' ?>>
@@ -765,14 +766,19 @@ require __DIR__ . '/../../inc/header.php';
         <?php else: ?>
           <div class="luubut-items">
             <?php foreach ($namLoiNhanMoiNhat as $item): ?>
+              <?php
+                $thoiGianText = (string)($item['thoi_gian'] ?? '');
+                $dt = DateTime::createFromFormat('d/m/Y H:i', $thoiGianText);
+                $isoTime = $dt ? $dt->format('Y-m-d\TH:i') : date('Y-m-d\TH:i');
+              ?>
               <article class="luubut-card-item">
                 <div class="luubut-card-item__top">
                   <div class="luubut-card-item__sender">
-                    <strong><?= e($item['ho_ten'] ?? 'Ẩn danh') ?></strong>
+                    <h4 class="luubut-card-item__sender-name"><?= e($item['ho_ten'] ?? 'Ẩn danh') ?></h4>
                     <span class="luubut-role-tag"><?= e($item['vai_tro'] ?? 'Khách ghé thăm') ?></span>
                   </div>
-                  <time class="luubut-time" datetime="<?= e($item['thoi_gian'] ?? '') ?>">
-                    <?= e($item['thoi_gian'] ?? '') ?>
+                  <time class="luubut-time" datetime="<?= e($isoTime) ?>">
+                    <?= e($thoiGianText) ?>
                   </time>
                 </div>
                 <p class="luubut-card-item__content"><?= nl2br(e($item['loi_nhan'] ?? '')) ?></p>
