@@ -11,24 +11,24 @@
 
 ## 👥 Danh Sách Thành Viên Nhóm 14
 
-| STT | Họ và tên | Mã sinh viên | Tài khoản GitHub | Vai trò & Nhiệm vụ chính | Đóng góp |
-|:---:|---|:---:|:---:|---|:---:|
-| 1 | **Đinh Trịnh Ngọc Hưng** | `3120224065` | [@biidicodedao](https://github.com/biidicodedao) | **Nhóm trưởng**; Khung trang dùng chung, Cookie `da_xem`, Báo cáo | 20% |
-| 2 | **Nguyễn Hoài Bảo** | `3120224011` | [@nguyenhoaibao282006-creator](https://github.com/nguyenhoaibao282006-creator) | Thành viên; Khung header, footer, 404, 500, Kiểm thử bảo mật | 20% |
-| 3 | **Lê Phú Đạt** | `3120224024` | [@phudat1304](https://github.com/phudat1304) | Thành viên; Biểu mẫu liên hệ, Upload ảnh an toàn, Giỏ hàng Session | 20% |
-| 4 | **Phan Nhuận** | `3120224106` | [@nhuan14](https://github.com/nhuan14) | Thành viên; Danh sách sự kiện, Tìm kiếm từ khóa, Lọc & Sắp xếp GET | 20% |
-| 5 | **Nguyễn Thị Kiều Trang** | `3120224153` | [@kchan-g](https://github.com/kchan-g) | Thành viên; Đăng nhập, Đăng xuất, Phân quyền Trang quản trị Admin | 20% |
+| STT | Họ và tên                 | Mã sinh viên |                                Tài khoản GitHub                                | Vai trò & Nhiệm vụ chính                                           | Đóng góp |
+| :-: | ------------------------- | :----------: | :----------------------------------------------------------------------------: | ------------------------------------------------------------------ | :------: |
+|  1  | **Đinh Trịnh Ngọc Hưng**  | `3120224065` |                [@biidicodedao](https://github.com/biidicodedao)                | **Nhóm trưởng**; Khung trang dùng chung, Cookie `da_xem`, Báo cáo  |   20%    |
+|  2  | **Nguyễn Hoài Bảo**       | `3120224011` | [@nguyenhoaibao282006-creator](https://github.com/nguyenhoaibao282006-creator) | Thành viên; Khung header, footer, 404, 500, Kiểm thử bảo mật       |   20%    |
+|  3  | **Lê Phú Đạt**            | `3120224024` |                  [@phudat1304](https://github.com/phudat1304)                  | Thành viên; Biểu mẫu liên hệ, Upload ảnh an toàn, Giỏ hàng Session |   20%    |
+|  4  | **Phan Nhuận**            | `3120224106` |                     [@nhuan14](https://github.com/nhuan14)                     | Thành viên; Danh sách sự kiện, Tìm kiếm từ khóa, Lọc & Sắp xếp GET |   20%    |
+|  5  | **Nguyễn Thị Kiều Trang** | `3120224153` |                     [@kchan-g](https://github.com/kchan-g)                     | Thành viên; Đăng nhập, Đăng xuất, Phân quyền Trang quản trị Admin  |   20%    |
 
 ---
 
 ## 💻 Yêu Cầu Môi Trường
 
-* **PHP:** Phiên bản $\ge$ **8.1** (Bật các tiện ích mở rộng: `ext-fileinfo`, `ext-mbstring`, `ext-json`).
-* **Composer:** Công cụ quản lý phụ thuộc và tự động nạp lớp (Autoload PSR-4).
-* **Trình duyệt khuyến nghị:** Google Chrome, Mozilla Firefox, Microsoft Edge (hỗ trợ DevTools, Lighthouse).
-* **Môi trường chạy web:**
-  * Cách khuyến nghị: PHP Built-in Server (`php -S localhost:8000`).
-  * Hoặc máy chủ cục bộ: XAMPP, Laragon, WampServer.
+- **PHP:** Phiên bản $\ge$ **8.1** (Bật các tiện ích mở rộng: `ext-fileinfo`, `ext-mbstring`, `ext-json`).
+- **Composer:** Công cụ quản lý phụ thuộc và tự động nạp lớp (Autoload PSR-4).
+- **Trình duyệt khuyến nghị:** Google Chrome, Mozilla Firefox, Microsoft Edge (hỗ trợ DevTools, Lighthouse).
+- **Môi trường chạy web:**
+  - Cách khuyến nghị: PHP Built-in Server (`php -S localhost:8000`).
+  - Hoặc máy chủ cục bộ: XAMPP, Laragon, WampServer.
 
 ---
 
@@ -41,7 +41,7 @@
    ```bash
    composer install
    ```
-   *(hoặc nếu đã có sẵn chỉ cần cập nhật bộ nạp: `composer dump-autoload`)*
+   _(hoặc nếu đã có sẵn chỉ cần cập nhật bộ nạp: `composer dump-autoload`)_
 3. Khởi động máy chủ web tích hợp của PHP tại cổng `8000`:
    ```bash
    php -S localhost:8000
@@ -67,11 +67,11 @@
 
 Hệ thống lưu mật khẩu dạng băm an toàn bằng `password_hash()` theo thuật toán mặc định `PASSWORD_DEFAULT`.
 
-| Loại tài khoản | Tên đăng nhập (Username / Email) | Mật khẩu | Quyền hạn & Chuyển hướng |
-|---|---|:---:|---|
-| **Quản trị viên (Admin)** | `admin` *(hoặc `hung`)* | `123456` | Toàn quyền; tự động vào trang Quản trị (`quan-tri.php`) xem danh sách liên hệ & tệp đính kèm |
-| **Sinh viên (User)** | `3120224065@ued.udn.vn` | `123456` | Tài khoản sinh viên Khoa Toán - Tin; xem và đăng ký vé sự kiện |
-| **Sinh viên thử nghiệm** | `sinhvien@ued.udn.vn` | `123456` | Tài khoản sinh viên Khoa KHTN |
+| Loại tài khoản            | Tên đăng nhập (Username / Email) | Mật khẩu | Quyền hạn & Chuyển hướng                                                                     |
+| ------------------------- | -------------------------------- | :------: | -------------------------------------------------------------------------------------------- |
+| **Quản trị viên (Admin)** | `admin` _(hoặc `hung`)_          | `123456` | Toàn quyền; tự động vào trang Quản trị (`quan-tri.php`) xem danh sách liên hệ & tệp đính kèm |
+| **Sinh viên (User)**      | `3120224065@ued.udn.vn`          | `123456` | Tài khoản sinh viên Khoa Toán - Tin; xem và đăng ký vé sự kiện                               |
+| **Sinh viên thử nghiệm**  | `sinhvien@ued.udn.vn`            | `123456` | Tài khoản sinh viên Khoa KHTN                                                                |
 
 ---
 
@@ -79,24 +79,24 @@ Hệ thống lưu mật khẩu dạng băm an toàn bằng `password_hash()` the
 
 ### 1. Sáu chức năng bắt buộc đồ án (Phần A)
 
-| STT | Tên chức năng | Đường dẫn URL | Tệp PHP xử lý | Người phụ trách |
-|:---:|---|---|---|:---:|
-| **1** | Khung trang dùng chung, Menu điều hướng, Trang lỗi thân thiện 404 & 500 | `http://localhost:8000/404.php`<br>`http://localhost:8000/500.php` | `inc/config.php`<br>`inc/header.php`<br>`inc/footer.php`<br>`404.php`, `500.php` | Bảo & Hưng |
-| **2** | Danh sách sự kiện động từ JSON, Tìm kiếm từ khóa, Lọc danh mục, Sắp xếp tiêu chí qua GET | `http://localhost:8000/danh-sach.php` | `danh-sach.php`<br>`src/Data/KhoSuKien.php`<br>`src/Models/SuKien.php` | Nhuận |
-| **3** | Chi tiết sự kiện (`?id=`), Thêm vào giỏ vé, Ghi nhận Cookie an toàn nhớ 4 mục xem gần nhất | `http://localhost:8000/chi-tiet.php?id=1`<br>`http://localhost:8000/index.php` | `chi-tiet.php`<br>`index.php`<br>`src/Models/SuKien.php` | Trang & Hưng |
-| **4** | Biểu mẫu liên hệ: Kiểm tra toàn bộ tại máy chủ, Giữ lại dữ liệu, Upload ảnh an toàn (finfo MIME), Ghi JSON Lines, Mô hình PRG | `http://localhost:8000/lien-he.php` | `lien-he.php`<br>`src/Data/KhoLienHe.php` | Đạt |
-| **5** | Quản lý giỏ vé qua Session: Thêm vé, Sửa số lượng, Hủy vé, Xóa toàn bộ, Tính tổng điểm rèn luyện | `http://localhost:8000/gio-hang.php` | `gio-hang.php`<br>`src/Services/GioHang.php` | Đạt |
-| **6** | Đăng nhập đơn giản, Quản lý phiên Session, Đăng xuất, Bảo vệ trang quản trị liệt kê liên hệ kèm ảnh | `http://localhost:8000/dang-nhap.php`<br>`http://localhost:8000/quan-tri.php`<br>`http://localhost:8000/dang-xuat.php` | `dang-nhap.php`<br>`quan-tri.php`<br>`dang-xuat.php`<br>`inc/bao-ve.php` | Trang |
+|  STT  | Tên chức năng                                                                                                                 | Đường dẫn URL                                                                                                          | Tệp PHP xử lý                                                                    | Người phụ trách |
+| :---: | ----------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | :-------------: |
+| **1** | Khung trang dùng chung, Menu điều hướng, Trang lỗi thân thiện 404 & 500                                                       | `http://localhost:8000/404.php`<br>`http://localhost:8000/500.php`                                                     | `inc/config.php`<br>`inc/header.php`<br>`inc/footer.php`<br>`404.php`, `500.php` |   Bảo & Hưng    |
+| **2** | Danh sách sự kiện động từ JSON, Tìm kiếm từ khóa, Lọc danh mục, Sắp xếp tiêu chí qua GET                                      | `http://localhost:8000/danh-sach.php`                                                                                  | `danh-sach.php`<br>`src/Data/KhoSuKien.php`<br>`src/Models/SuKien.php`           |      Nhuận      |
+| **3** | Chi tiết sự kiện (`?id=`), Thêm vào giỏ vé, Ghi nhận Cookie an toàn nhớ 4 mục xem gần nhất                                    | `http://localhost:8000/chi-tiet.php?id=1`<br>`http://localhost:8000/index.php`                                         | `chi-tiet.php`<br>`index.php`<br>`src/Models/SuKien.php`                         |  Trang & Hưng   |
+| **4** | Biểu mẫu liên hệ: Kiểm tra toàn bộ tại máy chủ, Giữ lại dữ liệu, Upload ảnh an toàn (finfo MIME), Ghi JSON Lines, Mô hình PRG | `http://localhost:8000/lien-he.php`                                                                                    | `lien-he.php`<br>`src/Data/KhoLienHe.php`                                        |       Đạt       |
+| **5** | Quản lý giỏ vé qua Session: Thêm vé, Sửa số lượng, Hủy vé, Xóa toàn bộ, Tính tổng điểm rèn luyện                              | `http://localhost:8000/gio-hang.php`                                                                                   | `gio-hang.php`<br>`src/Services/GioHang.php`                                     |       Đạt       |
+| **6** | Đăng nhập đơn giản, Quản lý phiên Session, Đăng xuất, Bảo vệ trang quản trị liệt kê liên hệ kèm ảnh                           | `http://localhost:8000/dang-nhap.php`<br>`http://localhost:8000/quan-tri.php`<br>`http://localhost:8000/dang-xuat.php` | `dang-nhap.php`<br>`quan-tri.php`<br>`dang-xuat.php`<br>`inc/bao-ve.php`         |      Trang      |
 
 ### 2. Trang cá nhân và 2 chức năng máy chủ của từng thành viên (Phần B)
 
-| Thành viên | Đường dẫn trang cá nhân | Hai chức năng xử lý phía máy chủ (Server-side) |
-|---|---|---|
-| **Đinh Trịnh Ngọc Hưng** | `http://localhost:8000/thanhvien/3120224065_Hung/gioithieu.php` | 1. Bộ đếm lượt xem trang cá nhân (mỗi phiên tính 1 lần, lưu `storage/3120224065_views.txt`)<br>2. Sổ lưu bút sinh viên (POST $\rightarrow$ Validate server $\rightarrow$ Lưu JSONL $\rightarrow$ PRG $\rightarrow$ Hiện 5 lời nhắn mới nhất) |
-| **Nguyễn Hoài Bảo** | `http://localhost:8000/thanhvien/3120224011_Bao/gioithieu.php` | 1. Lọc danh mục hồ sơ kỹ năng qua GET `?nhom=`<br>2. Đặt lịch tư vấn học tập & kết nối dự án (Validate server $\rightarrow$ Lưu `storage/3120224011_lienhe.jsonl` $\rightarrow$ PRG) |
-| **Phan Nhuận** | `http://localhost:8000/thanhvien/3120224106_Nhuan/gioithieu.php` | 1. Khảo sát & Đánh giá năng lực chuyên môn (Lưu `storage/3120224106_danhgia.jsonl` $\rightarrow$ PRG)<br>2. Bài trắc nghiệm kiến thức Web tự động chấm điểm phía máy chủ |
-| **Lê Phú Đạt** | `http://localhost:8000/thanhvien/3120224024_Dat/gioithieu.php` | 1. Công cụ tính điểm học phần tích lũy theo công thức tín chỉ ($0.2 \times A1 + 0.3 \times A2 + 0.5 \times A3$)<br>2. Tải lên ảnh đại diện cá nhân an toàn (Kiểm tra MIME qua finfo $\rightarrow$ Đổi tên ngẫu nhiên $\rightarrow$ PRG) |
-| **Nguyễn Thị Kiều Trang** | `http://localhost:8000/thanhvien/3120224153_Trang/gioithieu.php` | 1. Đăng ký nhận bản tin công nghệ & đồ án (Validate server $\rightarrow$ Lưu `storage/3120224153_bantin.jsonl` $\rightarrow$ PRG)<br>2. Công cụ dự toán chi phí & tiến độ phát triển website tự động |
+| Thành viên                | Đường dẫn trang cá nhân                                          | Hai chức năng xử lý phía máy chủ (Server-side)                                                                                                                                                                                               |
+| ------------------------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Đinh Trịnh Ngọc Hưng**  | `http://localhost:8000/thanhvien/3120224065_Hung/gioithieu.php`  | 1. Bộ đếm lượt xem trang cá nhân (mỗi phiên tính 1 lần, lưu `storage/3120224065_views.txt`)<br>2. Sổ lưu bút sinh viên (POST $\rightarrow$ Validate server $\rightarrow$ Lưu JSONL $\rightarrow$ PRG $\rightarrow$ Hiện 5 lời nhắn mới nhất) |
+| **Nguyễn Hoài Bảo**       | `http://localhost:8000/thanhvien/3120224011_Bao/gioithieu.php`   | 1. Lọc danh mục hồ sơ kỹ năng qua GET `?nhom=`<br>2. Đặt lịch tư vấn học tập & kết nối dự án (Validate server $\rightarrow$ Lưu `storage/3120224011_lienhe.jsonl` $\rightarrow$ PRG)                                                         |
+| **Phan Nhuận**            | `http://localhost:8000/thanhvien/3120224106_Nhuan/gioithieu.php` | 1. Khảo sát & Đánh giá năng lực chuyên môn (Lưu `storage/3120224106_danhgia.jsonl` $\rightarrow$ PRG)<br>2. Bài trắc nghiệm kiến thức Web tự động chấm điểm phía máy chủ                                                                     |
+| **Lê Phú Đạt**            | `http://localhost:8000/thanhvien/3120224024_Dat/gioithieu.php`   | 1. Công cụ tính điểm học phần tích lũy theo công thức tín chỉ ($0.2 \times A1 + 0.3 \times A2 + 0.5 \times A3$)<br>2. Tải lên ảnh đại diện cá nhân an toàn (Kiểm tra MIME qua finfo $\rightarrow$ Đổi tên ngẫu nhiên $\rightarrow$ PRG)      |
+| **Nguyễn Thị Kiều Trang** | `http://localhost:8000/thanhvien/3120224153_Trang/gioithieu.php` | 1. Đăng ký nhận bản tin công nghệ & đồ án (Validate server $\rightarrow$ Lưu `storage/3120224153_bantin.jsonl` $\rightarrow$ PRG)<br>2. Công cụ dự toán chi phí & tiến độ phát triển website tự động                                         |
 
 ---
 
@@ -184,4 +184,3 @@ ltweb-doan-nhom14/
    Tất cả 6 chức năng chính (tìm kiếm, lọc, thêm giỏ, gửi liên hệ, đăng nhập, phân trang) đều vận hành hoàn hảo 100% bằng xử lý máy chủ PHP thuần ngay cả khi tắt JavaScript trên trình duyệt.
 8. **Đạt chuẩn W3C & Lighthouse Accessibility:**  
    Mã nguồn HTML do PHP sinh ra đạt **0 lỗi W3C Markup Validator**, không cuộn ngang trên màn hình 360px và đạt điểm kiểm định trợ năng **Lighthouse Accessibility $\ge 96/100$** trên thiết bị di động.
-
