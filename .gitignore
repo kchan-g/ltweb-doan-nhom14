@@ -1,7 +1,25 @@
 /vendor/
+
+# Logs phat sinh khi chay
 /logs/*
 !/logs/.htaccess
+!/logs/.gitkeep
+
+# Storage: Du lieu phat sinh runtime (jsonl, txt, avatars)
 /storage/*
 !/storage/.htaccess
+!/storage/.gitkeep
+/storage/avatars/*
+!/storage/avatars/.gitkeep
+*.jsonl
+*.log
+
+# Uploads cua nguoi dung
 /uploads/*
 !/uploads/.gitkeep
+
+# OS & Editor temp files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
