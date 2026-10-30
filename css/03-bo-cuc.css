@@ -169,11 +169,10 @@ footer.vung-chan {
 
   .header-phai {
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: stretch;
     width: 100%;
-    gap: var(--space-2);
+    gap: 8px;
   }
 
   .search-box {
@@ -182,6 +181,7 @@ footer.vung-chan {
     height: 38px;
     padding: 2px 2px 2px 14px;
     order: 1;
+    margin: 0;
   }
 
   .search-box input {
@@ -193,17 +193,90 @@ footer.vung-chan {
     height: 32px;
   }
 
-  .nut-yeu-thich-header {
+  .nhom-tien-ich-header {
     order: 2;
-    font-size: 0.8125rem;
-    padding: 4px 10px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    width: 100%;
+    margin: 0;
   }
 
-  .tai-khoan {
+  .nut-yeu-thich-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    padding: 6px 4px;
+    border-radius: 8px;
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    gap: 4px;
+  }
+
+  .nut-yeu-thich-header .nut-tien-ich__noi-dung {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .nut-yeu-thich-header .chu-nhan {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.72rem;
+  }
+
+  .nut-yeu-thich-header .huy-hieu-dem {
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    font-size: 0.68rem;
+    flex-shrink: 0;
+  }
+
+  .header-tai-khoan-wrap {
     order: 3;
+    width: 100%;
+  }
+
+  .header-tai-khoan-wrap .tai-khoan {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+  }
+
+  .header-tai-khoan-wrap .tai-khoan .nut-login-ued,
+  .header-tai-khoan-wrap .tai-khoan .nut-bam {
+    width: 100% !important;
+    text-align: center;
+    justify-content: center;
+    padding: 7px 10px;
     font-size: 0.8125rem;
-    padding: 4px 12px;
-    margin-left: auto;
+    margin: 0;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+  }
+
+  .header-tai-khoan-wrap .tai-khoan-sinhvien,
+  .header-tai-khoan-wrap .tai-khoan-admin {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 12px;
+    box-sizing: border-box;
+    border-radius: 8px;
   }
 }
 
@@ -236,15 +309,24 @@ nav.site-nav ul {
   align-items: center;
 }
 
-/* Lưới thẻ sự kiện repeat(auto-fit, minmax) & tự xuống dòng */
+/* Lưới thẻ sự kiện repeat(auto-fill, minmax) để giữ kích thước thẻ chuẩn kể cả khi chỉ có 1 kết quả */
 .luoi-the,
 .danh-sach-su-kien {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: var(--space-5);
   list-style: none;
   padding: 0;
-  min-height: 520px;
+}
+
+.danh-sach-su-kien > li {
+  max-width: 380px;
+  width: 100%;
+}
+
+.danh-sach-su-kien:empty {
+  min-height: 0;
+  display: none;
 }
 
 .luoi-3-the,

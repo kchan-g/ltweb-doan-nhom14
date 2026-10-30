@@ -330,19 +330,20 @@ require __DIR__ . '/inc/header.php';
                 </tr>
               </tfoot>
             </table>
+            </div>
           </div>
 
-          <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mt-4">
-            <div class="d-flex gap-2">
-              <a href="danh-sach.php" class="nut-bam nut-phu" style="padding: 10px 18px;">← Tiếp tục chọn sự kiện</a>
-              <form action="gio-hang.php" method="POST" style="margin:0;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa toàn bộ giỏ vé này?');">
+          <div class="gio-hang__dieu-huong">
+            <div class="nhom-nut-trai">
+              <a href="danh-sach.php" class="nut-bam nut-phu">← Tiếp tục chọn sự kiện</a>
+              <form action="gio-hang.php" method="POST" style="margin:0; display:inline-flex;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa toàn bộ giỏ vé này?');">
                 <input type="hidden" name="hanh_dong" value="xoa_het">
-                <button type="submit" class="nut-bam nut-canh-bao" style="padding: 10px 18px;">Xóa giỏ vé</button>
+                <button type="submit" class="nut-bam nut-canh-bao">Xóa giỏ vé</button>
               </form>
             </div>
 
-            <div class="d-flex gap-2">
-              <a href="dat-hang.php" class="nut-bam nut-nhan" style="padding: 12px 24px; font-size:1rem; font-weight:700;">
+            <div class="nhom-nut-phai">
+              <a href="dat-hang.php" class="nut-bam nut-nhan">
                 💳 Tiến Hành Đặt Vé / Đăng Ký →
               </a>
             </div>

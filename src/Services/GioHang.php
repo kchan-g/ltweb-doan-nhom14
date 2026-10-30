@@ -3,9 +3,12 @@
  * src/Services/GioHang.php
  * Lớp dịch vụ quản lý Giỏ vé / Đơn đăng ký sự kiện của người dùng.
  * Phân chia 2 trạng thái:
- * 1. Chờ xác nhận đăng ký: $_SESSION['gio'] = [id => 1]
+ * 1. Chờ xác nhận đăng ký: $_SESSION['gio'] = [id => soLuong]
  * 2. Đã xác nhận đăng ký:  $_SESSION['da_dang_ky'] = [id => ['thoi_gian' => ..., 'ma_ve' => ...]]
- * Ràng buộc: Mỗi tài khoản sinh viên chỉ được đăng ký tối đa 1 vé cho mỗi sự kiện.
+ *
+ * TỐI ƯU HÓA HIỆU NĂNG CSDL:
+ * Phương thức chiTiet() sử dụng layTheoIds() để tải toàn bộ thông tin sự kiện
+ * chỉ trong DUY NHẤT MỘT câu truy vấn SQL WHERE id IN (...), loại trừ hoàn toàn lỗi N+1.
  */
 
 declare(strict_types=1);
@@ -48,7 +51,7 @@ class GioHang
     }
 
     /**
-     * Kiểm tra xem sinh viên đã đăng ký sự kiện này (đang chờ hoặc đã xác nhận).
+     * Kiểm tra xem sinh viên đã đăng ký sự kiện này.
      */
     public function daDangKy(int $id): bool
     {
@@ -56,10 +59,7 @@ class GioHang
     }
 
     /**
-     * Trả về chuỗi trạng thái đăng ký của sự kiện:
-     * - 'da_xac_nhan': Đã đăng ký thành công
-     * - 'cho_xac_nhan': Đang chờ xác nhận
-     * - 'chua_dang_ky': Chưa đăng ký
+     * Trả về chuỗi trạng thái đăng ký của sự kiện.
      */
     public function trangThaiDangKy(int $id): string
     {
@@ -74,11 +74,10 @@ class GioHang
 
     /**
      * Thêm sự kiện vào danh sách Chờ xác nhận đăng ký.
-     * Ràng buộc: Mỗi tài khoản sinh viên chỉ có thể đăng ký 1 vé cho mỗi sự kiện.
      *
      * @param int $id Mã sự kiện
-     * @param int $sl Số lượng vé (luôn là 1 vé duy nhất/sự kiện)
-     * @return bool True nếu thêm mới thành công, False nếu ID không hợp lệ hoặc đã đăng ký rồi
+     * @param int $sl Số lượng vé (tối thiểu 1)
+     * @return bool True nếu thêm mới thành công
      */
     public function them(int $id, int $sl = 1): bool
     {
@@ -86,20 +85,14 @@ class GioHang
             return false;
         }
 
-        // Ràng buộc: Mỗi tài khoản sinh viên chỉ đăng ký 1 vé cho mỗi sự kiện
-        if ($this->daDangKy($id)) {
-            return false;
-        }
-
-        $_SESSION['gio'][$id] = 1;
+        $sl = max(1, min(50, $sl));
+        $_SESSION['gio'][$id] = ($_SESSION['gio'][$id] ?? 0) + $sl;
 
         return true;
     }
 
     /**
      * Xác nhận toàn bộ sự kiện đang ở trạng thái Chờ xác nhận sang Đã đăng ký thành công.
-     *
-     * @return int Số lượng sự kiện vừa được xác nhận (+N vào Đã đăng ký)
      */
     public function xacNhanTatCa(): int
     {
@@ -143,7 +136,7 @@ class GioHang
     }
 
     /**
-     * Cập nhật số lượng của một mục trong giỏ (luôn giữ 1 vé hoặc xóa).
+     * Cập nhật số lượng của một mục trong giỏ.
      */
     public function capNhat(int $id, int $sl): void
     {
@@ -154,7 +147,7 @@ class GioHang
         if ($sl <= 0) {
             $this->xoa($id);
         } else {
-            $_SESSION['gio'][$id] = 1;
+            $_SESSION['gio'][$id] = min(50, $sl);
         }
     }
 
@@ -179,11 +172,11 @@ class GioHang
      */
     public function soMonChoXacNhan(): int
     {
-        return count($_SESSION['gio']);
+        return array_sum($_SESSION['gio']);
     }
 
     /**
-     * Đếm tổng số lượng vé đã xác nhận đăng ký thành công (+1 vào đây).
+     * Đếm tổng số lượng vé đã xác nhận đăng ký thành công.
      */
     public function soMonDaXacNhan(): int
     {
@@ -191,7 +184,7 @@ class GioHang
     }
 
     /**
-     * Đếm tổng số lượng vé chờ xác nhận (hỗ trợ tương thích ngược).
+     * Đếm tổng số món trong giỏ.
      */
     public function soMon(): int
     {
@@ -199,7 +192,9 @@ class GioHang
     }
 
     /**
-     * Lấy danh sách thô các ID và số lượng chờ xác nhận: [id => soLuong].
+     * Lấy danh sách thô các ID và số lượng: [id => soLuong].
+     *
+     * @return array<int, int>
      */
     public function tatCa(): array
     {
@@ -208,20 +203,33 @@ class GioHang
 
     /**
      * Lấy danh sách chi tiết các sự kiện đang chờ xác nhận.
+     * ÁP DỤNG TRUY VẤN MỘT LẦN layTheoIds() ĐỂ TRÁNH LỖI N+1.
+     *
+     * @param KhoSuKien $kho
+     * @return array<int, array{suKien: \App\Models\SuKien, soLuong: int, thanhTien: int}>
      */
     public function chiTiet(KhoSuKien $kho): array
     {
+        $ids = array_keys($_SESSION['gio']);
+        if (empty($ids)) {
+            return [];
+        }
+
+        // Tải toàn bộ sự kiện trong 1 câu SQL duy nhất
+        $danhSachSK = $kho->layTheoIds($ids);
+
         $ketQua = [];
-        foreach ($_SESSION['gio'] as $id => $soLuong) {
-            $sk = $kho->timTheoId((int)$id);
-            if ($sk !== null && $soLuong > 0) {
+        foreach ($danhSachSK as $sk) {
+            $soLuong = (int)($_SESSION['gio'][$sk->id] ?? 1);
+            if ($soLuong > 0) {
                 $ketQua[] = [
-                    'suKien' => $sk,
-                    'soLuong' => 1,
-                    'thanhTien' => 0,
+                    'suKien'    => $sk,
+                    'soLuong'   => $soLuong,
+                    'thanhTien' => $sk->gia * $soLuong,
                 ];
             }
         }
+
         return $ketQua;
     }
 
@@ -230,17 +238,23 @@ class GioHang
      */
     public function danhSachDaXacNhan(KhoSuKien $kho): array
     {
-        $ketQua = [];
-        foreach ($_SESSION['da_dang_ky'] as $id => $info) {
-            $sk = $kho->timTheoId((int)$id);
-            if ($sk !== null) {
-                $ketQua[] = [
-                    'suKien' => $sk,
-                    'thoiGianXacNhan' => $info['thoi_gian'] ?? date('d/m/Y H:i'),
-                    'maVe' => $info['ma_ve'] ?? ('UE-' . $id),
-                ];
-            }
+        $ids = array_keys($_SESSION['da_dang_ky']);
+        if (empty($ids)) {
+            return [];
         }
+
+        $danhSachSK = $kho->layTheoIds($ids);
+
+        $ketQua = [];
+        foreach ($danhSachSK as $sk) {
+            $info = $_SESSION['da_dang_ky'][$sk->id] ?? [];
+            $ketQua[] = [
+                'suKien'          => $sk,
+                'thoiGianXacNhan' => $info['thoi_gian'] ?? date('d/m/Y H:i'),
+                'maVe'            => $info['ma_ve'] ?? ('UE-' . $sk->id),
+            ];
+        }
+
         return $ketQua;
     }
 
@@ -252,8 +266,16 @@ class GioHang
         return $_SESSION['da_dang_ky'][$id]['ma_ve'] ?? null;
     }
 
+    /**
+     * Tính tổng số tiền vé trong giỏ hàng.
+     */
     public function tongTien(KhoSuKien $kho): int
     {
-        return 0;
+        $chiTiet = $this->chiTiet($kho);
+        $tong = 0;
+        foreach ($chiTiet as $item) {
+            $tong += $item['thanhTien'];
+        }
+        return $tong;
     }
 }

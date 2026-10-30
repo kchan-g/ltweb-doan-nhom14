@@ -160,7 +160,7 @@ require __DIR__ . '/inc/header.php';
             <p class="event-meta">Quyền lợi: +<?= (int)$sp->diemRenLuyen ?> điểm rèn luyện</p>
             <div class="the-tin__actions mt-3">
               <a href="chi-tiet.php?id=<?= $sp->id ?>" class="nut-bam nut-nhan nut-nho">
-                Xem chi tiết &amp; Đăng ký
+                Xem chi tiết
               </a>
               <?php if ($gio->daXacNhan($sp->id)): ?>
                 <a href="gio-hang.php#da-xac-nhan" class="nut-bam nut-phu nut-nho" style="color:#16a34a; background:rgba(34,197,94,0.12); border-color:rgba(34,197,94,0.3); font-weight:700;" title="Bạn đã đăng ký thành công sự kiện này (1 vé)">
@@ -188,7 +188,7 @@ require __DIR__ . '/inc/header.php';
                 aria-label="Lưu tin - Lưu sự kiện <?= e($sp->ten) ?>"
                 title="Lưu sự kiện vào danh sách yêu thích"
               >
-                <?= uiIcon("heart", "", 13) ?> Lưu tin
+                <?= uiIcon("heart", "", 13) ?> Lưu
               </button>
             </div>
           </div>
@@ -227,7 +227,7 @@ require __DIR__ . '/inc/header.php';
               <p class="event-meta">Quyền lợi: +<?= (int)$sp->diemRenLuyen ?> điểm rèn luyện</p>
               <div class="the-tin__actions mt-3">
                 <a href="chi-tiet.php?id=<?= $sp->id ?>" class="nut-bam nut-nhan nut-nho">
-                  Xem chi tiết &amp; Đăng ký
+                  Xem chi tiết
                 </a>
                 <?php if ($gio->daXacNhan($sp->id)): ?>
                   <a href="gio-hang.php#da-xac-nhan" class="nut-bam nut-phu nut-nho" style="color:#16a34a; background:rgba(34,197,94,0.12); border-color:rgba(34,197,94,0.3); font-weight:700;" title="Bạn đã đăng ký thành công sự kiện này (1 vé)">
@@ -255,7 +255,7 @@ require __DIR__ . '/inc/header.php';
                   aria-label="Lưu tin - Lưu sự kiện <?= e($sp->ten) ?>"
                   title="Lưu sự kiện vào danh sách yêu thích"
                 >
-                  <?= uiIcon("heart", "", 13) ?> Lưu tin
+                  <?= uiIcon("heart", "", 13) ?> Lưu
                 </button>
               </div>
             </div>

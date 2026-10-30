@@ -1,21 +1,35 @@
 /**
  * @file yeu-thich.js
- * @description Quản lý danh sách sự kiện yêu thích (lưu tạm) bằng localStorage.
+ * @description Quản lý danh sách sự kiện yêu thích (lưu tin) phân biệt độc lập theo từng tài khoản.
+ * Khách vãng lai dùng kho riêng ('khach'), mỗi người dùng đăng nhập có kho riêng ('user_<id>').
  * Đồng bộ số đếm trên thanh điều hướng header ở mọi trang và phát sự kiện cập nhật.
  */
 
-const KHOA_LUU_TRU = "unievent_yeu_thich";
+const TIEN_TO_KHOA = "unievent_yeu_thich";
 
 /**
- * Lấy danh sách ID các sự kiện đã lưu từ localStorage.
- * @returns {number[]} Mảng chứa ID các sự kiện đã thích
+ * Xác định khóa lưu trữ cục bộ tương ứng với tài khoản đang đăng nhập hoặc khách vãng lai.
+ * @returns {string} Khóa localStorage riêng biệt của người dùng
+ */
+export function layKhoaLuuTru() {
+  const userId = document.body ? document.body.dataset.userId : "";
+  if (userId && String(userId).trim() !== "") {
+    return `${TIEN_TO_KHOA}_user_${String(userId).trim()}`;
+  }
+  return `${TIEN_TO_KHOA}_khach`;
+}
+
+/**
+ * Lấy danh sách ID các sự kiện đã lưu của tài khoản hiện tại từ localStorage.
+ * @returns {number[]} Mảng chứa ID các sự kiện đã lưu
  */
 export function layDanhSachYeuThich() {
   try {
-    const raw = localStorage.getItem(KHOA_LUU_TRU);
+    const khoa = layKhoaLuuTru();
+    const raw = localStorage.getItem(khoa);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed.map((item) => Number(item)) : [];
+    return Array.isArray(parsed) ? parsed.map((item) => Number(item)).filter((id) => id > 0) : [];
   } catch (error) {
     console.warn("Lỗi đọc dữ liệu yêu thích từ localStorage:", error);
     return [];
@@ -23,20 +37,20 @@ export function layDanhSachYeuThich() {
 }
 
 /**
- * Lưu mảng ID sự kiện vào localStorage và phát sự kiện tùy biến.
+ * Lưu mảng ID sự kiện của tài khoản hiện tại vào localStorage và phát sự kiện tùy biến.
  * @param {number[]} danhSach - Mảng ID cần lưu
  */
 export function luuDanhSachYeuThich(danhSach) {
+  const khoa = layKhoaLuuTru();
   try {
-    localStorage.setItem(KHOA_LUU_TRU, JSON.stringify(danhSach));
+    localStorage.setItem(khoa, JSON.stringify(danhSach));
   } catch (error) {
     console.error("Không thể ghi dữ liệu vào localStorage:", error);
   }
 
-  // Phát sự kiện tùy biến để các trang hoặc thành phần khác lắng nghe đồng bộ
   window.dispatchEvent(
     new CustomEvent("yeuThichThayDoi", {
-      detail: { danhSach, soLuong: danhSach.length },
+      detail: { danhSach, soLuong: danhSach.length, khoa },
     }),
   );
 
@@ -44,7 +58,7 @@ export function luuDanhSachYeuThich(danhSach) {
 }
 
 /**
- * Kiểm tra xem một sự kiện đã được lưu hay chưa.
+ * Kiểm tra xem một sự kiện đã được lưu bởi tài khoản hiện tại hay chưa.
  * @param {number} id - ID sự kiện
  * @returns {boolean} True nếu đã lưu, ngược lại False
  */
@@ -60,6 +74,8 @@ export function kiemTraYeuThich(id) {
  */
 export function toggleYeuThich(id) {
   const maSo = Number(id);
+  if (!maSo) return false;
+
   const ds = layDanhSachYeuThich();
   const viTri = ds.indexOf(maSo);
   let daThem = false;
@@ -77,7 +93,7 @@ export function toggleYeuThich(id) {
 }
 
 /**
- * Cập nhật số đếm sự kiện yêu thích hiển thị trên header.
+ * Cập nhật số đếm sự kiện yêu thích hiển thị trên header theo tài khoản hiện tại.
  */
 export function capNhatSoDemHeader() {
   const phanTuDem = document.getElementById("dem-yeu-thich");
@@ -88,7 +104,7 @@ export function capNhatSoDemHeader() {
 }
 
 /**
- * Đồng bộ trạng thái hiển thị của tất cả nút .nut-yeu-thich trên trang theo localStorage.
+ * Đồng bộ trạng thái hiển thị của tất cả nút .nut-yeu-thich trên trang theo tài khoản hiện tại.
  */
 export function dongBoNutYeuThich() {
   const cacNut = document.querySelectorAll(".nut-yeu-thich");
@@ -99,7 +115,7 @@ export function dongBoNutYeuThich() {
     const daLuu = ds.includes(id);
     nut.classList.toggle("da-thich", daLuu);
     nut.setAttribute("aria-pressed", String(daLuu));
-    nut.textContent = daLuu ? "♥ Đã lưu" : "♡ Lưu tin";
+    nut.textContent = daLuu ? "♥ Đã lưu" : "♡ Lưu";
     nut.setAttribute(
       "title",
       daLuu ? "Bỏ lưu sự kiện này" : "Lưu sự kiện vào danh sách yêu thích",
@@ -116,22 +132,48 @@ export function locDanhSachYeuThich() {
 
   const laYeuThich = window.location.hash === "#yeu-thich";
   let thongBao = document.getElementById("thong-bao-loc-yeu-thich");
+  const vungPhanTrang = document.querySelector(".vung-phan-trang");
+  const tieuDeMuc = document.getElementById("tieu-de-tat-ca-su-kien");
+  const moTaMuc = document.querySelector(".section-head__mota");
+  const boLoc = document.querySelector(".bo-loc");
+
+  if (moTaMuc && !moTaMuc.dataset.originalHtml) {
+    moTaMuc.dataset.originalHtml = moTaMuc.innerHTML;
+  }
+  if (tieuDeMuc && !tieuDeMuc.dataset.originalText) {
+    tieuDeMuc.dataset.originalText = tieuDeMuc.textContent.trim();
+  }
 
   if (laYeuThich) {
     const ds = layDanhSachYeuThich();
+
+    if (tieuDeMuc) {
+      tieuDeMuc.textContent = "Sự Kiện Bạn Đã Lưu";
+    }
+    if (moTaMuc) {
+      moTaMuc.innerHTML = `Đang lọc theo danh sách yêu thích &bull; Tổng cộng <strong>${ds.length}</strong> sự kiện đã lưu`;
+    }
+    if (boLoc) {
+      boLoc.style.display = "none";
+    }
+
     if (!thongBao) {
       thongBao = document.createElement("div");
       thongBao.id = "thong-bao-loc-yeu-thich";
       thongBao.className = "hop-thong-bao mb-4";
       thongBao.style.cssText =
-        "background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 12px 18px; border-radius: var(--radius-vua, 8px); display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;";
+        "background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; padding: 12px 18px; border-radius: var(--radius-vua, 8px); display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 24px;";
       dsContainer.parentNode.insertBefore(thongBao, dsContainer);
     }
     thongBao.style.display = "flex";
     thongBao.innerHTML = `
-      <span>📌 Đang hiển thị <strong>${ds.length}</strong> sự kiện bạn đã lưu</span>
+      <span>📌 Đang hiển thị danh sách <strong>${ds.length}</strong> sự kiện bạn đã đánh dấu yêu thích</span>
       <a href="danh-sach.php" class="nut-bam nut-phu nut-nho" style="background: #ffffff; text-decoration: none;">Xem tất cả sự kiện</a>
     `;
+
+    if (vungPhanTrang) {
+      vungPhanTrang.style.display = "none";
+    }
 
     const cacMuc = dsContainer.querySelectorAll("li");
     let demHienThi = 0;
@@ -148,30 +190,51 @@ export function locDanhSachYeuThich() {
 
     let hopRong = document.getElementById("yeu-thich-rong");
     if (demHienThi === 0) {
+      dsContainer.style.display = "none";
       if (!hopRong) {
         hopRong = document.createElement("div");
         hopRong.id = "yeu-thich-rong";
-        hopRong.className = "p-5 text-center my-4";
+        hopRong.className = "p-5 text-center my-3";
         hopRong.style.cssText =
-          "background:var(--nen-surface); border-radius:var(--radius-vua); border:1px dashed var(--border-nhat);";
+          "background:var(--nen-surface, #ffffff); border-radius:var(--radius-vua, 12px); border:1px dashed var(--border-dam, #cbd5e1); box-shadow: var(--shadow-sm, 0 1px 3px rgba(0,0,0,0.05)); padding: 48px 24px;";
         hopRong.innerHTML = `
           <div style="font-size:3rem; margin-bottom:1rem;">❤️</div>
-          <h3 class="h4" style="color:var(--mau-chinh-toi);">Bạn chưa lưu sự kiện nào</h3>
-          <p class="text-phu mb-3" style="max-width:500px; margin:0 auto;">
-            Hãy nhấn nút "Lưu tin" ở các sự kiện bạn quan tâm để lưu lại và xem nhanh bất kỳ lúc nào!
+          <h3 class="h4" style="color:var(--mau-chinh-toi, #1e293b); font-weight: 700; margin-bottom: 0.5rem;">Bạn chưa lưu sự kiện nào</h3>
+          <p class="text-phu mb-4" style="max-width:500px; margin:0 auto 1.5rem auto; color: #64748b; line-height: 1.6;">
+            Hãy nhấn vào biểu tượng trái tim ở các sự kiện bạn quan tâm để lưu lại và theo dõi lịch trình dễ dàng nhất!
           </p>
-          <a href="danh-sach.php" class="nut-bam nut-chinh">Khám phá danh sách sự kiện</a>
+          <a href="danh-sach.php" class="nut-bam nut-chinh" style="padding: 10px 24px; text-decoration: none; border-radius: 6px; font-weight: 600;">Khám phá toàn bộ sự kiện</a>
         `;
         dsContainer.parentNode.insertBefore(hopRong, dsContainer.nextSibling);
       }
       hopRong.style.display = "block";
-    } else if (hopRong) {
-      hopRong.style.display = "none";
+    } else {
+      dsContainer.style.display = "grid";
+      if (hopRong) {
+        hopRong.style.display = "none";
+      }
     }
   } else {
-    if (thongBao) thongBao.style.display = "none";
+    if (tieuDeMuc && tieuDeMuc.dataset.originalText) {
+      tieuDeMuc.textContent = tieuDeMuc.dataset.originalText;
+    }
+    if (moTaMuc && moTaMuc.dataset.originalHtml) {
+      moTaMuc.innerHTML = moTaMuc.dataset.originalHtml;
+    }
+    if (boLoc) {
+      boLoc.style.display = "";
+    }
+    if (thongBao) {
+      thongBao.style.display = "none";
+    }
     const hopRong = document.getElementById("yeu-thich-rong");
-    if (hopRong) hopRong.style.display = "none";
+    if (hopRong) {
+      hopRong.style.display = "none";
+    }
+    dsContainer.style.display = "grid";
+    if (vungPhanTrang) {
+      vungPhanTrang.style.display = "";
+    }
     const cacMuc = dsContainer.querySelectorAll("li");
     cacMuc.forEach((muc) => {
       muc.style.display = "";
@@ -179,15 +242,11 @@ export function locDanhSachYeuThich() {
   }
 }
 
-/**
- * Khởi tạo toàn bộ tương tác Lưu tin (Event Delegation & Đồng bộ trạng thái).
- */
 export function khoiTaoYeuThich() {
   capNhatSoDemHeader();
   dongBoNutYeuThich();
   locDanhSachYeuThich();
 
-  // Bắt sự kiện click toàn trang cho bất kỳ nút .nut-yeu-thich nào
   document.addEventListener("click", (suKien) => {
     const nut = suKien.target.closest(".nut-yeu-thich");
     if (!nut) return;
@@ -206,7 +265,6 @@ export function khoiTaoYeuThich() {
     }
   });
 
-  // Lắng nghe hash thay đổi khi người dùng bấm vào liên kết #yeu-thich từ header
   window.addEventListener("hashchange", () => {
     locDanhSachYeuThich();
   });
