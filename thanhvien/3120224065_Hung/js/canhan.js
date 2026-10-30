@@ -32,6 +32,8 @@
     function applyTheme(isDark) {
       if (isDark) {
         document.body.classList.add("dark-theme");
+        document.documentElement.classList.add("dark-theme");
+        document.documentElement.setAttribute("data-theme", "dark");
         themeBtn.setAttribute("aria-pressed", "true");
         themeBtn.setAttribute(
           "aria-label",
@@ -45,6 +47,8 @@
         }
       } else {
         document.body.classList.remove("dark-theme");
+        document.documentElement.classList.remove("dark-theme");
+        document.documentElement.removeAttribute("data-theme");
         themeBtn.setAttribute("aria-pressed", "false");
         themeBtn.setAttribute("aria-label", "Chuyển sang chế độ giao diện tối");
         if (themeIcon) {
@@ -73,13 +77,14 @@
       evt.preventDefault();
       const willBeDark = !document.body.classList.contains("dark-theme");
       applyTheme(willBeDark);
+      const val = willBeDark ? "dark" : "light";
       try {
-        localStorage.setItem(STORAGE_KEY, willBeDark ? "dark" : "light");
+        localStorage.setItem(STORAGE_KEY, val);
       } catch {
         // Dự phòng an toàn
       }
-      // Đồng bộ cookie hung_theme phía máy chủ (hạn dùng 30 ngày)
-      document.cookie = `hung_theme=${willBeDark ? "dark" : "light"}; path=/; max-age=2592000; SameSite=Lax`;
+      // Đồng bộ cookie hung_theme và unievent_theme phía máy chủ (hạn dùng 30 ngày)
+      document.cookie = `hung_theme=${val}; path=/; max-age=2592000; SameSite=Lax`;
     });
   }
 

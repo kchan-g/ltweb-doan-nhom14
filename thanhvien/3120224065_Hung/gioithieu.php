@@ -2,8 +2,13 @@
 /**
  * thanhvien/3120224065_Hung/gioithieu.php
  * Trang giới thiệu cá nhân sinh viên Đinh Trịnh Ngọc Hưng (MSSV: 3120224065 - Nhóm 14).
- * Chức năng máy chủ: 1. Bộ đếm lượt xem (Session + storage, 1 lần/phiên); 2. Sổ lưu bút (POST -> kiểm tra máy chủ -> lưu storage JSONL -> PRG chuyển hướng -> hiện 5 lời nhắn); 3. Đổi giao diện Sáng/Tối qua Cookie (hung_theme).
- * Cách thử: F5 để thấy lượt xem không tăng lại trong phiên; nhập biểu mẫu Lưu bút và bấm gửi để kiểm tra PRG + lưu JSONL; bấm ?doi_theme=1 để đổi theme qua Cookie.
+ * Chức năng CSDL (Phần B):
+ * 1. Sổ lưu bút dùng bảng tv_luu_but (INSERT qua prepared statement, phân trang 5 lời nhắn/trang, chỉ chủ trang đăng nhập mới được xóa lời nhắn có kiểm tra quyền máy chủ).
+ * 2. Bộ đếm lượt xem theo ngày dùng bảng tv_luot_xem (INSERT ... ON DUPLICATE KEY UPDATE) kèm thống kê 7 ngày gần nhất.
+ * Cách thử:
+ * - Gửi biểu mẫu Lưu bút kiểm tra thêm mới vào MySQL và phân trang (?trang_lb=2).
+ * - Đăng nhập tài khoản Hưng (hung@ued.vn / matkhau123) hoặc Admin (admin@ued.vn / matkhau123) để thấy nút "Xóa" từng lời nhắn; thử xóa để kiểm tra DELETE trong CSDL. Đăng nhập tài khoản khác (an@ued.vn) nút xóa sẽ ẩn và nếu cố tình gửi request xóa sẽ nhận mã lỗi 403 Forbidden.
+ * - Xem widget "Thống kê lượt xem 7 ngày gần nhất" ở đầu trang để thấy số lượt xem tăng lên theo ngày.
  */
 
 declare(strict_types=1);
@@ -14,6 +19,25 @@ require_once __DIR__ . '/../../inc/config.php';
 $goc = '../../';
 $tieuDe = 'Profile cá nhân - Đinh Trịnh Ngọc Hưng | UniEvent';
 $trang = 'gioi-thieu';
+$mssvHung = '3120224065';
+
+// Kết nối PDO
+$pdo = null;
+try {
+    $pdo = db();
+} catch (Throwable $e) {
+    error_log('Lỗi kết nối CSDL tại trang Hưng: ' . $e->getMessage());
+}
+
+// Kiểm tra quyền chủ trang (id 4 hung@ued.vn, id 5, hoặc vai trò quan_tri)
+$ndHienTai = nguoiDung();
+$laChuTrang = $ndHienTai !== null && (
+    ($ndHienTai['id'] ?? 0) === 4 ||
+    ($ndHienTai['id'] ?? 0) === 5 ||
+    ($ndHienTai['email'] ?? '') === 'hung@ued.vn' ||
+    ($ndHienTai['email'] ?? '') === '3120224065@ued.udn.vn' ||
+    laQuanTri()
+);
 
 // ============================================================================
 // CHỨC NĂNG PHỤ: XỬ LÝ ĐỔI GIAO DIỆN SÁNG / TỐI QUA HTTP COOKIE (PRG)
@@ -36,79 +60,89 @@ $theme = $_COOKIE['hung_theme'] ?? 'light';
 $bodyClass = ($theme === 'dark') ? 'dark-theme' : '';
 
 // ============================================================================
-// CHỨC NĂNG 1: BỘ ĐẾM LƯỢT XEM TRANG CÁ NHÂN (SESSION + TỆP STORAGE, 1 LẦN/PHIÊN)
+// CHỨC NĂNG 1: BỘ ĐẾM LƯỢT XEM THEO NGÀY (BẢNG tv_luot_xem)
 // ============================================================================
-$storageDir = __DIR__ . '/../../storage';
-if (!is_dir($storageDir)) {
-    @mkdir($storageDir, 0777, true);
-}
-$tepViews = $storageDir . '/3120224065_views.txt';
-$tepViewsPhu = $storageDir . '/hung_views.txt';
+$luotXemHomNay = 1;
+$tongLuotXem = 1;
+$thongKe7Ngay = [];
 
-$luotXem = 1;
-if (!isset($_SESSION['hung_da_xem_trang'])) {
-    $_SESSION['hung_da_xem_trang'] = true;
-    if (file_exists($tepViews)) {
-        $fp = fopen($tepViews, 'c+');
-        if ($fp && flock($fp, LOCK_EX)) {
-            $noiDung = trim((string)fread($fp, 64));
-            $luotXem = max(1, (int)$noiDung + 1);
-            ftruncate($fp, 0);
-            rewind($fp);
-            fwrite($fp, (string)$luotXem);
-            fflush($fp);
-            flock($fp, LOCK_UN);
-            fclose($fp);
+if ($pdo !== null) {
+    if (!isset($_SESSION['hung_da_xem_trang'])) {
+        $_SESSION['hung_da_xem_trang'] = true;
+        try {
+            $stmtInc = $pdo->prepare("INSERT INTO tv_luot_xem (mssv, ngay, so_luot) VALUES (:mssv, CURDATE(), 1) ON DUPLICATE KEY UPDATE so_luot = so_luot + 1");
+            $stmtInc->execute([':mssv' => $mssvHung]);
+        } catch (Throwable $e) {
+            error_log('Lỗi ghi nhận tv_luot_xem: ' . $e->getMessage());
         }
-    } else {
-        $luotXem = 1;
-        @file_put_contents($tepViews, '1', LOCK_EX);
     }
-    // Ghi đồng bộ tệp hung_views.txt
-    @file_put_contents($tepViewsPhu, (string)$luotXem, LOCK_EX);
+
+    try {
+        $stmtHN = $pdo->prepare("SELECT so_luot FROM tv_luot_xem WHERE mssv = :mssv AND ngay = CURDATE()");
+        $stmtHN->execute([':mssv' => $mssvHung]);
+        $valHN = $stmtHN->fetchColumn();
+        $luotXemHomNay = $valHN !== false ? (int)$valHN : 1;
+
+        $stmtTong = $pdo->prepare("SELECT SUM(so_luot) FROM tv_luot_xem WHERE mssv = :mssv");
+        $stmtTong->execute([':mssv' => $mssvHung]);
+        $valTong = $stmtTong->fetchColumn();
+        $tongLuotXem = $valTong !== false ? (int)$valTong : $luotXemHomNay;
+
+        $stmt7 = $pdo->prepare("SELECT ngay, so_luot FROM tv_luot_xem WHERE mssv = :mssv ORDER BY ngay DESC LIMIT 7");
+        $stmt7->execute([':mssv' => $mssvHung]);
+        $thongKe7Ngay = $stmt7->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Throwable $e) {
+        error_log('Lỗi đọc thống kê tv_luot_xem: ' . $e->getMessage());
+    }
 } else {
-    if (file_exists($tepViews)) {
-        $luotXem = max(1, (int)trim((string)@file_get_contents($tepViews)));
-    } elseif (file_exists($tepViewsPhu)) {
-        $luotXem = max(1, (int)trim((string)@file_get_contents($tepViewsPhu)));
+    // Fallback file storage nếu CSDL chưa kết nối
+    $storageDir = __DIR__ . '/../../storage';
+    if (!is_dir($storageDir)) {
+        @mkdir($storageDir, 0777, true);
     }
+    $tepViews = $storageDir . '/3120224065_views.txt';
+    if (!isset($_SESSION['hung_da_xem_trang'])) {
+        $_SESSION['hung_da_xem_trang'] = true;
+        $cnt = file_exists($tepViews) ? (int)file_get_contents($tepViews) + 1 : 1;
+        @file_put_contents($tepViews, (string)$cnt, LOCK_EX);
+        $tongLuotXem = $cnt;
+    } else {
+        $tongLuotXem = file_exists($tepViews) ? max(1, (int)file_get_contents($tepViews)) : 1;
+    }
+    $luotXemHomNay = $tongLuotXem;
 }
 
 // ============================================================================
-// CHỨC NĂNG 2: SỔ LƯU BÚT CÁ NHÂN (POST -> KIỂM TRA MÁY CHỦ -> STORAGE -> PRG)
+// CHỨC NĂNG 2: XÓA LƯU BÚT (CHỈ CHỦ TRANG ĐĂNG NHẬP MỚI ĐƯỢC XÓA - KIỂM TRA MÁY CHỦ)
 // ============================================================================
-$tepLuuBut = $storageDir . '/3120224065_luubut.jsonl';
-
-// Khởi tạo sẵn tệp lưu bút mẫu nếu chưa tồn tại
-if (!file_exists($tepLuuBut)) {
-    $mauLuuBut = [
-        [
-            'thoi_gian' => date('d/m/Y H:i', strtotime('-2 days')),
-            'ho_ten' => 'Nguyễn Văn Bảo',
-            'vai_tro' => 'Bạn cùng nhóm 14',
-            'loi_nhan' => 'Chúc Hưng hoàn thành xuất sắc đồ án môn Thiết kế Web nhé! Profile cá nhân thiết kế rất chuyên nghiệp và chỉn chu.',
-        ],
-        [
-            'thoi_gian' => date('d/m/Y H:i', strtotime('-1 days')),
-            'ho_ten' => 'Trần Thị Đoan Trang',
-            'vai_tro' => 'Bạn cùng lớp',
-            'loi_nhan' => 'Giao diện web mượt mà, tối ưu hỗ trợ tiếp cận a11y và đồng hồ đếm ngược thi rất hữu ích!',
-        ],
-        [
-            'thoi_gian' => date('d/m/Y H:i', strtotime('-3 hours')),
-            'ho_ten' => 'Hồ Văn Nhuận',
-            'vai_tro' => 'Đồng nghiệp / Bạn bè',
-            'loi_nhan' => 'Các chức năng máy chủ chạy rất chuẩn, chúc nhóm 14 đạt điểm tối đa môn học!',
-        ],
-    ];
-    $noiDungMau = '';
-    foreach ($mauLuuBut as $item) {
-        $noiDungMau .= json_encode($item, JSON_UNESCAPED_UNICODE) . "\n";
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['xoa_luu_but'])) {
+    if (!$laChuTrang) {
+        http_response_code(403);
+        if (file_exists(__DIR__ . '/../../403.php')) {
+            require __DIR__ . '/../../403.php';
+        } else {
+            echo "<h1>403 Forbidden</h1><p>Bạn không có quyền xóa lời nhắn lưu bút này.</p>";
+        }
+        exit;
     }
-    @file_put_contents($tepLuuBut, $noiDungMau, LOCK_EX);
+
+    $idXoa = filter_var($_POST['id_luu_but'] ?? 0, FILTER_VALIDATE_INT);
+    if ($idXoa > 0 && $pdo !== null) {
+        try {
+            $stmtXoa = $pdo->prepare("DELETE FROM tv_luu_but WHERE id = :id AND mssv = :mssv");
+            $stmtXoa->execute([':id' => $idXoa, ':mssv' => $mssvHung]);
+            flash('Đã xóa lời nhắn lưu bút khỏi cơ sở dữ liệu thành công.');
+        } catch (Throwable $e) {
+            flash('Lỗi khi xóa lời nhắn: ' . $e->getMessage());
+        }
+    }
+    header('Location: gioithieu.php#luubut');
+    exit;
 }
 
-// Xử lý khi người dùng gửi biểu mẫu POST Sổ lưu bút
+// ============================================================================
+// CHỨC NĂNG 3: GỬI LƯU BÚT MỚI (POST -> VALIDATE -> INSERT CSDL -> PRG)
+// ============================================================================
 $loiLuuBut = $_SESSION['hung_luubut_loi'] ?? [];
 $duLieuCu = $_SESSION['hung_luubut_cu'] ?? ['ho_ten' => '', 'vai_tro' => '', 'loi_nhan' => ''];
 unset($_SESSION['hung_luubut_loi'], $_SESSION['hung_luubut_cu']);
@@ -148,41 +182,100 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['gui_luu_but'])) {
         exit;
     }
 
-    // Ghi vào tệp JSONL phía máy chủ
-    $dongMoi = [
-        'thoi_gian' => date('d/m/Y H:i'),
-        'ho_ten' => $hoTen,
-        'vai_tro' => $vaiTro,
-        'loi_nhan' => $loiNhan,
-    ];
-    $dongJson = json_encode($dongMoi, JSON_UNESCAPED_UNICODE) . "\n";
-    file_put_contents($tepLuuBut, $dongJson, FILE_APPEND | LOCK_EX);
+    if ($pdo !== null) {
+        try {
+            $stmtIns = $pdo->prepare("INSERT INTO tv_luu_but (mssv, ten_khach, vai_tro, loi_nhan, thoi_gian) VALUES (:mssv, :ten, :vai_tro, :loi_nhan, NOW())");
+            $stmtIns->execute([
+                ':mssv' => $mssvHung,
+                ':ten' => $hoTen,
+                ':vai_tro' => $vaiTro,
+                ':loi_nhan' => $loiNhan,
+            ]);
+            flash('Cảm ơn bạn! Lời nhắn lưu bút của bạn đã được lưu vào cơ sở dữ liệu MySQL thành công.');
+        } catch (Throwable $e) {
+            flash('Lỗi khi lưu vào CSDL: ' . $e->getMessage());
+        }
+    } else {
+        // Fallback ghi file JSONL
+        $storageDir = __DIR__ . '/../../storage';
+        $tepLuuBut = $storageDir . '/3120224065_luubut.jsonl';
+        $dongMoi = [
+            'thoi_gian' => date('Y-m-d H:i:s'),
+            'ho_ten' => $hoTen,
+            'vai_tro' => $vaiTro,
+            'loi_nhan' => $loiNhan,
+        ];
+        @file_put_contents($tepLuuBut, json_encode($dongMoi, JSON_UNESCAPED_UNICODE) . "\n", FILE_APPEND | LOCK_EX);
+        flash('Cảm ơn bạn! Lời nhắn lưu bút đã được ghi nhận.');
+    }
 
-    flash('Cảm ơn bạn! Lời nhắn lưu bút của bạn đã được gửi và lưu trữ an toàn trên máy chủ.');
     header('Location: gioithieu.php#luubut');
     exit;
 }
 
-// Đọc danh sách lời nhắn từ tệp máy chủ và lấy 5 lời nhắn mới nhất
+// ============================================================================
+// CHỨC NĂNG 4: ĐỌC VÀ PHÂN TRANG SỔ LƯU BÚT (5 LỜI NHẮN / TRANG)
+// ============================================================================
+$trangLB = max(1, (int)($_GET['trang_lb'] ?? 1));
+$soLuongMoiTrang = 5;
+$tongSoLuuBut = 0;
+$tongSoTrangLB = 1;
 $danhSachLuuBut = [];
-if (file_exists($tepLuuBut)) {
-    $lines = file($tepLuuBut, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    if (is_array($lines)) {
-        foreach ($lines as $line) {
-            $data = json_decode($line, true);
-            if (is_array($data) && isset($data['ho_ten'], $data['loi_nhan'])) {
-                $danhSachLuuBut[] = $data;
+
+if ($pdo !== null) {
+    try {
+        $stmtDem = $pdo->prepare("SELECT COUNT(*) FROM tv_luu_but WHERE mssv = :mssv");
+        $stmtDem->execute([':mssv' => $mssvHung]);
+        $tongSoLuuBut = (int)$stmtDem->fetchColumn();
+
+        $tongSoTrangLB = max(1, (int)ceil($tongSoLuuBut / $soLuongMoiTrang));
+        if ($trangLB > $tongSoTrangLB) {
+            $trangLB = $tongSoTrangLB;
+        }
+        $offset = ($trangLB - 1) * $soLuongMoiTrang;
+
+        $stmtLB = $pdo->prepare("SELECT id, ten_khach, vai_tro, loi_nhan, thoi_gian FROM tv_luu_but WHERE mssv = :mssv ORDER BY thoi_gian DESC, id DESC LIMIT :limit OFFSET :offset");
+        $stmtLB->bindValue(':mssv', $mssvHung, PDO::PARAM_STR);
+        $stmtLB->bindValue(':limit', $soLuongMoiTrang, PDO::PARAM_INT);
+        $stmtLB->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmtLB->execute();
+        $danhSachLuuBut = $stmtLB->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Throwable $e) {
+        error_log('Lỗi đọc tv_luu_but: ' . $e->getMessage());
+    }
+} else {
+    // Fallback file storage nếu CSDL chưa có
+    $storageDir = __DIR__ . '/../../storage';
+    $tepLuuBut = $storageDir . '/3120224065_luubut.jsonl';
+    $dsTatCa = [];
+    if (file_exists($tepLuuBut)) {
+        $lines = file($tepLuuBut, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        if (is_array($lines)) {
+            foreach ($lines as $idx => $line) {
+                $data = json_decode($line, true);
+                if (is_array($data) && isset($data['ho_ten'], $data['loi_nhan'])) {
+                    $dsTatCa[] = [
+                        'id' => $idx + 1,
+                        'ten_khach' => $data['ho_ten'],
+                        'vai_tro' => $data['vai_tro'] ?? 'Khách ghé thăm',
+                        'loi_nhan' => $data['loi_nhan'],
+                        'thoi_gian' => $data['thoi_gian'] ?? date('Y-m-d H:i:s'),
+                    ];
+                }
             }
         }
     }
+    $dsTatCa = array_reverse($dsTatCa);
+    $tongSoLuuBut = count($dsTatCa);
+    $tongSoTrangLB = max(1, (int)ceil($tongSoLuuBut / $soLuongMoiTrang));
+    $danhSachLuuBut = array_slice($dsTatCa, ($trangLB - 1) * $soLuongMoiTrang, $soLuongMoiTrang);
 }
-$danhSachLuuBut = array_reverse($danhSachLuuBut);
-$namLoiNhanMoiNhat = array_slice($danhSachLuuBut, 0, 5);
 
 $thongBaoThanhCong = flash();
 
 require __DIR__ . '/../../inc/header.php';
 ?>
+
 
 <link rel="stylesheet" href="css/style.css">
 
@@ -191,9 +284,9 @@ require __DIR__ . '/../../inc/header.php';
   <div class="container">
     <div class="profile-header__top-row">
       <span class="profile-header__badge">Thành viên Ban Kỹ thuật &bull; UniEvent</span>
-      <div class="profile-view-badge" title="Bộ đếm lượt xem phía máy chủ (mỗi phiên tính một lần)">
+      <div class="profile-view-badge" title="Bộ đếm lượt xem CSDL MySQL tv_luot_xem (INSERT ... ON DUPLICATE KEY UPDATE)">
         <span aria-hidden="true">👁️</span>
-        <span>Lượt xem: <strong><?= e($luotXem) ?></strong></span>
+        <span>Hôm nay: <strong><?= e($luotXemHomNay) ?></strong> | Tổng: <strong><?= e($tongLuotXem) ?></strong> lượt</span>
       </div>
     </div>
     <h1>Profile cá nhân</h1>
@@ -636,7 +729,7 @@ require __DIR__ . '/../../inc/header.php';
     </div>
   </section>
 
-  <!-- KHỐI 5: SỔ LƯU BÚT & LỜI NHẮN GỬI (XỬ LÝ MÁY CHỦ POST - PRG - LƯU TỆP JSONL) -->
+  <!-- KHỐI 5: SỔ LƯU BÚT & LỜI NHẮN GỬI (CSDL MYSQL tv_luu_but & tv_luot_xem - PHẦN B) -->
   <section
     id="luubut"
     class="profile-card luubut-section"
@@ -645,11 +738,11 @@ require __DIR__ . '/../../inc/header.php';
     <div class="luubut-header">
       <div class="luubut-badge">
         <span aria-hidden="true">✍️</span>
-        <span>Xử lý máy chủ (Server-side) &bull; Mô hình PRG</span>
+        <span>CSDL MySQL <code>tv_luu_but</code> &bull; Phân trang &bull; Phân quyền chủ trang</span>
       </div>
       <h2 id="luubut-heading">Sổ Lưu Bút &amp; Lời Nhắn Gửi</h2>
       <p class="luubut-desc">
-        Hãy để lại lời chúc, nhận xét hoặc đóng góp ý kiến của bạn dành cho Hưng. Dữ liệu được kiểm tra an toàn tại máy chủ, lưu trữ bền vững vào tệp <code>storage/3120224065_luubut.jsonl</code> và tự động chuyển hướng <strong>Post/Redirect/Get (PRG)</strong> chống gửi lặp.
+        Hãy để lại lời chúc, nhận xét hoặc đóng góp ý kiến của bạn dành cho Hưng. Dữ liệu được lưu trữ trong bảng <code>tv_luu_but</code> qua PDO Prepared Statement, hỗ trợ phân trang (5 lời nhắn/trang) và chỉ chủ trang đăng nhập mới có quyền xóa lời nhắn.
       </p>
     </div>
 
@@ -754,40 +847,102 @@ require __DIR__ . '/../../inc/header.php';
         </form>
       </div>
 
-      <!-- Cột phải: 5 Lời nhắn mới nhất -->
+      <!-- Cột phải: Danh sách lời nhắn phân trang -->
       <div class="luubut-list-card">
         <div class="luubut-list-card__header">
-          <h3>5 Lời nhắn mới nhất</h3>
-          <span class="luubut-total-pill">Tổng cộng: <?= e(count($danhSachLuuBut)) ?></span>
+          <h3>Sổ lưu bút (Trang <?= e($trangLB) ?> / <?= e($tongSoTrangLB) ?>)</h3>
+          <span class="luubut-total-pill">Tổng cộng: <?= e($tongSoLuuBut) ?> lời nhắn</span>
         </div>
 
-        <?php if (empty($namLoiNhanMoiNhat)): ?>
+        <?php if (empty($danhSachLuuBut)): ?>
           <p class="luubut-empty">Chưa có lời lưu bút nào. Hãy là người đầu tiên để lại lời nhắn nhé!</p>
         <?php else: ?>
           <div class="luubut-items">
-            <?php foreach ($namLoiNhanMoiNhat as $item): ?>
+            <?php foreach ($danhSachLuuBut as $item): ?>
               <?php
-                $thoiGianText = (string)($item['thoi_gian'] ?? '');
-                $dt = DateTime::createFromFormat('d/m/Y H:i', $thoiGianText);
-                $isoTime = $dt ? $dt->format('Y-m-d\TH:i') : date('Y-m-d\TH:i');
+                $thoiGianRaw = $item['thoi_gian'] ?? '';
+                $timestamp = strtotime((string)$thoiGianRaw);
+                $isoTime = $timestamp ? date('c', $timestamp) : date('c');
+                $dinhDangHienThi = $timestamp ? date('d/m/Y H:i', $timestamp) : (string)$thoiGianRaw;
               ?>
               <article class="luubut-card-item">
                 <div class="luubut-card-item__top">
                   <div class="luubut-card-item__sender">
-                    <h4 class="luubut-card-item__sender-name"><?= e($item['ho_ten'] ?? 'Ẩn danh') ?></h4>
+                    <h4 class="luubut-card-item__sender-name"><?= e($item['ten_khach'] ?? 'Ẩn danh') ?></h4>
                     <span class="luubut-role-tag"><?= e($item['vai_tro'] ?? 'Khách ghé thăm') ?></span>
                   </div>
-                  <time class="luubut-time" datetime="<?= e($isoTime) ?>">
-                    <?= e($thoiGianText) ?>
-                  </time>
+                  <div class="luubut-card-item__meta">
+                    <time class="luubut-time" datetime="<?= e($isoTime) ?>">
+                      <?= e($dinhDangHienThi) ?>
+                    </time>
+                    <?php if ($laChuTrang && !empty($item['id'])): ?>
+                      <form action="gioithieu.php#luubut" method="post" class="d-inline ms-2" onsubmit="return confirm('Bạn có chắc chắn muốn xóa lời nhắn này khỏi CSDL?');">
+                        <input type="hidden" name="xoa_luu_but" value="1">
+                        <input type="hidden" name="id_luu_but" value="<?= (int)$item['id'] ?>">
+                        <button type="submit" class="btn-xoa-luubut" title="Chủ trang xóa lời nhắn">🗑️ Xóa</button>
+                      </form>
+                    <?php endif; ?>
+                  </div>
                 </div>
                 <p class="luubut-card-item__content"><?= nl2br(e($item['loi_nhan'] ?? '')) ?></p>
               </article>
             <?php endforeach; ?>
           </div>
+
+          <!-- Phân trang Sổ lưu bút (5 lời nhắn / trang) -->
+          <?php if ($tongSoTrangLB > 1): ?>
+            <nav class="luubut-pagination mt-3" aria-label="Phân trang sổ lưu bút">
+              <ul>
+                <?php if ($trangLB > 1): ?>
+                  <li class="page-item">
+                    <a class="page-link" href="?trang_lb=<?= $trangLB - 1 ?>#luubut" aria-label="Trang trước">&laquo; Trước</a>
+                  </li>
+                <?php endif; ?>
+
+                <?php for ($p = 1; $p <= $tongSoTrangLB; $p++): ?>
+                  <li class="page-item <?= $p === $trangLB ? 'active' : '' ?>">
+                    <a class="page-link" href="?trang_lb=<?= $p ?>#luubut"><?= $p ?></a>
+                  </li>
+                <?php endfor; ?>
+
+                <?php if ($trangLB < $tongSoTrangLB): ?>
+                  <li class="page-item">
+                    <a class="page-link" href="?trang_lb=<?= $trangLB + 1 ?>#luubut" aria-label="Trang sau">Sau &raquo;</a>
+                  </li>
+                <?php endif; ?>
+              </ul>
+            </nav>
+          <?php endif; ?>
         <?php endif; ?>
       </div>
     </div>
+
+    <!-- Bảng thống kê 7 ngày gần nhất (Bảng tv_luot_xem) -->
+    <?php if (!empty($thongKe7Ngay)): ?>
+      <div class="luubut-stats-box mt-4 p-3 rounded border">
+        <h3 class="h6 mb-2 font-weight-bold" style="font-size: 1rem; color: var(--mau-chinh);">
+          📊 Thống kê lượt truy cập trang 7 ngày gần nhất (Bảng <code>tv_luot_xem</code>)
+        </h3>
+        <div class="table-responsive">
+          <table class="table table-sm table-bordered text-center m-0">
+            <thead>
+              <tr style="background: rgba(0,0,0,0.03);">
+                <?php foreach ($thongKe7Ngay as $tk): ?>
+                  <th><?= e(date('d/m', strtotime((string)$tk['ngay']))) ?></th>
+                <?php endforeach; ?>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <?php foreach ($thongKe7Ngay as $tk): ?>
+                  <td><strong><?= e($tk['so_luot']) ?></strong> lượt</td>
+                <?php endforeach; ?>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <?php endif; ?>
   </section>
 </main>
 
