@@ -1,11 +1,4 @@
 <?php
-/**
- * gio-hang.php
- * Trang quản lý Phiếu đăng ký giữ chỗ sự kiện phía máy chủ bằng Session ($_SESSION['gio']).
- * Xử lý: Thêm sự kiện, đổi số lượng chỗ, xóa 1 sự kiện, xóa toàn bộ theo mô hình Post/Redirect/Get (PRG).
- * Toàn bộ thông tin sự kiện được đối chiếu từ tệp dữ liệu máy chủ.
- */
-
 declare(strict_types=1);
 
 require_once __DIR__ . '/inc/config.php';
@@ -13,37 +6,139 @@ require_once __DIR__ . '/inc/config.php';
 use App\Data\KhoSuKien;
 use App\Services\GioHang;
 
-$kho = new KhoSuKien(__DIR__ . '/data/su-kien.json');
+$kho = new KhoSuKien(db());
 $gio = new GioHang();
 
-// 1. XỬ LÝ BIỂU MẪU POST (Thêm, Xác nhận, Hủy, Xóa) - Áp dụng Post/Redirect/Get (PRG)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $hanhDong = $_POST['hanh_dong'] ?? '';
+    $hanhDong = (string)($_POST['hanh_dong'] ?? '');
 
     if ($hanhDong === 'them') {
         $idRaw = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT);
-
-        if ($idRaw === false || $idRaw <= 0 || $kho->timTheoId($idRaw) === null) {
-            flash('Mã sự kiện không hợp lệ hoặc sự kiện không tồn tại trong hệ thống.');
+        if ($idRaw === false || $idRaw <= 0) {
+            flash('Mã sự kiện không hợp lệ.');
             header('Location: gio-hang.php');
             exit;
         }
 
-        // Ràng buộc: Mỗi tài khoản sinh viên chỉ có thể đăng ký 1 vé cho mỗi sự kiện
-        if ($gio->daXacNhan($idRaw)) {
-            flash('Bạn đã xác nhận đăng ký sự kiện này rồi (mỗi tài khoản sinh viên chỉ được đăng ký tối đa 1 vé cho mỗi sự kiện).');
-            header('Location: gio-hang.php#da-xac-nhan');
-            exit;
-        }
-
-        if ($gio->dangChoXacNhan($idRaw)) {
-            flash('Sự kiện này đã có trong danh sách chờ xác nhận. Vui lòng bấm "Xác Nhận Đăng Ký Giữ Chỗ" bên dưới để hoàn tất.');
+        $sk = $kho->timTheoId($idRaw);
+        if ($sk === null) {
+            flash('Sự kiện không tồn tại trong hệ thống.');
             header('Location: gio-hang.php');
             exit;
         }
 
-        $gio->them($idRaw, 1);
-        flash('Đã thêm sự kiện vào phiếu! Trạng thái hiện tại: ⏳ Chờ xác nhận đăng ký. Vui lòng bấm "Xác Nhận Đăng Ký Giữ Chỗ" bên dưới để hoàn tất.');
+        $soLuongRaw = $_POST['so_luong'] ?? null;
+        if (!is_numeric($soLuongRaw)) {
+            flash('Số lượng vé không đúng định dạng số nguyên.');
+            header('Location: gio-hang.php');
+            exit;
+        }
+
+        $slInt = (int)$soLuongRaw;
+        if ((string)$slInt !== trim((string)$soLuongRaw)) {
+            flash('Số lượng vé phải là một số nguyên hợp lệ.');
+            header('Location: gio-hang.php');
+            exit;
+        }
+
+        if ($slInt <= 0) {
+            flash('Số lượng vé phải lớn hơn 0 (tối thiểu 1 vé).');
+            header('Location: gio-hang.php');
+            exit;
+        }
+
+        if ($slInt > 50) {
+            flash("Số lượng vé yêu cầu ({$slInt}) vượt quá giới hạn cho phép (tối đa 50 vé mỗi lượt đăng ký).");
+            header('Location: gio-hang.php');
+            exit;
+        }
+
+        if ($sk->ton_kho <= 0) {
+            flash("Sự kiện \"{$sk->ten}\" đã hết vé đăng ký.");
+            header('Location: gio-hang.php');
+            exit;
+        }
+
+        if ($slInt > $sk->ton_kho) {
+            flash("Số lượng vé yêu cầu ({$slInt}) vượt quá số vé còn lại trong kho ({$sk->ton_kho} vé).");
+            header('Location: gio-hang.php');
+            exit;
+        }
+
+        $gio->them($idRaw, $slInt);
+        flash("Đã thêm sự kiện \"{$sk->ten}\" vào giỏ vé thành công!");
+        header('Location: gio-hang.php');
+        exit;
+    }
+
+    if ($hanhDong === 'cap_nhat') {
+        $idRaw = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT);
+        if ($idRaw === false || $idRaw <= 0) {
+            flash('Mã sự kiện không hợp lệ.');
+            header('Location: gio-hang.php');
+            exit;
+        }
+
+        $sk = $kho->timTheoId($idRaw);
+        if ($sk === null) {
+            flash('Sự kiện không tồn tại trong hệ thống.');
+            header('Location: gio-hang.php');
+            exit;
+        }
+
+        $soLuongRaw = $_POST['so_luong'] ?? null;
+        if (!is_numeric($soLuongRaw)) {
+            flash('Số lượng vé không đúng định dạng số nguyên.');
+            header('Location: gio-hang.php');
+            exit;
+        }
+
+        $slInt = (int)$soLuongRaw;
+        if ((string)$slInt !== trim((string)$soLuongRaw)) {
+            flash('Số lượng vé phải là một số nguyên hợp lệ.');
+            header('Location: gio-hang.php');
+            exit;
+        }
+
+        if ($slInt <= 0) {
+            flash('Số lượng vé cập nhật không hợp lệ (phải từ 1 đến 50 vé). Nếu muốn xóa sự kiện khỏi giỏ, vui lòng nhấn nút ✕.');
+            header('Location: gio-hang.php');
+            exit;
+        }
+
+        if ($slInt > 50) {
+            flash("Số lượng vé yêu cầu ({$slInt}) vượt quá giới hạn cho phép (tối đa 50 vé mỗi sự kiện).");
+            header('Location: gio-hang.php');
+            exit;
+        }
+
+        if ($slInt > $sk->ton_kho) {
+            flash("Số lượng vé yêu cầu ({$slInt}) vượt quá số vé còn lại trong kho ({$sk->ton_kho} vé).");
+            header('Location: gio-hang.php');
+            exit;
+        }
+
+        $gio->capNhat($idRaw, $slInt);
+        flash("Đã cập nhật số lượng vé cho sự kiện \"{$sk->ten}\" thành {$slInt} vé.");
+        header('Location: gio-hang.php');
+        exit;
+    }
+
+    if ($hanhDong === 'xoa') {
+        $idRaw = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT);
+        if ($idRaw !== false && $idRaw > 0) {
+            $sk = $kho->timTheoId($idRaw);
+            $gio->xoa($idRaw);
+            $tenSK = $sk ? $sk->ten : "Sự kiện #{$idRaw}";
+            flash("Đã xóa sự kiện \"{$tenSK}\" khỏi giỏ vé.");
+        }
+        header('Location: gio-hang.php');
+        exit;
+    }
+
+    if ($hanhDong === 'xoa_het') {
+        $gio->xoaHet();
+        flash('Đã xóa toàn bộ sự kiện khỏi giỏ vé.');
         header('Location: gio-hang.php');
         exit;
     }
@@ -51,7 +146,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($hanhDong === 'xac_nhan_tat_ca') {
         $soLuong = $gio->xacNhanTatCa();
         if ($soLuong > 0) {
-            flash("🎉 Chúc mừng bạn đã đăng ký tham gia thành công {$soLuong} sự kiện! Số lượng vé đã đăng ký của bạn được +{$soLuong}.");
+            flash("🎉 Đã đăng ký thành công {$soLuong} vé sự kiện!");
         } else {
             flash('Hiện không có sự kiện nào trong danh sách chờ xác nhận.');
         }
@@ -59,52 +154,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    if ($hanhDong === 'xac_nhan_mot') {
-        $idRaw = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT);
-        if ($idRaw !== false && $idRaw > 0 && $gio->xacNhan($idRaw)) {
-            flash('🎉 Đã xác nhận đăng ký thành công! Số lượng sự kiện đã đăng ký của bạn được +1.');
-        }
-        header('Location: gio-hang.php#da-xac-nhan');
-        exit;
-    }
-
-    if ($hanhDong === 'xoa') {
-        $idRaw = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT);
-        if ($idRaw !== false && $idRaw > 0) {
-            $gio->xoa($idRaw);
-            flash('Đã xóa sự kiện khỏi danh sách chờ xác nhận.');
-        }
-        header('Location: gio-hang.php');
-        exit;
-    }
-
     if ($hanhDong === 'huy_ve') {
         $idRaw = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT);
         if ($idRaw !== false && $idRaw > 0) {
+            $sk = $kho->timTheoId($idRaw);
             $gio->huyXacNhan($idRaw);
-            flash('Đã hủy đăng ký sự kiện thành công.');
+            $tenSK = $sk ? $sk->ten : "Sự kiện #{$idRaw}";
+            flash("Đã hủy vé của sự kiện \"{$tenSK}\".");
         }
         header('Location: gio-hang.php#da-xac-nhan');
         exit;
     }
-
-    if ($hanhDong === 'xoa_het') {
-        $gio->xoaHet();
-        flash('Đã xóa toàn bộ danh sách chờ xác nhận đăng ký.');
-        header('Location: gio-hang.php');
-        exit;
-    }
-
-    header('Location: gio-hang.php');
-    exit;
 }
 
-// 2. HIỂN THỊ DANH SÁCH CHI TIẾT
 $chiTietGio = $gio->chiTiet($kho);
 $danhSachDaXacNhan = $gio->danhSachDaXacNhan($kho);
+$thongBaoFlash = flash();
 
+$tongTien = 0;
 $tongDiem = 0;
 foreach ($chiTietGio as $item) {
+    $tongTien += $item['thanhTien'];
     $tongDiem += $item['suKien']->diemRenLuyen * $item['soLuong'];
 }
 
@@ -113,9 +183,7 @@ foreach ($danhSachDaXacNhan as $item) {
     $tongDiemDaXacNhan += $item['suKien']->diemRenLuyen;
 }
 
-$thongBao = flash();
-
-$tieuDe = 'Phiếu đăng ký sự kiện - UniEvent';
+$tieuDe = 'Phiếu đăng ký giữ chỗ sự kiện - UniEvent';
 $trang  = 'gio-hang';
 
 require __DIR__ . '/inc/header.php';
@@ -123,255 +191,258 @@ require __DIR__ . '/inc/header.php';
 
 <main>
   <div class="container">
-    <nav class="breadcrumb mb-3" aria-label="Đường dẫn phân cấp">
+    <nav class="breadcrumb mb-4" aria-label="Đường dẫn phân cấp">
       <a href="index.php">Trang chủ</a>
       <span aria-hidden="true">/</span>
       <span class="hien-tai">Phiếu đăng ký sự kiện</span>
     </nav>
 
     <div class="trang-tieu-de mb-4">
-      <h1>Phiếu Đăng Ký Giữ Chỗ Sự Kiện</h1>
-      <p class="do-dai-chuan text-phu">
-        Xem lại danh sách các sự kiện bạn đã chọn giữ chỗ (mỗi sự kiện tối đa 1 vé/sinh viên) và tiến hành xác nhận tham gia để tích lũy điểm rèn luyện.
+      <h1 class="font-hien-thi fw-800 text-chinh mb-2">Phiếu Đăng Ký Giữ Chỗ &amp; Giỏ Vé</h1>
+      <p class="do-dai-chuan text-phu" style="font-size: 1.05rem;">
+        Quản lý danh sách các sự kiện bạn dự định tham gia, theo dõi số lượng vé, giá tiền và điểm rèn luyện tích lũy.
       </p>
     </div>
 
-    <?php if ($thongBao !== null): ?>
-      <?php $isLoi = str_contains($thongBao, 'không hợp lệ') || str_contains($thongBao, 'Lỗi') || str_contains($thongBao, 'không tồn tại'); ?>
-      <div class="hop-thong-bao <?= $isLoi ? 'hop-thong-bao--loi' : 'hop-thong-bao--thanh-cong' ?> mb-4" role="status">
-        <span class="hop-thong-bao__icon" aria-hidden="true"><?= $isLoi ? '⚠️' : '✓' ?></span>
-        <div>
-          <p class="mb-0"><?= e($thongBao) ?></p>
-        </div>
+    <?php if (!empty($thongBaoFlash)): ?>
+      <div class="hop-thong-bao mb-4" role="alert" style="background:rgba(59,130,246,0.12); border:1px solid rgba(59,130,246,0.3); color:var(--mau-chinh); padding:14px 20px; border-radius:12px; font-weight:500; box-shadow:var(--shadow-sm);">
+        <strong style="color:var(--mau-chinh);">Thông báo:</strong> <?= e($thongBaoFlash) ?>
       </div>
     <?php endif; ?>
 
-  <?php if (empty($chiTietGio) && empty($danhSachDaXacNhan)): ?>
-    <!-- DANH SÁCH RỖNG -->
-    <div class="text-center p-5 my-4" style="background:var(--nen-surface); border-radius:var(--radius-vua); border:1px dashed var(--border-nhat);">
-      <div style="font-size:3.5rem; margin-bottom:1rem;">📋</div>
-      <h2 class="h4" style="color:var(--mau-chinh-toi);">Chưa có sự kiện nào trong phiếu đăng ký</h2>
-      <p class="text-phu mb-4">
-        Bạn chưa chọn đăng ký sự kiện nào. Hãy khám phá các hội thảo, cuộc thi và hoạt động hấp dẫn tại UniEvent nhé!
-      </p>
-      <a href="danh-sach.php" class="nut-bam nut-chinh">Khám phá danh sách sự kiện</a>
-    </div>
-  <?php else: ?>
+    <?php if (empty($chiTietGio) && empty($danhSachDaXacNhan)): ?>
+      <div class="p-5 text-center my-4" style="background:var(--nen-surface); border-radius:16px; border:1px dashed var(--border-dam); box-shadow:var(--shadow-sm);">
+        <div style="font-size:3.5rem; margin-bottom:1rem;">🎫</div>
+        <h2 class="h4" style="color:var(--mau-chinh-toi); font-weight:700;">Phiếu đăng ký của bạn đang trống</h2>
+        <p class="text-phu mb-4" style="max-width:500px; margin-left:auto; margin-right:auto;">
+          Bạn chưa chọn sự kiện nào vào phiếu. Hãy khám phá danh sách sự kiện phong phú tại trường để bắt đầu đăng ký!
+        </p>
+        <a href="danh-sach.php" class="nut-bam nut-nhan" style="padding: 10px 24px;">Khám phá sự kiện ngay</a>
+      </div>
+    <?php else: ?>
 
-    <?php if (!empty($chiTietGio)): ?>
-      <!-- 1. BẢNG CHI TIẾT SỰ KIỆN CHỜ XÁC NHẬN ĐĂNG KÝ -->
-      <section class="mb-5">
-        <div class="section-head mb-3">
-          <div>
-            <h2 class="h4" style="color:#b45309;">
-              ⏳ Danh Sách Chờ Xác Nhận Đăng Ký (<?= count($chiTietGio) ?> sự kiện)
-            </h2>
-            <p class="section-head__mota">
-              Các sự kiện bạn đã chọn giữ chỗ nhưng chưa hoàn tất xác nhận. Vui lòng bấm <strong>"Xác Nhận Đăng Ký Giữ Chỗ"</strong> để được ghi nhận vào hệ thống.
-            </p>
+      <?php if (!empty($chiTietGio)): ?>
+        <section aria-labelledby="tieu-de-danh-sach-cho" class="mb-5">
+          <div class="section-head mb-4">
+            <div>
+              <h2 id="tieu-de-danh-sach-cho" class="h4 font-hien-thi fw-700" style="color:#b45309;">
+                ⏳ Danh Sách Sự Kiện Đang Chờ Đặt Vé (<?= count($chiTietGio) ?> mục)
+              </h2>
+              <p class="section-head__mota mt-1">
+                Các sự kiện đang giữ trong phiên. Vui lòng kiểm tra số lượng và tiến hành đặt vé để giữ chỗ an toàn trong CSDL.
+              </p>
+            </div>
           </div>
-        </div>
 
-        <div class="bang-wrapper shadow-sm mb-4">
-          <table>
-            <caption>Danh sách sự kiện đang chờ sinh viên xác nhận đăng ký giữ chỗ</caption>
-            <thead>
-              <tr>
-                <th scope="col" style="width:45%;">Sự kiện</th>
-                <th scope="col">Quyền lợi</th>
-                <th scope="col" style="width:160px;">Số lượng chỗ</th>
-                <th scope="col">Trạng thái</th>
-                <th scope="col" style="text-align:center;">Hủy</th>
-              </tr>
-            </thead>
-            <tbody>
-              <?php foreach ($chiTietGio as $item): ?>
-                <?php $sk = $item['suKien']; ?>
+          <div class="bang-card mb-4">
+            <div class="bang-card__header">
+              <h2 class="bang-card__tieu-de">
+                <?= uiIcon('ticket', 'icon-brand', 18) ?>
+                <span>Danh sách sự kiện đang chờ đặt vé</span>
+              </h2>
+              <span class="bang-card__dem"><?= count($chiTietGio) ?> sự kiện</span>
+            </div>
+            <div class="bang-wrapper">
+              <table style="width:100%; min-width: 660px; border-collapse:collapse;">
+              <thead>
                 <tr>
-                  <td>
-                    <div class="d-flex align-items-center gap-3">
-                      <img
-                        src="<?= e($sk->hinhAnh) ?>"
-                        alt="<?= e($sk->ten) ?>"
-                        width="60"
-                        height="40"
-                        style="border-radius:4px; object-fit:cover; flex-shrink:0;"
-                      />
-                      <div>
-                        <a href="chi-tiet.php?id=<?= $sk->id ?>" class="fw-bold text-chinh" style="font-size:0.95rem;">
-                          <?= e($sk->ten) ?>
-                        </a>
-                        <div class="fs-meta text-phu mt-1">
-                          📅 <?= e($sk->thoiGian) ?> | 📍 <?= e($sk->diaDiem) ?>
+                  <th scope="col" style="min-width:240px;">Sự kiện</th>
+                  <th scope="col" style="width:120px; white-space:nowrap;">Đơn giá</th>
+                  <th scope="col" style="width:130px; text-align:center; white-space:nowrap;">Số lượng</th>
+                  <th scope="col" style="width:130px; text-align:right; white-space:nowrap;">Thành tiền</th>
+                  <th scope="col" style="width:100px; text-align:center; white-space:nowrap;">Quyền lợi</th>
+                  <th scope="col" style="width:70px; text-align:center; white-space:nowrap;">Xóa</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php foreach ($chiTietGio as $item): ?>
+                  <?php $sk = $item['suKien']; ?>
+                  <tr>
+                    <td>
+                      <div class="d-flex align-items-center gap-3">
+                        <img
+                          src="<?= e($sk->hinhAnh) ?>"
+                          alt="<?= e($sk->ten) ?>"
+                          width="64"
+                          height="44"
+                          style="border-radius:8px; object-fit:cover; flex-shrink:0; border:1px solid var(--border-nhat);"
+                        />
+                        <div>
+                          <a href="chi-tiet.php?id=<?= $sk->id ?>" class="fw-bold text-chinh" style="font-size:0.95rem; text-decoration:none;">
+                            <?= e($sk->ten) ?>
+                          </a>
+                          <div class="fs-meta text-phu mt-1">
+                            <?= uiIcon('calendar', 'icon-muted', 13) ?> <?= e($sk->thoiGian) ?> | <?= uiIcon('pin', 'icon-muted', 13) ?> <?= e($sk->diaDiem) ?>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </td>
-                  <td>
-                    <span class="badge badge--xanh">+<?= $sk->diemRenLuyen ?> Điểm rèn luyện</span>
-                  </td>
-                  <td>
-                    <!-- Ràng buộc: Mỗi tài khoản sinh viên chỉ được đăng ký tối đa 1 vé cho mỗi sự kiện -->
-                    <div class="d-flex align-items-center gap-2">
-                      <span class="badge" style="background:var(--nen-surface); border:1px solid var(--border-nhat); font-size:0.95rem; font-weight:600; padding:5px 12px; color:var(--mau-chinh);">
-                        1 vé
+                    </td>
+                    <td style="white-space:nowrap;">
+                      <strong><?= vnd($sk->gia) ?></strong>
+                    </td>
+                    <td style="text-align:center;">
+                      <form action="gio-hang.php" method="POST" class="d-flex align-items-center justify-content-center gap-1" style="margin:0;">
+                        <input type="hidden" name="hanh_dong" value="cap_nhat">
+                        <input type="hidden" name="id" value="<?= $sk->id ?>">
+                        <input
+                          type="number"
+                          name="so_luong"
+                          value="<?= $item['soLuong'] ?>"
+                          min="1"
+                          max="50"
+                          class="form-control"
+                          style="width:65px; height:36px; padding:4px 6px; text-align:center; border:1.5px solid var(--border-nhat); border-radius:6px; font-weight:600;"
+                        />
+                        <button type="submit" class="nut-bam nut-phu nut-nho" style="padding:6px 10px;" title="Cập nhật số lượng">↻</button>
+                      </form>
+                    </td>
+                    <td style="text-align:right; white-space:nowrap;">
+                      <strong style="color:var(--mau-chinh); font-size:1rem;"><?= vnd($item['thanhTien']) ?></strong>
+                    </td>
+                    <td style="text-align:center; white-space:nowrap;">
+                      <span class="badge" style="background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe; font-weight:600;">
+                        +<?= $sk->diemRenLuyen * $item['soLuong'] ?> Điểm
                       </span>
-                    </div>
-                  </td>
-                  <td>
-                    <span class="badge" style="background:#fef3c7; color:#b45309; border:1px solid #fde68a; font-weight:600;">
-                      ⏳ Chờ xác nhận
-                    </span>
-                  </td>
-                  <td style="text-align:center;">
-                    <!-- Biểu mẫu xóa một sự kiện khỏi danh sách chờ (PRG) -->
-                    <form action="gio-hang.php" method="POST" style="margin:0;">
-                      <input type="hidden" name="hanh_dong" value="xoa">
-                      <input type="hidden" name="id" value="<?= $sk->id ?>">
-                      <button type="submit" class="nut-bam nut-canh-bao nut-nho" style="padding:4px 10px;" title="Hủy sự kiện khỏi danh sách chờ">
-                        ✕
-                      </button>
-                    </form>
+                    </td>
+                    <td style="text-align:center;">
+                      <form action="gio-hang.php" method="POST" style="margin:0;">
+                        <input type="hidden" name="hanh_dong" value="xoa">
+                        <input type="hidden" name="id" value="<?= $sk->id ?>">
+                        <button type="submit" class="nut-bam nut-canh-bao nut-nho" style="padding:6px 10px; border-radius:6px;" title="Xóa mục này">
+                          ✕
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                <?php endforeach; ?>
+              </tbody>
+              <tfoot>
+                <tr style="background:var(--nen-section);">
+                  <th colspan="3" scope="row" style="text-align:right; font-weight:700; font-size:1.05rem;">
+                    Tổng cộng thanh toán:
+                  </th>
+                  <td colspan="3" style="text-align:left;">
+                    <strong style="font-size:1.25rem; color:var(--mau-chinh); font-weight:800; white-space:nowrap;">
+                      <?= vnd($tongTien) ?>
+                    </strong>
+                    <span class="ms-2 fs-meta text-phu" style="white-space:nowrap;">(Tổng: +<?= $tongDiem ?> Điểm rèn luyện)</span>
                   </td>
                 </tr>
-              <?php endforeach; ?>
-            </tbody>
-            <tfoot>
-              <tr style="background:var(--nen-surface);">
-                <th colspan="3" scope="row" style="text-align:right; font-weight:700; font-size:1.05rem;">
-                  Tổng điểm rèn luyện tích lũy dự kiến:
-                </th>
-                <td colspan="2">
-                  <strong style="font-size:1.15rem; color:var(--mau-chinh); font-weight:800;">
-                    +<?= $tongDiem ?> Điểm rèn luyện
-                  </strong>
-                </td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-
-        <!-- HÀNH ĐỘNG PHIẾU ĐĂNG KÝ -->
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-          <div class="d-flex gap-2">
-            <a href="danh-sach.php" class="nut-bam nut-phu">← Tiếp tục chọn sự kiện</a>
-            <!-- Nút xóa hết danh sách chờ -->
-            <form action="gio-hang.php" method="POST" style="margin:0;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa toàn bộ danh sách chờ xác nhận này không?');">
-              <input type="hidden" name="hanh_dong" value="xoa_het">
-              <button type="submit" class="nut-bam nut-canh-bao">Xóa danh sách chờ</button>
-            </form>
+              </tfoot>
+            </table>
           </div>
 
-          <!-- Nút Xác nhận đăng ký chính thức (POST -> chuyển sang Đã đăng ký và +1 vào Đã đăng ký) -->
-          <form action="gio-hang.php" method="POST" style="margin:0;">
-            <input type="hidden" name="hanh_dong" value="xac_nhan_tat_ca">
-            <button type="submit" class="nut-bam nut-nhan py-2 px-4" style="font-size:1rem; font-weight:700;">
-              ✓ Xác Nhận Đăng Ký Giữ Chỗ (+<?= count($chiTietGio) ?> vé) →
-            </button>
-          </form>
-        </div>
-      </section>
-    <?php endif; ?>
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mt-4">
+            <div class="d-flex gap-2">
+              <a href="danh-sach.php" class="nut-bam nut-phu" style="padding: 10px 18px;">← Tiếp tục chọn sự kiện</a>
+              <form action="gio-hang.php" method="POST" style="margin:0;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa toàn bộ giỏ vé này?');">
+                <input type="hidden" name="hanh_dong" value="xoa_het">
+                <button type="submit" class="nut-bam nut-canh-bao" style="padding: 10px 18px;">Xóa giỏ vé</button>
+              </form>
+            </div>
 
-    <!-- 2. BẢNG DANH SÁCH SỰ KIỆN ĐÃ ĐĂNG KÝ THÀNH CÔNG -->
-    <?php if (!empty($danhSachDaXacNhan)): ?>
-      <section id="da-xac-nhan" class="mt-5 pt-3" style="border-top:1px dashed var(--border-nhat);">
-        <div class="section-head mb-3">
-          <div>
-            <h2 class="h4" style="color:#15803d;">
-              ✓ Sự Kiện Đã Đăng Ký Thành Công (<span id="dem-so-ve-xac-nhan"><?= count($danhSachDaXacNhan) ?></span> vé)
-            </h2>
-            <p class="section-head__mota">
-              Danh sách các sự kiện bạn đã hoàn tất đăng ký giữ chỗ chính thức. Hãy xuất trình mã vé hoặc thẻ sinh viên để quét điểm danh khi tham gia.
-            </p>
+            <div class="d-flex gap-2">
+              <a href="dat-hang.php" class="nut-bam nut-nhan" style="padding: 12px 24px; font-size:1rem; font-weight:700;">
+                💳 Tiến Hành Đặt Vé / Đăng Ký →
+              </a>
+            </div>
           </div>
-        </div>
+        </section>
+      <?php endif; ?>
 
-        <div class="bang-wrapper shadow-sm mb-4">
-          <table>
-            <caption>Danh sách các sự kiện sinh viên đã đăng ký tham gia thành công</caption>
-            <thead>
-              <tr>
-                <th scope="col" style="width:40%;">Sự kiện</th>
-                <th scope="col" style="width:140px;">Mã vé điện tử</th>
-                <th scope="col">Thời gian xác nhận</th>
-                <th scope="col">Quyền lợi</th>
-                <th scope="col">Trạng thái</th>
-                <th scope="col" style="text-align:center;">Hủy vé</th>
-              </tr>
-            </thead>
-            <tbody>
-              <?php foreach ($danhSachDaXacNhan as $item): ?>
-                <?php $sk = $item['suKien']; ?>
+      <?php if (!empty($danhSachDaXacNhan)): ?>
+        <section id="da-xac-nhan" class="mt-5 pt-4" style="border-top:1px dashed var(--border-dam);">
+          <div class="section-head mb-4">
+            <div>
+              <h2 class="h4 font-hien-thi fw-700" style="color:#15803d;">
+                <?= uiIcon('check', 'icon-success', 16) ?> Vé Đã Xác Nhận Trong Phiên (<?= count($danhSachDaXacNhan) ?> vé)
+              </h2>
+              <p class="section-head__mota mt-1">
+                Danh sách vé điện tử bạn đã xác nhận giữ chỗ nhanh trong phiên làm việc.
+              </p>
+            </div>
+          </div>
+
+          <div class="bang-card mb-4">
+            <div class="bang-card__header">
+              <h2 class="bang-card__tieu-de">
+                <?= uiIcon('check', 'icon-success', 18) ?>
+                <span>Danh sách vé đã xác nhận giữ chỗ</span>
+              </h2>
+              <span class="bang-card__dem"><?= count($danhSachDaXacNhan) ?> vé</span>
+            </div>
+            <div class="bang-wrapper">
+              <table style="width:100%; min-width: 660px; border-collapse:collapse;">
+              <thead>
                 <tr>
-                  <td>
-                    <div class="d-flex align-items-center gap-3">
-                      <img
-                        src="<?= e($sk->hinhAnh) ?>"
-                        alt="<?= e($sk->ten) ?>"
-                        width="60"
-                        height="40"
-                        style="border-radius:4px; object-fit:cover; flex-shrink:0;"
-                      />
-                      <div>
-                        <a href="chi-tiet.php?id=<?= $sk->id ?>" class="fw-bold text-chinh" style="font-size:0.95rem;">
-                          <?= e($sk->ten) ?>
-                        </a>
-                        <div class="fs-meta text-phu mt-1">
-                          📅 <?= e($sk->thoiGian) ?> | 📍 <?= e($sk->diaDiem) ?>
+                  <th scope="col" style="min-width:240px;">Sự kiện</th>
+                  <th scope="col" style="width:160px; white-space:nowrap;">Mã vé điện tử</th>
+                  <th scope="col" style="width:140px; white-space:nowrap;">Thời gian</th>
+                  <th scope="col" style="width:100px; text-align:center; white-space:nowrap;">Quyền lợi</th>
+                  <th scope="col" style="width:130px; text-align:center; white-space:nowrap;">Trạng thái</th>
+                  <th scope="col" style="width:90px; text-align:center; white-space:nowrap;">Hủy vé</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php foreach ($danhSachDaXacNhan as $item): ?>
+                  <?php $sk = $item['suKien']; ?>
+                  <tr>
+                    <td>
+                      <div class="d-flex align-items-center gap-3">
+                        <img
+                          src="<?= e($sk->hinhAnh) ?>"
+                          alt="<?= e($sk->ten) ?>"
+                          width="64"
+                          height="44"
+                          style="border-radius:8px; object-fit:cover; flex-shrink:0; border:1px solid var(--border-nhat);"
+                        />
+                        <div>
+                          <a href="chi-tiet.php?id=<?= $sk->id ?>" class="fw-bold text-chinh" style="font-size:0.95rem; text-decoration:none;">
+                            <?= e($sk->ten) ?>
+                          </a>
+                          <div class="fs-meta text-phu mt-1">
+                            <?= uiIcon('calendar', 'icon-muted', 13) ?> <?= e($sk->thoiGian) ?> | <?= uiIcon('pin', 'icon-muted', 13) ?> <?= e($sk->diaDiem) ?>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </td>
-                  <td>
-                    <code style="background:#f1f5f9; padding:4px 8px; border-radius:4px; font-weight:700; color:var(--mau-chinh); font-size:0.875rem;">
-                      <?= e($item['maVe']) ?>
-                    </code>
-                  </td>
-                  <td>
-                    <span class="fs-meta text-phu">
-                      🕒 <?= e($item['thoiGianXacNhan']) ?>
-                    </span>
-                  </td>
-                  <td>
-                    <span class="badge badge--xanh">+<?= $sk->diemRenLuyen ?> Điểm rèn luyện</span>
-                  </td>
-                  <td>
-                    <span class="badge" style="background:#dcfce7; color:#15803d; border:1px solid #bbf7d0; font-weight:600;">
-                      ✓ Đã đăng ký
-                    </span>
-                  </td>
-                  <td style="text-align:center;">
-                    <!-- Biểu mẫu hủy vé đã xác nhận (PRG) -->
-                    <form action="gio-hang.php" method="POST" style="margin:0;" onsubmit="return confirm('Bạn có chắc chắn muốn hủy đăng ký tham gia sự kiện này không?');">
-                      <input type="hidden" name="hanh_dong" value="huy_ve">
-                      <input type="hidden" name="id" value="<?= $sk->id ?>">
-                      <button type="submit" class="nut-bam nut-canh-bao nut-nho" style="padding:4px 8px; font-size:0.75rem;" title="Hủy đăng ký vé sự kiện này">
-                        Hủy vé
-                      </button>
-                    </form>
-                  </td>
-                </tr>
-              <?php endforeach; ?>
-            </tbody>
-            <tfoot>
-              <tr style="background:var(--nen-surface);">
-                <th colspan="3" scope="row" style="text-align:right; font-weight:700; font-size:1.05rem;">
-                  Tổng điểm rèn luyện đã xác nhận:
-                </th>
-                <td colspan="3">
-                  <strong style="font-size:1.15rem; color:#15803d; font-weight:800;">
-                    +<?= $tongDiemDaXacNhan ?> Điểm rèn luyện
-                  </strong>
-                </td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-      </section>
-    <?php endif; ?>
+                    </td>
+                    <td style="white-space:nowrap;">
+                      <code style="background:var(--nen-section); padding:6px 10px; border-radius:6px; font-weight:700; color:var(--mau-chinh); font-size:0.875rem; border:1px solid var(--border-nhat);">
+                        <?= e($item['maVe']) ?>
+                      </code>
+                    </td>
+                    <td style="white-space:nowrap;">
+                      <span class="fs-meta text-phu">🕒 <?= e($item['thoiGianXacNhan']) ?></span>
+                    </td>
+                    <td style="text-align:center; white-space:nowrap;">
+                      <span class="badge" style="background:rgba(59,130,246,0.12); color:var(--mau-chinh); border:1px solid rgba(59,130,246,0.25); font-weight:600;">
+                        +<?= $sk->diemRenLuyen ?> Điểm
+                      </span>
+                    </td>
+                    <td style="text-align:center; white-space:nowrap;">
+                      <span class="badge" style="background:#dcfce7; color:#15803d; border:1px solid #bbf7d0; font-weight:700;">
+                        ✓ Đã xác nhận
+                      </span>
+                    </td>
+                    <td style="text-align:center;">
+                      <form action="gio-hang.php" method="POST" style="margin:0;" onsubmit="return confirm('Bạn có chắc chắn muốn hủy vé sự kiện này?');">
+                        <input type="hidden" name="hanh_dong" value="huy_ve">
+                        <input type="hidden" name="id" value="<?= $sk->id ?>">
+                        <button type="submit" class="nut-bam nut-canh-bao nut-nho" style="padding:6px 12px; font-size:0.8rem; border-radius:6px;">
+                          Hủy vé
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                <?php endforeach; ?>
+              </tbody>
+            </table>
+            </div>
+          </div>
+        </section>
+      <?php endif; ?>
 
-  <?php endif; ?>
+    <?php endif; ?>
   </div>
 </main>
 

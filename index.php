@@ -1,12 +1,4 @@
 <?php
-/**
- * index.php
- * Trang chủ hệ thống UniEvent.
- * Sinh giao diện động từ PHP và dữ liệu data/su-kien.json,
- * hiển thị khối "Sự kiện đã xem gần đây" từ cookie da_xem được kiểm tra an toàn ở máy chủ.
- * Giữ nguyên 100% cấu trúc HTML Semantic & CSS Design System gốc.
- */
-
 declare(strict_types=1);
 
 require_once __DIR__ . '/inc/config.php';
@@ -14,27 +6,24 @@ require_once __DIR__ . '/inc/config.php';
 use App\Data\KhoSuKien;
 use App\Services\GioHang;
 
-$kho = new KhoSuKien(__DIR__ . '/data/su-kien.json');
+$kho = new KhoSuKien(db());
 $gio = new GioHang();
-$tatCa = $kho->tatCa();
-
-// 3 sự kiện tiêu biểu cho phần nổi bật
+$tatCa = $kho->tatCa(6);
 $noiBat = array_slice($tatCa, 0, 3);
 
-// Đọc cookie 'da_xem' (tối đa 4 ID xem gần nhất)
-// Tuyệt đối không tin giá trị cookie, kiểm tra từng ID qua FILTER_VALIDATE_INT và đối chiếu trong kho
 $daXem = [];
 $cookieDaXem = $_COOKIE['da_xem'] ?? '';
 if ($cookieDaXem !== '') {
     $cacId = explode(',', $cookieDaXem);
+    $idsHopLe = [];
     foreach ($cacId as $idStr) {
         $idInt = filter_var($idStr, FILTER_VALIDATE_INT);
         if ($idInt !== false && $idInt > 0) {
-            $sk = $kho->timTheoId($idInt);
-            if ($sk !== null) {
-                $daXem[] = $sk;
-            }
+            $idsHopLe[] = $idInt;
         }
+    }
+    if (!empty($idsHopLe)) {
+        $daXem = $kho->layTheoIds(array_slice($idsHopLe, 0, 4));
     }
 }
 
@@ -45,42 +34,54 @@ $bodyClass = 'khung-trang-grid';
 require __DIR__ . '/inc/header.php';
 ?>
 
-<!-- Main (Vùng "chinh") -->
 <main class="vung-chinh noi-dung-chinh">
-  <!-- 1. Hero Section Nổi Bật -->
   <section class="hero">
     <div class="hero__noi-dung">
-      <span class="hero__badge">Cổng sự kiện sinh viên UED</span>
+      <div class="hero__co-quan">
+        <span class="hero__badge">ĐOÀN TRƯỜNG – HỘI SINH VIÊN ĐHSP ĐÀ NẴNG</span>
+        <span class="hero__nam-hoc">Năm học 2026 – 2027</span>
+      </div>
       <h1>
-        Khám phá &amp; Khởi tạo
-        <span class="text-highlight">Sự kiện Đại học</span> cùng UniEvent
+        Cổng Đăng Ký Hoạt Động &amp;
+        <span class="text-highlight">Tích Lũy Điểm Rèn Luyện</span>
       </h1>
       <p class="hero__mota">
-        Trải nghiệm cuộc sống sinh viên sôi động, kết nối mạng lưới bạn bè
-        và phát triển kỹ năng toàn diện thông qua hàng trăm hoạt động học
-        thuật, thể thao và văn hóa đặc sắc tại Trường ĐH Sư Phạm – Đại học
-        Đà Nẵng.
+        Hệ thống chính thức ghi nhận, cấp vé điện tử E-Ticket và đồng bộ Điểm rèn luyện tự động cho sinh viên tham gia các hoạt động phong trào, hội thảo học thuật, văn hóa nghệ thuật và thể dục thể thao tại Trường ĐH Sư Phạm – Đại học Đà Nẵng.
       </p>
       <div class="hero__cta">
         <a href="danh-sach.php" class="nut-bam nut-nhan">
-          Khám phá sự kiện ngay →
+          <?= uiIcon('calendar', '', 15) ?> Khám phá các sự kiện đang mở →
         </a>
-        <a href="gioi-thieu.php" class="nut-bam"> Tìm hiểu thêm </a>
       </div>
 
-      <!-- Khối thống kê nổi bật trên Hero -->
-      <div class="hero__thong-ke">
-        <div class="hero__thong-ke-item">
-          <span class="hero__thong-ke-so">50+</span>
-          <span class="hero__thong-ke-chu">Sự kiện mỗi tháng</span>
+      <div class="hero__quy-chuan-grid">
+        <div class="hero__quy-chuan-item">
+          <span class="icon-hop"><?= uiIcon("pin", "icon-brand", 18) ?></span>
+          <div>
+            <strong>Địa điểm tập trung</strong>
+            <small>Hội trường A, A3 &amp; Nhà đa năng</small>
+          </div>
         </div>
-        <div class="hero__thong-ke-item">
-          <span class="hero__thong-ke-so">10.000+</span>
-          <span class="hero__thong-ke-chu">Sinh viên tham gia</span>
+        <div class="hero__quy-chuan-item">
+          <span class="icon-hop icon-hop--gold"><?= uiIcon("star", "icon-gold", 18) ?></span>
+          <div>
+            <strong>Điểm rèn luyện</strong>
+            <small>Tích lũy +3 đến +5 ĐRL/sự kiện</small>
+          </div>
         </div>
-        <div class="hero__thong-ke-item">
-          <span class="hero__thong-ke-so">100%</span>
-          <span class="hero__thong-ke-chu">Cộng điểm rèn luyện</span>
+        <div class="hero__quy-chuan-item">
+          <span class="icon-hop"><?= uiIcon("ticket", "icon-brand", 18) ?></span>
+          <div>
+            <strong>Vé E-Ticket</strong>
+            <small>Mã QR điểm danh tại sự kiện</small>
+          </div>
+        </div>
+        <div class="hero__quy-chuan-item">
+          <span class="icon-hop"><?= uiIcon("users", "icon-brand", 18) ?></span>
+          <div>
+            <strong>Đối tượng</strong>
+            <small>Toàn thể sinh viên chính quy UED</small>
+          </div>
         </div>
       </div>
     </div>
@@ -96,14 +97,13 @@ require __DIR__ . '/inc/header.php';
       />
       <div class="hero__the-noi">
         <div>
-          <strong>Tiêu điểm tuần này</strong>
-          <span>Đang mở cổng đăng ký trực tuyến</span>
+          <strong>Cổng trực tuyến đang mở</strong>
+          <span>Đăng ký giữ chỗ &amp; nhận vé tức thì</span>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Khối dữ liệu từ REST API công khai: Thời tiết khuôn viên ĐH Sư Phạm Đà Nẵng (Open-Meteo) -->
   <section class="thoi-tiet-section" aria-labelledby="tieu-de-thoi-tiet">
     <div class="section-head mb-3">
       <div>
@@ -129,7 +129,6 @@ require __DIR__ . '/inc/header.php';
     </div>
   </section>
 
-  <!-- 2. Featured Events (Lưới 3 thẻ chuẩn CSS UniEvent) -->
   <section>
     <div class="section-head">
       <div>
@@ -164,11 +163,11 @@ require __DIR__ . '/inc/header.php';
                 Xem chi tiết &amp; Đăng ký
               </a>
               <?php if ($gio->daXacNhan($sp->id)): ?>
-                <a href="gio-hang.php#da-xac-nhan" class="nut-bam nut-phu nut-nho" style="color:#15803d; background:#f0fdf4; border-color:#86efac; font-weight:700;" title="Bạn đã đăng ký thành công sự kiện này (1 vé)">
+                <a href="gio-hang.php#da-xac-nhan" class="nut-bam nut-phu nut-nho" style="color:#16a34a; background:rgba(34,197,94,0.12); border-color:rgba(34,197,94,0.3); font-weight:700;" title="Bạn đã đăng ký thành công sự kiện này (1 vé)">
                   ✓ Đã đăng ký
                 </a>
               <?php elseif ($gio->dangChoXacNhan($sp->id)): ?>
-                <a href="gio-hang.php" class="nut-bam nut-phu nut-nho" style="color:#b45309; background:#fffbeb; border-color:#fde68a; font-weight:700;" title="Sự kiện đang chờ xác nhận - Bấm để xác nhận">
+                <a href="gio-hang.php" class="nut-bam nut-phu nut-nho" style="color:#d97706; background:rgba(245,158,11,0.12); border-color:rgba(245,158,11,0.3); font-weight:700;" title="Sự kiện đang chờ xác nhận - Bấm để xác nhận">
                   ⏳ Chờ xác nhận
                 </a>
               <?php else: ?>
@@ -189,7 +188,7 @@ require __DIR__ . '/inc/header.php';
                 aria-label="Lưu tin - Lưu sự kiện <?= e($sp->ten) ?>"
                 title="Lưu sự kiện vào danh sách yêu thích"
               >
-                ♡ Lưu tin
+                <?= uiIcon("heart", "", 13) ?> Lưu tin
               </button>
             </div>
           </div>
@@ -199,7 +198,6 @@ require __DIR__ . '/inc/header.php';
   </section>
 
   <?php if (!empty($daXem)): ?>
-    <!-- Khối sự kiện đã xem gần đây (từ Cookie da_xem) -->
     <section class="mt-5">
       <div class="section-head mb-3">
         <div>
@@ -232,11 +230,11 @@ require __DIR__ . '/inc/header.php';
                   Xem chi tiết &amp; Đăng ký
                 </a>
                 <?php if ($gio->daXacNhan($sp->id)): ?>
-                  <a href="gio-hang.php#da-xac-nhan" class="nut-bam nut-phu nut-nho" style="color:#15803d; background:#f0fdf4; border-color:#86efac; font-weight:700;" title="Bạn đã đăng ký thành công sự kiện này (1 vé)">
+                  <a href="gio-hang.php#da-xac-nhan" class="nut-bam nut-phu nut-nho" style="color:#16a34a; background:rgba(34,197,94,0.12); border-color:rgba(34,197,94,0.3); font-weight:700;" title="Bạn đã đăng ký thành công sự kiện này (1 vé)">
                     ✓ Đã đăng ký
                   </a>
                 <?php elseif ($gio->dangChoXacNhan($sp->id)): ?>
-                  <a href="gio-hang.php" class="nut-bam nut-phu nut-nho" style="color:#b45309; background:#fffbeb; border-color:#fde68a; font-weight:700;" title="Sự kiện đang chờ xác nhận - Bấm để xác nhận">
+                  <a href="gio-hang.php" class="nut-bam nut-phu nut-nho" style="color:#d97706; background:rgba(245,158,11,0.12); border-color:rgba(245,158,11,0.3); font-weight:700;" title="Sự kiện đang chờ xác nhận - Bấm để xác nhận">
                     ⏳ Chờ xác nhận
                   </a>
                 <?php else: ?>
@@ -257,7 +255,7 @@ require __DIR__ . '/inc/header.php';
                   aria-label="Lưu tin - Lưu sự kiện <?= e($sp->ten) ?>"
                   title="Lưu sự kiện vào danh sách yêu thích"
                 >
-                  ♡ Lưu tin
+                  <?= uiIcon("heart", "", 13) ?> Lưu tin
                 </button>
               </div>
             </div>
@@ -267,7 +265,6 @@ require __DIR__ . '/inc/header.php';
     </section>
   <?php endif; ?>
 
-  <!-- 3. Khối giới thiệu / Kêu gọi hành động -->
   <section class="khung-gioi-thieu">
     <h2>Giới thiệu UniEvent</h2>
     <p>
@@ -282,15 +279,12 @@ require __DIR__ . '/inc/header.php';
   </section>
 </main>
 
-<!-- Aside (Vùng "ben" - Cột tiện ích phụ hiển thị trên màn hình máy tính) -->
 <aside class="vung-ben chi-hien-tren-may-tinh">
   <div class="widget">
     <h3>Thông báo mới</h3>
     <ul>
       <li>Hạn đăng ký giải bóng đá sinh viên kết thúc vào 20/10.</li>
-      <li>
-        Hội trường A1 đang hoàn tất bảo trì hệ thống âm thanh, ánh sáng.
-      </li>
+      <li>Hội trường A1 đang hoàn tất bảo trì hệ thống âm thanh, ánh sáng.</li>
       <li>Mở cổng đăng ký tình nguyện viên tiếp sức mùa thi 2026.</li>
     </ul>
   </div>
@@ -313,7 +307,6 @@ require __DIR__ . '/inc/header.php';
   </div>
 </aside>
 
-<!-- Nạp JS thời tiết cho trang chủ -->
 <script type="module" src="js/trang-chu.js"></script>
 
 <?php require __DIR__ . '/inc/footer.php'; ?>
