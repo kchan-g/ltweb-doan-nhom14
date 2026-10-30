@@ -1,0 +1,87 @@
+# ============================================================================
+# api.http
+# Bộ request kiểm thử tự động REST API hệ thống UniEvent (Nhóm 14)
+# Mở bằng VS Code (cài đặt Extension: REST Client của Huachao Mao)
+# Nhấp vào "Send Request" phía trên mỗi mục để kiểm tra phản hồi từ máy chủ
+# ============================================================================
+
+@goc = http://localhost:8000
+
+### 1. Tìm kiếm sự kiện theo từ khóa -> 200 OK {"du_lieu": [...], "tong": N}
+GET {{goc}}/api/san-pham.php?q=AI
+Accept: application/json
+
+### 2. Xem chi tiết sự kiện hợp lệ -> 200 OK {"du_lieu": {...}}
+GET {{goc}}/api/san-pham.php?id=1
+Accept: application/json
+
+### 3. Xem sự kiện với ID không tồn tại -> 404 Not Found {"loi": "..."}
+GET {{goc}}/api/san-pham.php?id=999999
+Accept: application/json
+
+### 4. Xem sự kiện với ID sai kiểu (chữ cái) -> 400 Bad Request {"loi": "..."}
+GET {{goc}}/api/san-pham.php?id=abc
+Accept: application/json
+
+### 5. Xem thông tin giỏ vé hiện tại -> 200 OK {"so_mon": N, "cac_mon": [...]}
+GET {{goc}}/api/gio-hang.php
+Accept: application/json
+
+### 6. Thêm vé hợp lệ vào giỏ -> 200 OK {"thanh_cong": true, "so_mon": N}
+POST {{goc}}/api/gio-hang.php
+Content-Type: application/json
+Accept: application/json
+
+{
+  "id": 1,
+  "sl": 2
+}
+
+### 7. Thân yêu cầu không phải JSON hợp lệ (Thiếu ngoặc kép) -> 400 Bad Request {"loi": "..."}
+POST {{goc}}/api/gio-hang.php
+Content-Type: application/json
+Accept: application/json
+
+{id: 1, sl: 2}
+
+### 8. Thêm vào giỏ với số lượng âm (sl = -3) -> 422 Unprocessable Entity {"loi": "..."}
+POST {{goc}}/api/gio-hang.php
+Content-Type: application/json
+Accept: application/json
+
+{
+  "id": 1,
+  "sl": -3
+}
+
+### 9. Thêm vào giỏ với ID sự kiện không tồn tại -> 404 Not Found {"loi": "..."}
+POST {{goc}}/api/gio-hang.php
+Content-Type: application/json
+Accept: application/json
+
+{
+  "id": 888888,
+  "sl": 1
+}
+
+### 10. Thêm vào giỏ với số lượng vượt quá tồn kho khả dụng -> 422 Unprocessable Entity {"loi": "..."}
+# Sự kiện ID 10 có ton_kho = 0 (hết vé)
+POST {{goc}}/api/gio-hang.php
+Content-Type: application/json
+Accept: application/json
+
+{
+  "id": 10,
+  "sl": 10
+}
+
+### 11. Sai phương thức HTTP trên api/gio-hang.php (DELETE) -> 405 Method Not Allowed (Allow: GET, POST)
+DELETE {{goc}}/api/gio-hang.php
+Accept: application/json
+
+### 12. Sai phương thức HTTP trên api/san-pham.php (POST) -> 405 Method Not Allowed (Allow: GET)
+POST {{goc}}/api/san-pham.php
+Content-Type: application/json
+Accept: application/json
+
+{"q": "test"}

@@ -2,8 +2,8 @@
 /**
  * inc/config.php
  * Tệp cấu hình trung tâm nạp đầu tiên ở mọi trang trên website UniEvent.
- * Quản lý Autoload của Composer, báo lỗi, ghi log, khởi tạo phiên làm việc (Session)
- * và thiết lập bộ bắt ngoại lệ (Exception Handler).
+ * Quản lý Autoload của Composer, nạp kết nối PDO, thư viện xác thực, báo lỗi,
+ * ghi log, khởi tạo phiên làm việc (Session) và thiết lập bộ bắt ngoại lệ.
  */
 
 declare(strict_types=1);
@@ -14,12 +14,18 @@ require_once __DIR__ . '/../vendor/autoload.php';
 // 2. Nạp thư viện hàm tiện ích dùng chung
 require_once __DIR__ . '/ham.php';
 
-// 3. Hằng số môi trường: 'dev' khi phát triển cục bộ, 'prod' khi chạy thực tế
+// 3. Nạp kết nối CSDL MySQL qua PDO
+require_once __DIR__ . '/db.php';
+
+// 4. Nạp module xác thực và phân quyền người dùng
+require_once __DIR__ . '/xac-thuc.php';
+
+// 5. Hằng số môi trường: 'dev' khi phát triển cục bộ, 'prod' khi chạy thực tế
 if (!defined('MOI_TRUONG')) {
     define('MOI_TRUONG', 'dev');
 }
 
-// 4. Cấu hình báo lỗi và ghi nhật ký lỗi (logs/php-error.log)
+// 6. Cấu hình báo lỗi và ghi nhật ký lỗi (logs/php-error.log)
 error_reporting(E_ALL);
 
 ini_set('log_errors', '1');
@@ -33,15 +39,14 @@ if (MOI_TRUONG === 'dev') {
     ini_set('display_startup_errors', '0');
 }
 
-// 5. Khởi tạo phiên làm việc (Session) an toàn nếu chưa kích hoạt
+// 7. Khởi tạo phiên làm việc (Session) an toàn nếu chưa kích hoạt
 if (session_status() === PHP_SESSION_NONE) {
-    // Đảm bảo cấu hình cookie session an toàn
     ini_set('session.cookie_httponly', '1');
     ini_set('session.use_only_cookies', '1');
     session_start();
 }
 
-// 6. Xử lý ngoại lệ toàn cục (set_exception_handler)
+// 8. Xử lý ngoại lệ toàn cục (set_exception_handler)
 set_exception_handler(function (Throwable $ngoaiLe): void {
     // Luôn ghi log chi tiết lỗi vào tệp nhật ký
     error_log(sprintf(
@@ -67,11 +72,11 @@ set_exception_handler(function (Throwable $ngoaiLe): void {
     }
 
     // Môi trường dev: Hiển thị lỗi rõ ràng để nhóm dễ gỡ lỗi
-    echo "<div style='font-family:sans-serif; background:#fee2e2; color:#991b1b; padding:20px; border-radius:8px; border:1px solid #f87171; margin:20px;'>";
+    echo "<div style='font-family:sans-serif; background:rgba(239,68,68,0.12); color:#ef4444; padding:20px; border-radius:8px; border:1px solid rgba(239,68,68,0.3); margin:20px;'>";
     echo "<h2 style='margin-top:0;'>⚠️ Ngoại lệ chưa bắt (Dev Mode)</h2>";
     echo "<p><strong>Thông điệp:</strong> " . e($ngoaiLe->getMessage()) . "</p>";
     echo "<p><strong>Tệp:</strong> " . e($ngoaiLe->getFile()) . " (Dòng " . $ngoaiLe->getLine() . ")</p>";
-    echo "<pre style='background:#ffffff; padding:12px; border-radius:4px; overflow-x:auto;'>" . e($ngoaiLe->getTraceAsString()) . "</pre>";
+    echo "<pre style='background:var(--nen-surface, #ffffff); color:var(--chu-chinh, #333333); padding:12px; border-radius:4px; overflow-x:auto; border:1px solid var(--border-nhat, #e2e8f0);'>" . e($ngoaiLe->getTraceAsString()) . "</pre>";
     echo "</div>";
     exit;
 });
