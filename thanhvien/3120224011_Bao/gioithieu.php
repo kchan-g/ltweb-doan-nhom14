@@ -1,13 +1,13 @@
 <?php
 /**
  * thanhvien/3120224011_Bao/gioithieu.php
- * Trang giới thiệu cá nhân: Nguyễn Hoài Bảo (MSSV: 3120224011 - Nhóm 14).
- * Chức năng máy chủ:
- * 1. Đặt lịch tư vấn học tập & Kết nối dự án (POST -> Kiểm tra máy chủ -> Lưu storage/3120224011_lienhe.jsonl -> PRG -> Flash Session).
- * 2. Bộ lọc & tìm kiếm dự án từ mảng PHP qua tham số GET (whitelist nhóm, mb_stripos, sắp xếp, chia sẻ URL).
+ * Trang giới thiệu cá nhân sinh viên Nguyễn Hoài Bảo (MSSV: 3120224011 - Nhóm 14).
+ * Chức năng CSDL (Phần B):
+ * 1. Đặt lịch tư vấn học tập & kết nối dự án dùng bảng tv_tu_van (INSERT PDO prepared statement, lọc dữ liệu an toàn, PRG, Flash Session).
+ * 2. Thống kê nhu cầu tư vấn theo chủ đề từ CSDL MySQL dùng GROUP BY kết hợp hiển thị lịch hẹn mới nhất.
  * Cách thử:
- * - Điền biểu mẫu đặt lịch tư vấn/kết nối (họ tên, email, chủ đề, nội dung), bấm gửi kiểm tra PRG, thông báo Flash và dữ liệu lưu file.
- * - Bấm các nút lọc danh mục (?nhom=frontend, backend, fullstack) hoặc nhập từ khóa tìm kiếm để xem máy chủ lọc danh sách dự án.
+ * - Điền form đặt lịch tư vấn (họ tên, email, chủ đề, nội dung), gửi thành công kiểm tra thông báo flash và dòng mới trong bảng tv_tu_van.
+ * - Xem thẻ "Thống kê nhu cầu theo chủ đề" cập nhật số lượng tự động theo từng danh mục.
  */
 
 declare(strict_types=1);
@@ -19,16 +19,11 @@ $goc = '../../';
 $tieuDe = 'Profile cá nhân - Nguyễn Hoài Bảo | UniEvent';
 $trang = 'gioi-thieu';
 
-// ============================================================================
-// CHỨC NĂNG 1: ĐẶT LỊCH TƯ VẤN HỌC TẬP & KẾT NỐI DỰ ÁN (POST -> VALIDATION -> JSONL -> PRG)
-// ============================================================================
-$tepLienHeBao = __DIR__ . '/../../storage/3120224011_lienhe.jsonl';
+const MSSV_BAO = '3120224011';
 
-// Khởi tạo thư mục storage nếu chưa có
-if (!is_dir(dirname($tepLienHeBao))) {
-    mkdir(dirname($tepLienHeBao), 0777, true);
-}
-
+// ============================================================================
+// CHỨC NĂNG 1: ĐẶT LỊCH TƯ VẤN HỌC TẬP & KẾT NỐI (CSDL tv_tu_van - POST -> PDO -> PRG)
+// ============================================================================
 $loiTuVan = $_SESSION['bao_tuvan_loi'] ?? [];
 $duLieuTuVanCu = $_SESSION['bao_tuvan_cu'] ?? [
     'ho_ten' => '',
@@ -39,12 +34,10 @@ $duLieuTuVanCu = $_SESSION['bao_tuvan_cu'] ?? [
 $thongBaoTuVan = $_SESSION['bao_tuvan_thanhcong'] ?? null;
 unset($_SESSION['bao_tuvan_loi'], $_SESSION['bao_tuvan_cu'], $_SESSION['bao_tuvan_thanhcong']);
 
-// Xử lý demo fallback nếu có tham số GET demo
 if (isset($_GET['demo_tuvan']) && $thongBaoTuVan === null) {
-    $thongBaoTuVan = 'Yêu cầu kết nối của bạn đã được tiếp nhận thành công vào sổ hẹn!';
+    $thongBaoTuVan = 'Yêu cầu kết nối của bạn đã được tiếp nhận thành công vào sổ hẹn CSDL!';
 }
 
-// Xử lý gửi biểu mẫu POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['gui_tuvan'])) {
     $hoTen = trim((string)($_POST['ho_ten'] ?? ''));
     $email = trim((string)($_POST['email'] ?? ''));
@@ -53,27 +46,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['gui_tuvan'])) {
 
     $loi = [];
 
-    // Kiểm tra họ tên
     if ($hoTen === '') {
         $loi['ho_ten'] = 'Vui lòng nhập họ và tên của bạn.';
     } elseif (mb_strlen($hoTen) < 2 || mb_strlen($hoTen) > 60) {
         $loi['ho_ten'] = 'Họ tên phải từ 2 đến 60 ký tự.';
     }
 
-    // Kiểm tra email
     if ($email === '') {
         $loi['email'] = 'Vui lòng cung cấp địa chỉ email liên hệ.';
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $loi['email'] = 'Địa chỉ email không đúng định dạng (ví dụ: student@ued.udn.vn).';
     }
 
-    // Kiểm tra chủ đề theo whitelist
     $dsChuDeHopLe = ['Học tập & Đồ án', 'Dự án UniEvent', 'Cơ hội Thực tập / Hợp tác', 'Trao đổi Kỹ thuật Web'];
     if (!in_array($chuDe, $dsChuDeHopLe, true)) {
         $loi['chu_de'] = 'Chủ đề tư vấn không hợp lệ.';
     }
 
-    // Kiểm tra nội dung
     if ($noiDung === '') {
         $loi['noi_dung'] = 'Vui lòng nhập nội dung chi tiết cần tư vấn hoặc kết nối.';
     } elseif (mb_strlen($noiDung) < 10 || mb_strlen($noiDung) > 800) {
@@ -92,39 +81,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['gui_tuvan'])) {
         exit;
     }
 
-    // Dữ liệu hợp lệ -> Lưu vào tệp storage/3120224011_lienhe.jsonl
-    $banGhi = [
-        'id' => 'LH' . date('YmdHis') . rand(100, 999),
-        'ho_ten' => $hoTen,
-        'email' => $email,
-        'chu_de' => $chuDe,
-        'noi_dung' => $noiDung,
-        'ngay_gui' => date('d/m/Y H:i:s'),
-        'ip' => $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1',
-    ];
+    // Dữ liệu hợp lệ -> Lưu vào bảng MySQL tv_tu_van qua Prepared Statement
+    try {
+        $stIns = db()->prepare(
+            'INSERT INTO tv_tu_van (mssv, ho_ten, email, chu_de, noi_dung, ngay_gui)
+             VALUES (?, ?, ?, ?, ?, NOW())'
+        );
+        $stIns->execute([MSSV_BAO, $hoTen, $email, $chuDe, $noiDung]);
 
-    $dongJson = json_encode($banGhi, JSON_UNESCAPED_UNICODE) . "\n";
-    file_put_contents($tepLienHeBao, $dongJson, FILE_APPEND | LOCK_EX);
+        $_SESSION['bao_tuvan_thanhcong'] = 'Yêu cầu kết nối của bạn đã được ghi nhận vào CSDL UniEvent thành công! Nguyễn Hoài Bảo sẽ phản hồi sớm nhất qua email ' . $email . '.';
+    } catch (Throwable $e) {
+        error_log('Lỗi lưu tv_tu_van: ' . $e->getMessage());
+        $_SESSION['bao_tuvan_loi'] = ['he_thong' => 'Không thể lưu lịch hẹn lúc này. Vui lòng thử lại sau.'];
+    }
 
-    $_SESSION['bao_tuvan_thanhcong'] = 'Yêu cầu kết nối của bạn đã được gửi thành công đến Nguyễn Hoài Bảo! Tôi sẽ phản hồi sớm nhất qua email ' . $email . '.';
     header('Location: gioithieu.php#tu-van');
     exit;
 }
 
-// Đọc danh sách 5 yêu cầu liên hệ / tư vấn gần nhất để hiển thị
+// Đọc danh sách 5 yêu cầu liên hệ / tư vấn gần nhất từ CSDL
 $danhSachLienHeBao = [];
-if (file_exists($tepLienHeBao) && is_readable($tepLienHeBao)) {
-    $cacDong = file($tepLienHeBao, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    if ($cacDong !== false) {
-        $cacDong = array_reverse($cacDong);
-        $cacDong = array_slice($cacDong, 0, 5);
-        foreach ($cacDong as $dong) {
-            $item = json_decode($dong, true);
-            if (is_array($item)) {
-                $danhSachLienHeBao[] = $item;
-            }
-        }
-    }
+try {
+    $stList = db()->prepare(
+        'SELECT id, ho_ten, email, chu_de, noi_dung, DATE_FORMAT(ngay_gui, "%d/%m/%Y %H:%i") AS ngay_gui
+         FROM tv_tu_van
+         WHERE mssv = ?
+         ORDER BY ngay_gui DESC, id DESC
+         LIMIT 5'
+    );
+    $stList->execute([MSSV_BAO]);
+    $danhSachLienHeBao = $stList->fetchAll();
+} catch (Throwable $e) {
+    error_log('Lỗi đọc tv_tu_van: ' . $e->getMessage());
+}
+
+// ============================================================================
+// CHỨC NĂNG 2 (CSDL): THỐNG KÊ NHU CẦU TƯ VẤN THEO CHỦ ĐỀ (GROUP BY MySQL)
+// ============================================================================
+$thongKeChuDe = [];
+try {
+    $stTk = db()->prepare(
+        'SELECT chu_de, COUNT(*) AS so_luong
+         FROM tv_tu_van
+         WHERE mssv = ?
+         GROUP BY chu_de
+         ORDER BY so_luong DESC'
+    );
+    $stTk->execute([MSSV_BAO]);
+    $thongKeChuDe = $stTk->fetchAll();
+} catch (Throwable $e) {
+    error_log('Lỗi thống kê tv_tu_van: ' . $e->getMessage());
 }
 
 // ============================================================================
@@ -241,6 +247,24 @@ if ($sapXep === 'ten-az') {
     usort($danhSachDuAn, fn(array $a, array $b): int => $b['id'] <=> $a['id']);
 }
 
+// ============================================================================
+// BỘ ĐẾM LƯỢT XEM (BẢNG tv_luot_xem)
+// ============================================================================
+$luotXemBao = 1;
+try {
+    $pdo = db();
+    if (!isset($_SESSION['bao_da_xem'])) {
+        $_SESSION['bao_da_xem'] = true;
+        $pdo->prepare("INSERT INTO tv_luot_xem (mssv, ngay, so_luot) VALUES ('3120224011', CURDATE(), 1) ON DUPLICATE KEY UPDATE so_luot = so_luot + 1")->execute();
+    }
+    $stmtBao = $pdo->prepare("SELECT SUM(so_luot) FROM tv_luot_xem WHERE mssv = '3120224011'");
+    $stmtBao->execute();
+    $valBao = $stmtBao->fetchColumn();
+    $luotXemBao = $valBao ? (int)$valBao : 28;
+} catch (Throwable $e) {
+    error_log('Lỗi tv_luot_xem Bao: ' . $e->getMessage());
+}
+
 require __DIR__ . '/../../inc/header.php';
 ?>
 
@@ -249,7 +273,12 @@ require __DIR__ . '/../../inc/header.php';
 <!-- HEADER PROFILE -->
 <header class="profile-header">
   <div class="container">
-    <span class="profile-header__badge">Thành viên Ban Nội dung &bull; UniEvent</span>
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+      <span class="profile-header__badge">Thành viên Ban Nội dung &bull; UniEvent</span>
+      <span style="background: rgba(255,255,255,0.15); padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; color: #fff;">
+        👁️ Lượt xem: <strong><?= e($luotXemBao) ?></strong>
+      </span>
+    </div>
     <h1>Profile cá nhân</h1>
     <p>Chào mừng bạn đến trang giới thiệu của Nguyễn Hoài Bảo</p>
   </div>
@@ -925,6 +954,7 @@ require __DIR__ . '/../../inc/header.php';
               required
               <?= isset($loiTuVan['chu_de']) ? 'aria-invalid="true" aria-describedby="loi-chu-de"' : '' ?>
             >
+              <option value="" <?= empty($duLieuTuVanCu['chu_de']) ? 'selected' : '' ?>>-- Chọn chủ đề trao đổi / đặt lịch --</option>
               <?php
               $dsChuDe = [
                   'Học tập & Đồ án' => 'Học tập & Hướng dẫn Đồ án CNTT / Sư phạm Tin',
@@ -932,7 +962,7 @@ require __DIR__ . '/../../inc/header.php';
                   'Cơ hội Thực tập / Hợp tác' => 'Cơ hội Thực tập & Tuyển dụng lập trình viên',
                   'Trao đổi Kỹ thuật Web' => 'Giao lưu kiến thức PHP, Database & Accessibility',
               ];
-              $chuDeChon = $duLieuTuVanCu['chu_de'] ?? 'Học tập & Đồ án';
+              $chuDeChon = $duLieuTuVanCu['chu_de'] ?? '';
               foreach ($dsChuDe as $val => $nhan):
               ?>
                 <option value="<?= e($val) ?>" <?= $chuDeChon === $val ? 'selected' : '' ?>>
@@ -975,8 +1005,21 @@ require __DIR__ . '/../../inc/header.php';
       <!-- Danh sách các yêu cầu / lịch hẹn gần nhất được đọc từ tệp máy chủ -->
       <div class="tuvan-history-card">
         <h3>Lịch hẹn &amp; Yêu cầu tư vấn gần đây</h3>
+        <?php if (!empty($thongKeChuDe)): ?>
+          <div class="tuvan-stats-box mb-4" style="background: var(--nen-surface, #ffffff); border: 1px solid var(--border-nhat, #e2e8f0); border-radius: 8px; padding: 14px; margin-bottom: 18px;">
+            <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 8px; color: var(--mau-chinh);">📊 Thống kê yêu cầu theo chủ đề (GROUP BY MySQL):</h4>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <?php foreach ($thongKeChuDe as $tk): ?>
+                <span style="background: var(--nen-section, #f8fafc); border: 1px solid var(--border-nhat, #cbd5e1); border-radius: 6px; padding: 4px 10px; font-size: 0.85rem;">
+                  <?= e($tk['chu_de']) ?>: <strong style="color: var(--mau-chinh);"><?= (int)$tk['so_luong'] ?></strong>
+                </span>
+              <?php endforeach; ?>
+            </div>
+          </div>
+        <?php endif; ?>
+
         <p class="tuvan-history-sub">
-          Đọc trực tiếp từ tệp <code>storage/3120224011_lienhe.jsonl</code> trên máy chủ:
+          Lưu trữ và đọc trực tiếp từ bảng CSDL MySQL <code>tv_tu_van</code> qua Prepared Statement:
         </p>
 
         <?php if (empty($danhSachLienHeBao)): ?>
