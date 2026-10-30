@@ -1,17 +1,17 @@
 <?php
 /**
  * dang-xuat.php
- * Hủy toàn bộ phiên làm việc (Session) của người dùng và chuyển hướng về trang đăng nhập.
+ * Hủy toàn bộ phiên làm việc (Session) của người dùng và chuyển hướng an toàn về trang chủ.
  */
 
 declare(strict_types=1);
 
 require_once __DIR__ . '/inc/config.php';
 
-// Xóa toàn bộ biến phiên
+// Xóa sạch toàn bộ biến phiên
 $_SESSION = [];
 
-// Xóa cookie phiên nếu có
+// Xóa cookie phiên PHPSESSID trên trình duyệt
 if (ini_get('session.use_cookies')) {
     $params = session_get_cookie_params();
     setcookie(
@@ -27,23 +27,6 @@ if (ini_get('session.use_cookies')) {
 
 // Hủy phiên làm việc hoàn toàn
 session_destroy();
-?>
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <title>Đang đăng xuất - UniEvent</title>
-  <script>
-    try {
-      localStorage.removeItem('unievent_ued_sinhvien');
-    } catch(e) {}
-    window.location.href = 'index.php';
-  </script>
-</head>
-<body>
-  <p style="font-family:sans-serif; text-align:center; padding:50px;">
-    Đã đăng xuất tài khoản thành công. Đang chuyển về trang chủ... 
-    <a href="index.php">Nhấn vào đây nếu không tự chuyển</a>.
-  </p>
-</body>
-</html>
+
+header('Location: index.php');
+exit;
