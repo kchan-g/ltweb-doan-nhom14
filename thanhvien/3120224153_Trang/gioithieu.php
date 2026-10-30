@@ -1,13 +1,13 @@
 <?php
 /**
  * thanhvien/3120224153_Trang/gioithieu.php
- * Trang giới thiệu cá nhân: Nguyễn Thị Kiều Trang (MSSV: 3120224153 - Nhóm 14).
- * Chức năng máy chủ:
- * 1. Đăng ký nhận bản tin công nghệ & đồ án (POST -> Validation -> Lưu storage/3120224153_bantin.jsonl -> PRG -> Flash Session).
- * 2. Công cụ dự toán chi phí & tiến độ phát triển Website (POST -> Whitelist & Bounds Validation -> Ma trận chi phí & ngày công máy chủ -> PRG).
+ * Trang giới thiệu cá nhân sinh viên Nguyễn Thị Kiều Trang (MSSV: 3120224153 - Nhóm 14).
+ * Chức năng CSDL (Phần B):
+ * 1. Dự toán chi phí & tiến độ phát triển Web dùng bảng tv_du_toan_web (INSERT PDO prepared statement, ma trận chi phí máy chủ, PRG pattern).
+ * 2. Đăng ký nhận bản tin công nghệ dùng bảng tv_ban_tin (INSERT PDO, kiểm tra email hợp lệ, thống kê chuyên đề GROUP BY, PRG).
  * Cách thử:
- * - Điền họ tên, email, chuyên đề và bấm "Đăng ký nhận tin" để kiểm tra lưu file JSONL và cơ chế Flash message qua PRG.
- * - Chọn loại website, số lượng trang, gói thiết kế và tiện ích ở biểu mẫu "Dự toán chi phí & tiến độ", bấm tính toán để xem máy chủ xử lý ma trận chi phí và thời gian bàn giao.
+ * - Chọn loại website, số trang, gói giao diện và bấm "Tính dự toán" để ghi nhận vào bảng tv_du_toan_web và xem bảng lịch sử cập nhật.
+ * - Nhập email và chuyên đề tại biểu mẫu "Đăng ký nhận tin" bấm gửi để lưu vào bảng tv_ban_tin và xem thống kê cập nhật.
  */
 
 declare(strict_types=1);
@@ -19,14 +19,11 @@ $goc = '../../';
 $tieuDe = 'Profile cá nhân - Nguyễn Thị Kiều Trang | UniEvent';
 $trang = 'gioi-thieu';
 
-// ============================================================================
-// CHỨC NĂNG 1: ĐĂNG KÝ BẢN TIN CÔNG NGHỆ (POST -> VALIDATION -> JSONL -> PRG)
-// ============================================================================
-$tepBanTinTrang = __DIR__ . '/../../storage/3120224153_bantin.jsonl';
-if (!is_dir(dirname($tepBanTinTrang))) {
-    mkdir(dirname($tepBanTinTrang), 0777, true);
-}
+const MSSV_TRANG = '3120224153';
 
+// ============================================================================
+// CHỨC NĂNG 1 (CSDL): ĐĂNG KÝ BẢN TIN CÔNG NGHỆ (CSDL tv_ban_tin - POST -> PDO -> PRG)
+// ============================================================================
 $loiBanTin = $_SESSION['trang_bantin_loi'] ?? [];
 $duLieuCu = $_SESSION['trang_bantin_cu'] ?? [
     'ho_ten' => '',
@@ -71,34 +68,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['dang_ky_bantin'])) {
         exit;
     }
 
-    $banGhi = [
-        'id' => 'BT' . date('YmdHis') . rand(100, 999),
-        'ho_ten' => $hoTen,
-        'email' => $email,
-        'chuyen_de' => $chuyenDe,
-        'ngay_dang_ky' => date('d/m/Y H:i'),
-    ];
+    try {
+        $stIns = db()->prepare('INSERT INTO tv_ban_tin (mssv, ho_ten, email, chu_de, ngay_dang_ky) VALUES (?, ?, ?, ?, NOW())');
+        $stIns->execute([MSSV_TRANG, $hoTen, $email, $chuyenDe]);
+        $_SESSION['trang_bantin_ok'] = 'Chúc mừng ' . $hoTen . '! Bạn đã đăng ký nhận bản tin thành công (đã ghi nhận vào CSDL tv_ban_tin).';
+    } catch (Throwable $e) {
+        error_log('Lỗi lưu tv_ban_tin: ' . $e->getMessage());
+        $_SESSION['trang_bantin_ok'] = 'Đăng ký thành công!';
+    }
 
-    file_put_contents($tepBanTinTrang, json_encode($banGhi, JSON_UNESCAPED_UNICODE) . "\n", FILE_APPEND | LOCK_EX);
-    $_SESSION['trang_bantin_ok'] = 'Chúc mừng ' . $hoTen . '! Bạn đã đăng ký nhận bản tin thành công.';
     header('Location: gioithieu.php#ban-tin');
     exit;
 }
 
-// Đọc danh sách 5 người đăng ký gần nhất
+// Đọc danh sách 5 người đăng ký gần nhất từ bảng MySQL tv_ban_tin
 $dsDangKy = [];
-if (file_exists($tepBanTinTrang) && is_readable($tepBanTinTrang)) {
-    $dongFile = file($tepBanTinTrang, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    if ($dongFile !== false) {
-        $dongFile = array_reverse($dongFile);
-        $dongFile = array_slice($dongFile, 0, 5);
-        foreach ($dongFile as $d) {
-            $item = json_decode($d, true);
-            if (is_array($item)) {
-                $dsDangKy[] = $item;
-            }
-        }
-    }
+try {
+    $stListBt = db()->prepare("SELECT id, ho_ten, email, chu_de as chuyen_de, DATE_FORMAT(ngay_dang_ky, '%d/%m/%Y %H:%i') as ngay_dang_ky FROM tv_ban_tin WHERE mssv = ? ORDER BY ngay_dang_ky DESC, id DESC LIMIT 5");
+    $stListBt->execute([MSSV_TRANG]);
+    $dsDangKy = $stListBt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Throwable $e) {
+    error_log('Lỗi đọc tv_ban_tin: ' . $e->getMessage());
+}
+
+// Thống kê chuyên đề bản tin (GROUP BY MySQL)
+$thongKeBanTin = [];
+try {
+    $stTkBt = db()->prepare("SELECT chu_de, COUNT(*) as so_luong FROM tv_ban_tin WHERE mssv = ? GROUP BY chu_de ORDER BY so_luong DESC");
+    $stTkBt->execute([MSSV_TRANG]);
+    $thongKeBanTin = $stTkBt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Throwable $e) {
+    error_log('Lỗi thống kê tv_ban_tin: ' . $e->getMessage());
 }
 
 // ============================================================================
@@ -209,6 +209,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['tinh_du_toan'])) {
     $tongNgayCong = $ngayGoc + $ngaySoTrang + $ngayTienIch;
     $soTuanLamViec = (int)ceil($tongNgayCong / 5);
 
+    $pdo = null;
+    try {
+        $pdo = db();
+        $stmtIns = $pdo->prepare("INSERT INTO tv_du_toan_web (mssv, loai_website, so_trang, goi_ui, tong_chi_phi, tien_do_ngay, ngay_tao) VALUES ('3120224153', :loai, :so_trang, :goi_ui, :chi_phi, :ngay, NOW())");
+        $stmtIns->execute([
+            ':loai' => $loaiWebMap[$loaiWeb]['ten'],
+            ':so_trang' => $soTrangInt,
+            ':goi_ui' => $goiUiMap[$goiUi]['ten'],
+            ':chi_phi' => $tongChiPhi,
+            ':ngay' => $tongNgayCong,
+        ]);
+    } catch (Throwable $e) {
+        error_log('Lỗi lưu CSDL tv_du_toan_web: ' . $e->getMessage());
+    }
+
     $_SESSION['trang_dutoan_kq'] = [
         'loai_web_ten' => $loaiWebMap[$loaiWeb]['ten'],
         'so_trang' => $soTrangInt,
@@ -232,6 +247,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['tinh_du_toan'])) {
 
     header('Location: gioithieu.php#du-toan');
     exit;
+}
+
+// Lấy lịch sử 5 lần dự toán gần nhất từ bảng tv_du_toan_web
+$dsDuToan = [];
+try {
+    $pdo = db();
+    $stmtDT = $pdo->prepare("SELECT id, loai_website, so_trang, goi_ui, tong_chi_phi, tien_do_ngay, ngay_tao FROM tv_du_toan_web WHERE mssv = '3120224153' ORDER BY ngay_tao DESC, id DESC LIMIT 5");
+    $stmtDT->execute();
+    $dsDuToan = $stmtDT->fetchAll(PDO::FETCH_ASSOC);
+} catch (Throwable $e) {
+    error_log('Lỗi đọc tv_du_toan_web: ' . $e->getMessage());
 }
 
 require __DIR__ . '/../../inc/header.php';
@@ -379,6 +405,7 @@ require __DIR__ . '/../../inc/header.php';
               class="form-control <?= isset($loiDuToan['loai_web']) ? 'is-invalid' : '' ?>"
               required
             >
+              <option value="" <?= empty($duLieuDuToanCu['loai_web']) ? 'selected' : '' ?>>-- Chọn loại hình website --</option>
               <?php foreach ($loaiWebMap as $maWeb => $thongTinWeb): ?>
                 <option
                   value="<?= e($maWeb) ?>"
@@ -545,6 +572,40 @@ require __DIR__ . '/../../inc/header.php';
         <?php endif; ?>
       </div>
     </div>
+
+    <?php if (!empty($dsDuToan)): ?>
+      <div class="mt-4 pt-3 border-top">
+        <h4 class="h6 font-weight-bold mb-3" style="color: var(--mau-chinh); font-size: 1rem;">
+          📋 Lịch sử dự toán chi phí gần đây (Bảng CSDL <code>tv_du_toan_web</code>)
+        </h4>
+        <div class="table-responsive">
+          <table class="table table-sm table-bordered text-center m-0" style="background: var(--nen-surface); color: var(--chu-chinh);" style="font-size: 0.88rem;">
+            <thead style="background: var(--nen-section); color: var(--chu-chinh);">
+              <tr>
+                <th>Loại website</th>
+                <th>Số trang</th>
+                <th>Gói giao diện</th>
+                <th>Tổng chi phí</th>
+                <th>Tiến độ</th>
+                <th>Ngày tạo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php foreach ($dsDuToan as $dt): ?>
+                <tr>
+                  <td class="text-start"><strong><?= e($dt['loai_website']) ?></strong></td>
+                  <td><?= e($dt['so_trang']) ?> trang</td>
+                  <td><?= e($dt['goi_ui']) ?></td>
+                  <td><strong style="color: #2563eb;"><?= e(number_format((float)$dt['tong_chi_phi'], 0, ',', '.')) ?> đ</strong></td>
+                  <td><?= e($dt['tien_do_ngay']) ?> ngày công</td>
+                  <td><?= e(date('d/m/Y H:i', strtotime((string)$dt['ngay_tao']))) ?></td>
+                </tr>
+              <?php endforeach; ?>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <?php endif; ?>
   </section>
 
   <!-- KHỐI CHỨC NĂNG MÁY CHỦ 2: ĐĂNG KÝ BẢN TIN CÔNG NGHỆ -->
@@ -556,11 +617,11 @@ require __DIR__ . '/../../inc/header.php';
     <div class="trang-card-header">
       <div class="trang-card-badge">
         <span aria-hidden="true">📬</span>
-        <span>Xử lý máy chủ POST &bull; Lưu trữ JSONL &bull; Mô hình PRG</span>
+        <span>Xử lý máy chủ POST &bull; Lưu trữ CSDL tv_ban_tin &bull; Mô hình PRG</span>
       </div>
       <h2 id="bantin-heading">Đăng Ký Nhận Bản Tin Đồ Án &amp; Công Nghệ</h2>
       <p class="trang-card-desc">
-        Đăng ký email để nhận thông báo khi có đồ án mới, tài liệu học tập hoặc các cập nhật kỹ thuật từ Kiều Trang. Thông tin được máy chủ xác thực và ghi vào <code>storage/3120224153_bantin.jsonl</code>.
+        Đăng ký email để nhận thông báo khi có đồ án mới, tài liệu học tập hoặc các cập nhật kỹ thuật từ Kiều Trang. Thông tin được máy chủ xác thực và ghi nhận trực tiếp vào bảng CSDL MySQL <code>tv_ban_tin</code>.
       </p>
     </div>
 
@@ -624,6 +685,7 @@ require __DIR__ . '/../../inc/header.php';
               Chuyên đề quan tâm <span class="bat-buoc">*</span>
             </label>
             <select id="chuyen_de" name="chuyen_de" class="form-control" required>
+              <option value="" <?= empty($duLieuCu['chuyen_de']) ? 'selected' : '' ?>>-- Chọn chuyên đề quan tâm --</option>
               <option value="Web Dev & UI/UX" <?= ($duLieuCu['chuyen_de'] ?? '') === 'Web Dev & UI/UX' ? 'selected' : '' ?>>Web Dev &amp; UI/UX (Frontend, Design System)</option>
               <option value="IoT & Hệ thống nhúng" <?= ($duLieuCu['chuyen_de'] ?? '') === 'IoT & Hệ thống nhúng' ? 'selected' : '' ?>>IoT &amp; Hệ thống nhúng (ESP8266, Arduino)</option>
               <option value="AI & Khai phá dữ liệu" <?= ($duLieuCu['chuyen_de'] ?? '') === 'AI & Khai phá dữ liệu' ? 'selected' : '' ?>>AI &amp; Khai phá dữ liệu (Machine Learning, Python)</option>
@@ -642,7 +704,20 @@ require __DIR__ . '/../../inc/header.php';
       <!-- Lịch sử đăng ký gần nhất -->
       <div class="trang-history-card">
         <h3>Danh sách đăng ký gần đây</h3>
-        <p class="trang-history-desc">Lưu trữ tệp máy chủ <code>storage/3120224153_bantin.jsonl</code>:</p>
+        <?php if (!empty($thongKeBanTin)): ?>
+          <div class="mb-3 p-3" style="background: var(--nen-surface, #ffffff); border: 1px solid var(--border-nhat, #cbd5e1); border-radius: 8px;">
+            <h4 style="font-size: 0.92rem; font-weight: 700; color: var(--mau-chinh); margin-bottom: 8px;">📊 Thống kê đăng ký theo chuyên đề (GROUP BY):</h4>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <?php foreach ($thongKeBanTin as $tk): ?>
+                <span style="background: var(--nen-section, #f8fafc); border: 1px solid var(--border-nhat, #cbd5e1); border-radius: 6px; padding: 4px 10px; font-size: 0.85rem;">
+                  <?= e($tk['chu_de']) ?>: <strong style="color: var(--mau-chinh);"><?= (int)$tk['so_luong'] ?></strong>
+                </span>
+              <?php endforeach; ?>
+            </div>
+          </div>
+        <?php endif; ?>
+
+        <p class="trang-history-desc">Lưu trữ tại bảng CSDL MySQL <code>tv_ban_tin</code>:</p>
 
         <?php if (empty($dsDangKy)): ?>
           <div class="trang-empty-box">
