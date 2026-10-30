@@ -1,13 +1,13 @@
 <?php
 /**
  * thanhvien/3120224106_Nhuan/gioithieu.php
- * Trang giới thiệu cá nhân: Phan Nhuận (MSSV: 3120224106 - Nhóm 14).
- * Chức năng máy chủ:
- * 1. Khảo sát & Đánh giá kỹ năng chuyên môn (POST -> Validation -> Lưu storage/3120224106_danhgia.jsonl -> PRG -> Flash Session).
- * 2. Trắc nghiệm nhanh kiến thức Web & Nhận kết quả tự động (POST -> Chấm điểm máy chủ -> PRG -> Flash Session).
+ * Trang giới thiệu cá nhân sinh viên Phan Nhuận (MSSV: 3120224106 - Nhóm 14).
+ * Chức năng CSDL (Phần B):
+ * 1. Khảo sát & Đánh giá kỹ năng dùng bảng tv_danh_gia (INSERT PDO prepared statement, kiểm tra 1-5 sao, PRG, Flash Session).
+ * 2. Tổng hợp & Thống kê điểm sao trung bình theo từng kỹ năng từ CSDL MySQL dùng GROUP BY kết hợp hiển thị nhận xét mới nhất.
  * Cách thử:
- * - Điền họ tên, chọn kỹ năng, chọn số sao (1-5) và bấm "Gửi đánh giá" kiểm tra PRG và dữ liệu lưu file.
- * - Làm trắc nghiệm 3 câu hỏi kiến thức Web bên dưới, bấm "Nộp bài & Chấm điểm" xem máy chủ chấm điểm và phản hồi tức thì.
+ * - Chọn kỹ năng và số sao (1-5), nhập tên và gửi đánh giá để ghi nhận vào bảng tv_danh_gia.
+ * - Xem thẻ "Thống kê đánh giá theo kỹ năng" tự động cập nhật số lượng và điểm trung bình theo thời gian thực.
  */
 
 declare(strict_types=1);
@@ -83,6 +83,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['gui_danh_gia'])) {
         exit;
     }
 
+    $pdo = null;
+    try {
+        $pdo = db();
+        $stmtIns = $pdo->prepare("INSERT INTO tv_danh_gia (mssv, ho_ten, ky_nang, so_sao, nhan_xet, ngay_tao) VALUES ('3120224106', :ho_ten, :ky_nang, :so_sao, :nhan_xet, NOW())");
+        $stmtIns->execute([
+            ':ho_ten' => $nguoiGui,
+            ':ky_nang' => $kyNang,
+            ':so_sao' => $soSao,
+            ':nhan_xet' => $gopY !== '' ? $gopY : 'Rất tốt!',
+        ]);
+    } catch (Throwable $e) {
+        error_log('Lỗi lưu CSDL tv_danh_gia: ' . $e->getMessage());
+    }
+
     $banGhi = [
         'id' => 'DG' . date('YmdHis') . rand(100, 999),
         'nguoi_gui' => $nguoiGui,
@@ -92,26 +106,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['gui_danh_gia'])) {
         'ngay_gui' => date('d/m/Y H:i'),
     ];
 
-    file_put_contents($tepDanhGiaNhuan, json_encode($banGhi, JSON_UNESCAPED_UNICODE) . "\n", FILE_APPEND | LOCK_EX);
-    $_SESSION['nhuan_dg_ok'] = 'Cảm ơn bạn ' . $nguoiGui . ' đã gửi đánh giá kỹ năng cho Phan Nhuận!';
+    $_SESSION['nhuan_dg_ok'] = 'Cảm ơn bạn ' . $nguoiGui . ' đã gửi đánh giá kỹ năng cho Phan Nhuận (đã lưu vào bảng CSDL tv_danh_gia thành công)!';
     header('Location: gioithieu.php#danh-gia');
     exit;
 }
 
-// Đọc danh sách 5 đánh giá gần nhất
+// Đọc danh sách 5 đánh giá gần nhất từ MySQL tv_danh_gia
 $dsDanhGia = [];
-if (file_exists($tepDanhGiaNhuan) && is_readable($tepDanhGiaNhuan)) {
-    $dongFile = file($tepDanhGiaNhuan, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    if ($dongFile !== false) {
-        $dongFile = array_reverse($dongFile);
-        $dongFile = array_slice($dongFile, 0, 5);
-        foreach ($dongFile as $d) {
-            $item = json_decode($d, true);
-            if (is_array($item)) {
-                $dsDanhGia[] = $item;
-            }
-        }
-    }
+try {
+    $pdo = db();
+    $stmtDG = $pdo->prepare("SELECT id, ho_ten as nguoi_gui, ky_nang, so_sao, nhan_xet as gop_y, DATE_FORMAT(ngay_tao, '%d/%m/%Y %H:%i') as ngay_gui FROM tv_danh_gia WHERE mssv = '3120224106' ORDER BY ngay_tao DESC, id DESC LIMIT 5");
+    $stmtDG->execute();
+    $dsDanhGia = $stmtDG->fetchAll(PDO::FETCH_ASSOC);
+} catch (Throwable $e) {
+    error_log('Lỗi đọc tv_danh_gia: ' . $e->getMessage());
+}
+
+// CHỨC NĂNG 2 (CSDL): Tổng hợp & Thống kê điểm sao trung bình theo từng kỹ năng (GROUP BY MySQL)
+$thongKeKyNang = [];
+try {
+    $stTkNhuan = db()->prepare(
+        "SELECT ky_nang, COUNT(*) as so_luong, ROUND(AVG(so_sao), 1) as sao_tb
+         FROM tv_danh_gia
+         WHERE mssv = '3120224106'
+         GROUP BY ky_nang
+         ORDER BY so_luong DESC"
+    );
+    $stTkNhuan->execute();
+    $thongKeKyNang = $stTkNhuan->fetchAll(PDO::FETCH_ASSOC);
+} catch (Throwable $e) {
+    error_log('Lỗi thống kê tv_danh_gia: ' . $e->getMessage());
 }
 
 // ============================================================================
@@ -334,6 +358,7 @@ require __DIR__ . '/../../inc/header.php';
               Kỹ năng bạn muốn đánh giá <span class="bat-buoc">*</span>
             </label>
             <select id="ky_nang" name="ky_nang" class="form-control" required>
+              <option value="" <?= empty($duLieuCu['ky_nang']) ? 'selected' : '' ?>>-- Chọn kỹ năng muốn đánh giá --</option>
               <?php
               $dsKn = [
                   'HTML5 / Semantic & a11y',
@@ -342,7 +367,7 @@ require __DIR__ . '/../../inc/header.php';
                   'Lập trình JavaScript ES6+',
                   'Làm việc nhóm & Git/GitHub',
               ];
-              $knChon = $duLieuCu['ky_nang'] ?? 'HTML5 / Semantic & a11y';
+              $knChon = $duLieuCu['ky_nang'] ?? '';
               foreach ($dsKn as $k):
               ?>
                 <option value="<?= e($k) ?>" <?= $knChon === $k ? 'selected' : '' ?>>
@@ -357,11 +382,12 @@ require __DIR__ . '/../../inc/header.php';
               Mức độ thành thạo (Số sao) <span class="bat-buoc">*</span>
             </label>
             <select id="so_sao" name="so_sao" class="form-control" required>
-              <option value="5" <?= ($duLieuCu['so_sao'] ?? '5') === '5' ? 'selected' : '' ?>>⭐⭐⭐⭐⭐ (5 sao - Xuất sắc)</option>
-              <option value="4" <?= ($duLieuCu['so_sao'] ?? '5') === '4' ? 'selected' : '' ?>>⭐⭐⭐⭐ (4 sao - Tốt)</option>
-              <option value="3" <?= ($duLieuCu['so_sao'] ?? '5') === '3' ? 'selected' : '' ?>>⭐⭐⭐ (3 sao - Khá)</option>
-              <option value="2" <?= ($duLieuCu['so_sao'] ?? '5') === '2' ? 'selected' : '' ?>>⭐⭐ (2 sao - Trung bình)</option>
-              <option value="1" <?= ($duLieuCu['so_sao'] ?? '5') === '1' ? 'selected' : '' ?>>⭐ (1 sao - Cần cải thiện)</option>
+              <option value="" <?= empty($duLieuCu['so_sao']) ? 'selected' : '' ?>>-- Chọn mức độ đánh giá --</option>
+              <option value="5" <?= ($duLieuCu['so_sao'] ?? '') === '5' ? 'selected' : '' ?>>⭐⭐⭐⭐⭐ (5 sao - Xuất sắc)</option>
+              <option value="4" <?= ($duLieuCu['so_sao'] ?? '') === '4' ? 'selected' : '' ?>>⭐⭐⭐⭐ (4 sao - Tốt)</option>
+              <option value="3" <?= ($duLieuCu['so_sao'] ?? '') === '3' ? 'selected' : '' ?>>⭐⭐⭐ (3 sao - Khá)</option>
+              <option value="2" <?= ($duLieuCu['so_sao'] ?? '') === '2' ? 'selected' : '' ?>>⭐⭐ (2 sao - Trung bình)</option>
+              <option value="1" <?= ($duLieuCu['so_sao'] ?? '') === '1' ? 'selected' : '' ?>>⭐ (1 sao - Cần cải thiện)</option>
             </select>
           </div>
 
@@ -391,7 +417,20 @@ require __DIR__ . '/../../inc/header.php';
       <!-- Danh sách đánh giá gần đây -->
       <div class="nhuan-history-card">
         <h3>Đánh giá gần đây từ cộng đồng</h3>
-        <p class="nhuan-history-desc">Lưu trữ minh bạch tại <code>storage/3120224106_danhgia.jsonl</code>:</p>
+        <?php if (!empty($thongKeKyNang)): ?>
+          <div class="mb-3 p-3" style="background: var(--nen-surface, #ffffff); border: 1px solid var(--border-nhat, #cbd5e1); border-radius: 8px;">
+            <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--mau-chinh); margin-bottom: 8px;">📊 Thống kê điểm sao theo kỹ năng (GROUP BY):</h4>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <?php foreach ($thongKeKyNang as $tk): ?>
+                <span style="background: var(--nen-section, #f8fafc); border: 1px solid var(--border-nhat, #cbd5e1); border-radius: 6px; padding: 4px 10px; font-size: 0.85rem;">
+                  <?= e($tk['ky_nang']) ?>: <strong style="color: #f59e0b;">⭐ <?= e($tk['sao_tb']) ?>/5</strong> (<?= (int)$tk['so_luong'] ?> lượt)
+                </span>
+              <?php endforeach; ?>
+            </div>
+          </div>
+        <?php endif; ?>
+
+        <p class="nhuan-history-desc">Lưu trữ và đọc trực tiếp từ bảng CSDL MySQL <code>tv_danh_gia</code>:</p>
 
         <?php if (empty($dsDanhGia)): ?>
           <div class="nhuan-empty-box">
