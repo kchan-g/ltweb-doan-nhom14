@@ -1,13 +1,13 @@
 <?php
 /**
  * thanhvien/3120224024_Dat/gioithieu.php
- * Trang giới thiệu cá nhân: Lê Phú Đạt (MSSV: 3120224024 - Nhóm 14).
- * Chức năng máy chủ:
- * 1. Máy tính điểm học phần (0.2*A1 + 0.3*A2 + 0.5*A3, kiểm tra 0-10, quy đổi hệ 4 & chữ, PRG pattern).
- * 2. Tải lên ảnh đại diện an toàn (kiểm tra MIME thật finfo, kích thước <= 2MB, lưu storage/avatars/, đổi tên ngẫu nhiên).
+ * Trang giới thiệu cá nhân sinh viên Lê Phú Đạt (MSSV: 3120224024 - Nhóm 14).
+ * Chức năng CSDL (Phần B):
+ * 1. Máy tính điểm học phần lưu bảng tv_diem_hoc_phan (INSERT PDO prepared statement, quy đổi hệ 4 & chữ, PRG pattern).
+ * 2. Thống kê học tập (AVG, MAX, COUNT) & Xóa kết quả tính điểm trong CSDL qua POST an toàn.
  * Cách thử:
- * - Nhập 3 cột điểm A1, A2, A3 và bấm "Tính điểm" xem kết quả quy đổi (thử nhập điểm âm hoặc >10 để xem lỗi máy chủ).
- * - Chọn file ảnh (JPG/PNG/WEBP <= 2MB) bấm "Tải lên ảnh mới" kiểm tra MIME thật và cập nhật avatar tức thì.
+ * - Nhập điểm A1, A2, A3 và bấm "Tính điểm" để lưu vào CSDL và xem bảng lịch sử cập nhật.
+ * - Bấm nút "Xóa" tại từng môn trong bảng để xóa bản ghi tương ứng khỏi bảng tv_diem_hoc_phan.
  */
 
 declare(strict_types=1);
@@ -18,6 +18,27 @@ require_once __DIR__ . '/../../inc/config.php';
 $goc = '../../';
 $tieuDe = 'Profile cá nhân - Lê Phú Đạt | UniEvent';
 $trang = 'gioi-thieu';
+
+const MSSV_DAT = '3120224024';
+
+// Xử lý Xóa bản ghi điểm học phần trong CSDL (POST -> DELETE -> PRG)
+$thongBaoXoaDiem = $_SESSION['dat_diem_xoa_ok'] ?? null;
+unset($_SESSION['dat_diem_xoa_ok']);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['xoa_diem'])) {
+    $xoaId = filter_var($_POST['xoa_diem_id'] ?? null, FILTER_VALIDATE_INT);
+    if ($xoaId && $xoaId > 0) {
+        try {
+            $stDel = db()->prepare('DELETE FROM tv_diem_hoc_phan WHERE id = ? AND mssv = ?');
+            $stDel->execute([$xoaId, MSSV_DAT]);
+            $_SESSION['dat_diem_xoa_ok'] = "Đã xóa môn học #" . $xoaId . " khỏi lịch sử CSDL thành công!";
+        } catch (Throwable $e) {
+            error_log('Lỗi xóa tv_diem_hoc_phan: ' . $e->getMessage());
+        }
+    }
+    header('Location: gioithieu.php#tinh-diem');
+    exit;
+}
 
 // ============================================================================
 // CHỨC NĂNG 1: MÁY TÍNH ĐIỂM HỌC PHẦN (POST -> VALIDATION -> PRG)
@@ -142,6 +163,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['tinh_diem'])) {
         $loaiBadge = 'that-bai';
     }
 
+    $pdo = null;
+    try {
+        $pdo = db();
+        $stmtIns = $pdo->prepare("INSERT INTO tv_diem_hoc_phan (mssv, ten_mon, diem_a1, diem_a2, diem_a3, diem_tb, diem_chu, ngay_tinh) VALUES ('3120224024', :ten_mon, :diem_a1, :diem_a2, :diem_a3, :diem_tb, :diem_chu, NOW())");
+        $stmtIns->execute([
+            ':ten_mon' => $hocPhan,
+            ':diem_a1' => $a1Val,
+            ':diem_a2' => $a2Val,
+            ':diem_a3' => $a3Val,
+            ':diem_tb' => $dtb10,
+            ':diem_chu' => $diemChu,
+        ]);
+    } catch (Throwable $e) {
+        error_log('Lỗi lưu CSDL tv_diem_hoc_phan: ' . $e->getMessage());
+    }
+
     $_SESSION['dat_diem_ketqua'] = [
         'hoc_phan' => $hocPhan,
         'diem_a1' => $a1Val,
@@ -158,6 +195,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['tinh_diem'])) {
 
     header('Location: gioithieu.php#tinh-diem');
     exit;
+}
+
+// Lấy lịch sử 5 lần tính điểm gần nhất từ bảng tv_diem_hoc_phan
+$lichSuDiem = [];
+try {
+    $pdo = db();
+    $stmtLS = $pdo->prepare("SELECT id, ten_mon, diem_a1, diem_a2, diem_a3, diem_tb, diem_chu, ngay_tinh FROM tv_diem_hoc_phan WHERE mssv = '3120224024' ORDER BY ngay_tinh DESC, id DESC LIMIT 5");
+    $stmtLS->execute();
+    $lichSuDiem = $stmtLS->fetchAll(PDO::FETCH_ASSOC);
+} catch (Throwable $e) {
+    error_log('Lỗi đọc tv_diem_hoc_phan: ' . $e->getMessage());
+}
+
+// CHỨC NĂNG 2 (CSDL): Thống kê kết quả học tập từ CSDL MySQL (AVG, MAX, COUNT)
+$thongKeDiem = ['tong_mon' => 0, 'dtb_chung' => 0.0, 'diem_cao_nhat' => 0.0];
+try {
+    $stTk = db()->prepare('SELECT COUNT(*) AS tong_mon, ROUND(AVG(diem_tb), 2) AS dtb_chung, MAX(diem_tb) AS diem_cao_nhat FROM tv_diem_hoc_phan WHERE mssv = ?');
+    $stTk->execute([MSSV_DAT]);
+    $resTk = $stTk->fetch(PDO::FETCH_ASSOC);
+    if ($resTk && $resTk['tong_mon'] > 0) {
+        $thongKeDiem = $resTk;
+    }
+} catch (Throwable $e) {
+    error_log('Lỗi thống kê tv_diem_hoc_phan: ' . $e->getMessage());
 }
 
 // ============================================================================
@@ -471,6 +532,7 @@ require __DIR__ . '/../../inc/header.php';
             required
             <?= isset($loiDiem['hoc_phan']) ? 'aria-invalid="true" aria-describedby="loi-hp"' : '' ?>
           >
+            <option value="" <?= empty($duLieuDiemCu['hoc_phan']) ? 'selected' : '' ?>>-- Chọn học phần / môn học --</option>
             <?php
             $dsMon = [
                 'Thiết kế & Lập trình Web' => 'Thiết kế & Lập trình Web (31231755)',
@@ -479,7 +541,7 @@ require __DIR__ . '/../../inc/header.php';
                 'Khai phá dữ liệu' => 'Khai phá dữ liệu (31231330)',
                 'An toàn thông tin' => 'An toàn thông tin (31221010)',
             ];
-            $monChon = $duLieuDiemCu['hoc_phan'] ?? 'Thiết kế & Lập trình Web';
+            $monChon = $duLieuDiemCu['hoc_phan'] ?? '';
             foreach ($dsMon as $val => $nhan):
             ?>
               <option value="<?= e($val) ?>" <?= $monChon === $val ? 'selected' : '' ?>>
@@ -567,6 +629,63 @@ require __DIR__ . '/../../inc/header.php';
           </button>
         </div>
       </form>
+
+      <?php if (!empty($lichSuDiem)): ?>
+        <div class="mt-4 pt-3 border-top">
+          <?php if ($thongBaoXoaDiem): ?>
+            <div class="alert alert-success py-2 mb-3" style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; border-radius: 6px; font-size: 0.9rem; padding: 8px 12px;">
+              ✅ <?= e($thongBaoXoaDiem) ?>
+            </div>
+          <?php endif; ?>
+
+          <?php if (($thongKeDiem['tong_mon'] ?? 0) > 0): ?>
+            <div class="mb-3 p-3" style="background: var(--nen-surface, #ffffff); border: 1px solid var(--border-nhat, #cbd5e1); border-radius: 8px; display: flex; gap: 15px; flex-wrap: wrap;">
+              <span style="font-size: 0.9rem;">📚 Tổng môn đã tính: <strong style="color: var(--mau-chinh);"><?= (int)$thongKeDiem['tong_mon'] ?></strong></span>
+              <span style="font-size: 0.9rem;">🎯 ĐTB tích lũy: <strong style="color: #2563eb;"><?= e($thongKeDiem['dtb_chung']) ?></strong></span>
+              <span style="font-size: 0.9rem;">🌟 Điểm cao nhất: <strong style="color: #16a34a;"><?= e($thongKeDiem['diem_cao_nhat']) ?></strong></span>
+            </div>
+          <?php endif; ?>
+
+          <h4 class="h6 font-weight-bold mb-3" style="color: var(--mau-chinh); font-size: 1rem;">
+            📋 Lịch sử tính điểm & Quản lý CSDL (Bảng <code>tv_diem_hoc_phan</code>)
+          </h4>
+          <div class="table-responsive">
+            <table class="table table-sm table-bordered text-center m-0" style="background: var(--nen-surface); color: var(--chu-chinh);" style="font-size: 0.88rem;">
+              <thead style="background: var(--nen-section); color: var(--chu-chinh);">
+                <tr>
+                  <th>Học phần</th>
+                  <th>A1 (20%)</th>
+                  <th>A2 (30%)</th>
+                  <th>A3 (50%)</th>
+                  <th>ĐTB (10)</th>
+                  <th>Điểm chữ</th>
+                  <th>Thời gian</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php foreach ($lichSuDiem as $row): ?>
+                  <tr>
+                    <td class="text-start"><strong><?= e($row['ten_mon']) ?></strong></td>
+                    <td><?= e($row['diem_a1']) ?></td>
+                    <td><?= e($row['diem_a2']) ?></td>
+                    <td><?= e($row['diem_a3']) ?></td>
+                    <td><strong style="color: #2563eb;"><?= e($row['diem_tb']) ?></strong></td>
+                    <td><span class="badge bg-primary text-white" style="background-color: #2563eb; color: #fff; padding: 2px 6px; border-radius: 4px;"><?= e($row['diem_chu']) ?></span></td>
+                    <td><?= e(date('d/m/Y H:i', strtotime((string)$row['ngay_tinh']))) ?></td>
+                    <td>
+                      <form method="POST" action="gioithieu.php#tinh-diem" style="display:inline;" onsubmit="return confirm('Bạn có chắc muốn xóa bản ghi điểm môn này khỏi CSDL?');">
+                        <input type="hidden" name="xoa_diem_id" value="<?= (int)$row['id'] ?>">
+                        <button type="submit" name="xoa_diem" style="padding: 2px 8px; font-size: 0.78rem; border-radius: 4px; border: 1px solid #ef4444; color: #ef4444; background: transparent; cursor: pointer;">Xóa</button>
+                      </form>
+                    </td>
+                  </tr>
+                <?php endforeach; ?>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      <?php endif; ?>
     </div>
   </section>
 
