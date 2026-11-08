@@ -197,6 +197,110 @@ if ($idXemChiTiet !== false && $idXemChiTiet !== null && $idXemChiTiet > 0) {
             </table>
           </div>
 
+          <?php if ((int)$don['tong_tien'] > 0 && $don['trang_thai'] === 'cho_xac_nhan'): ?>
+            <?php
+              $nhInfo = thongTinNganHang();
+              $linkQR = taoLinkVietQR($don['ma_don'], (int)$don['tong_tien']);
+              $noiDungCK = 'UE ' . preg_replace('/[^A-Za-z0-9_-]/', '', $don['ma_don']);
+            ?>
+            <div class="vietqr-thanh-toan mb-4" style="background:var(--nen-section); border:1.5px solid var(--border-nhat); border-radius:14px; padding:24px;">
+              <div class="d-flex align-items-center gap-2 mb-3 pb-2" style="border-bottom:1px solid var(--border-nhat);">
+                <span style="display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; background:var(--mau-chinh); color:#fff; border-radius:6px; font-size:0.85rem; font-weight:bold;">QR</span>
+                <h3 class="h5 mb-0 font-hien-thi fw-700" style="color:var(--mau-chinh-toi);">
+                  Quét Mã VietQR Chuyển Khoản Tự Động
+                </h3>
+              </div>
+
+              <div style="display:flex; flex-wrap:wrap; gap:24px; align-items:center;">
+                <div style="text-align:center; flex:0 0 240px; margin:0 auto;">
+                  <div style="background:#ffffff; padding:12px; border-radius:12px; border:1px solid var(--border-nhat); display:inline-block; box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+                    <img
+                      src="<?= e($linkQR) ?>"
+                      alt="Mã QR Chuyển khoản VietQR đơn hàng <?= e($don['ma_don']) ?>"
+                      width="216"
+                      height="216"
+                      style="display:block; border-radius:6px;"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div class="mt-2 text-phu" style="font-size:0.78rem;">
+                    Mở App Ngân hàng hoặc Ví điện tử để quét mã tự động điền số tiền &amp; nội dung
+                  </div>
+                </div>
+
+                <div style="flex:1 1 320px;">
+                  <div style="display:flex; flex-direction:column; gap:10px; font-size:0.9rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:var(--nen-surface); border-radius:8px; border:1px solid var(--border-nhat);">
+                      <span class="text-phu">Ngân hàng:</span>
+                      <strong class="text-chinh"><?= e($nhInfo['ten_ngan_hang']) ?> (<?= e($nhInfo['ma_ngan_hang']) ?>)</strong>
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:var(--nen-surface); border-radius:8px; border:1px solid var(--border-nhat);">
+                      <span class="text-phu">Số tài khoản:</span>
+                      <div class="d-flex align-items-center gap-2">
+                        <strong class="text-chinh" style="font-family:monospace; font-size:1.05rem;"><?= e($nhInfo['so_tai_khoan']) ?></strong>
+                        <button type="button" class="nut-bam nut-phu nut-nho" onclick="saoChepDuLieu('<?= e($nhInfo['so_tai_khoan']) ?>', this)" style="padding:2px 8px; font-size:0.75rem;">Chép STK</button>
+                      </div>
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:var(--nen-surface); border-radius:8px; border:1px solid var(--border-nhat);">
+                      <span class="text-phu">Người thụ hưởng:</span>
+                      <strong class="text-chinh"><?= e($nhInfo['chu_tai_khoan']) ?></strong>
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:var(--nen-surface); border-radius:8px; border:1px solid var(--border-nhat);">
+                      <span class="text-phu">Số tiền thanh toán:</span>
+                      <div class="d-flex align-items-center gap-2">
+                        <strong style="color:var(--mau-chinh); font-size:1.1rem;"><?= vnd((int)$don['tong_tien']) ?></strong>
+                        <button type="button" class="nut-bam nut-phu nut-nho" onclick="saoChepDuLieu('<?= (int)$don['tong_tien'] ?>', this)" style="padding:2px 8px; font-size:0.75rem;">Chép số tiền</button>
+                      </div>
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:var(--nen-surface); border-radius:8px; border:1.5px dashed var(--mau-chinh);">
+                      <div>
+                        <span class="text-phu" style="display:block; font-size:0.75rem;">Nội dung chuyển khoản (bắt buộc):</span>
+                        <strong style="color:var(--mau-chinh-toi); font-family:monospace; font-size:1rem;"><?= e($noiDungCK) ?></strong>
+                      </div>
+                      <button type="button" class="nut-bam nut-chinh nut-nho" onclick="saoChepDuLieu('<?= e($noiDungCK) ?>', this)" style="padding:4px 10px; font-size:0.78rem;">Chép nội dung</button>
+                    </div>
+                  </div>
+
+                  <div class="mt-3 text-phu" style="font-size:0.8rem; line-height:1.5;">
+                    💡 <em>Lưu ý: Vui lòng nhập đúng nội dung chuyển khoản để Ban Tổ chức đối soát tự động và duyệt vé cho bạn trong thời gian sớm nhất.</em>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <script>
+            function saoChepDuLieu(vanBan, nut) {
+              if (navigator.clipboard) {
+                navigator.clipboard.writeText(vanBan).then(function() {
+                  var banDau = nut.textContent;
+                  nut.textContent = '✓ Đã chép!';
+                  nut.style.background = '#10b981';
+                  nut.style.color = '#ffffff';
+                  setTimeout(function() {
+                    nut.textContent = banDau;
+                    nut.style.background = '';
+                    nut.style.color = '';
+                  }, 2000);
+                });
+              } else {
+                alert('Đã chọn nội dung: ' + vanBan);
+              }
+            }
+            </script>
+          <?php elseif ((int)$don['tong_tien'] > 0 && in_array($don['trang_thai'], ['da_thanh_toan', 'hoan_thanh'], true)): ?>
+            <div class="p-3 mb-4" style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); border-radius:10px; color:#10b981; font-size:0.9rem;">
+              <?= uiIcon('check', 'icon-success', 16) ?> <strong>Đơn hàng đã được thanh toán và xác nhận thành công!</strong> Vé điện tử của bạn đã có hiệu lực tại sự kiện.
+            </div>
+          <?php elseif ((int)$don['tong_tien'] === 0): ?>
+            <div class="p-3 mb-4" style="background:rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.3); border-radius:10px; color:var(--mau-chinh); font-size:0.9rem;">
+              <?= uiIcon('check', 'icon-primary', 16) ?> <strong>Sự kiện miễn phí sinh viên:</strong> Đơn đăng ký giữ chỗ của bạn đã được ghi nhận trên hệ thống.
+            </div>
+          <?php endif; ?>
+
           <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-4">
             <a href="don-hang.php" class="nut-bam nut-phu" style="padding: 10px 18px;">← Quay lại danh sách đơn</a>
             <div style="font-size:0.9rem; color:#16a34a; font-weight:600; background:rgba(34,197,94,0.12); padding:8px 14px; border-radius:8px; border:1px solid rgba(34,197,94,0.25);">

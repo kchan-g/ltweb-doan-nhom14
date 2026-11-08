@@ -42,7 +42,7 @@ class KhoLienHe
         $hoTen    = trim((string)($lh['hoTen'] ?? ($lh['ho_ten'] ?? '')));
         $email    = trim((string)($lh['email'] ?? ''));
         $sdt      = trim((string)($lh['soDienThoai'] ?? ($lh['sdt'] ?? ($lh['so_dien_thoai'] ?? ''))));
-        $khoaVien = trim((string)($lh['khoaVien'] ?? ($lh['khoa_vien'] ?? '')));
+        $khoaVien = trim((string)($lh['khoaVien'] ?? ($lh['khoa_vien'] ?? ($lh['khoa'] ?? ''))));
         $noiDung  = trim((string)($lh['noiDung'] ?? ($lh['noi_dung'] ?? '')));
         $anh      = !empty($lh['anh']) ? (string)$lh['anh'] : null;
 

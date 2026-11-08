@@ -6,7 +6,11 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src/"
+            "App\\": "src/",
+            "Tests\\": "tests/"
         }
+    },
+    "scripts": {
+        "test": "php tests/run_tests.php"
     }
 }

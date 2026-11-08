@@ -293,7 +293,7 @@ require __DIR__ . '/../../inc/header.php';
       <li><a href="#education">Học vấn</a></li>
       <li><a href="#skills">Kỹ năng</a></li>
       <li><a href="#schedule">Thời khóa biểu</a></li>
-      <li><a href="#tinh-diem">Tính điểm HP</a></li>
+      <li><a href="#tu-van">Tư vấn dự án</a></li>
       <li><a href="#contact">Liên hệ</a></li>
     </ul>
   </div>
@@ -386,7 +386,7 @@ require __DIR__ . '/../../inc/header.php';
 
     <!-- Biểu mẫu lọc và tìm kiếm GET -->
     <form action="gioithieu.php" method="get" class="projects-filter-bar mb-4">
-      <div class="filter-categories-list" role="tablist" aria-label="Lọc theo nhóm dự án">
+      <nav class="filter-categories-list" aria-label="Lọc theo nhóm dự án">
         <?php
         $cacNhomTab = [
             'all' => 'Tất cả dự án',
@@ -409,13 +409,12 @@ require __DIR__ . '/../../inc/header.php';
           <a
             href="<?= e($filterUrl) ?>"
             class="filter-tab-btn <?= $isActive ? 'active' : '' ?>"
-            role="tab"
-            aria-selected="<?= $isActive ? 'true' : 'false' ?>"
+            <?= $isActive ? 'aria-current="page"' : '' ?>
           >
             <?= e($label) ?>
           </a>
         <?php endforeach; ?>
-      </div>
+      </nav>
 
       <div class="filter-controls-row mt-3">
         <input type="hidden" name="nhom" value="<?= e($nhomChon) ?>">
@@ -860,12 +859,6 @@ require __DIR__ . '/../../inc/header.php';
     </div>
   </section>
 
-  <!-- KHỐI 6: MÁY TÍNH ĐIỂM HỌC PHẦN (XỬ LÝ MÁY CHỦ POST - PRG PATTERN) -->
-  <section
-    id="tinh-diem"
-    class="profile-card grade-calc-section"
-    aria-labelledby="tinh-diem-heading"
-  >
   <!-- KHỐI 6: ĐẶT LỊCH TƯ VẤN & KẾT NỐI DỰ ÁN (XỬ LÝ MÁY CHỦ POST - JSONL - PRG) -->
   <section
     id="tu-van"

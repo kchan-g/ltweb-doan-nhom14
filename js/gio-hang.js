@@ -13,8 +13,11 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('submit', async (e) => {
     const form = e.target;
     
-    // Kiểm tra xem form có phải là form thêm giỏ hàng hay không
-    if (!form || (form.id !== 'form-them-gio' && !form.classList.contains('form-them-gio-nhanh'))) {
+    // Dùng form.getAttribute('id') để không bị ô input name="id" bên trong che mất thuộc tính form.id (DOM property shadowing)
+    const formId = (form && typeof form.getAttribute === 'function') ? form.getAttribute('id') : '';
+    const laFormThemGio = formId === 'form-them-gio' || (form && form.classList && form.classList.contains('form-them-gio-nhanh'));
+
+    if (!form || !laFormThemGio) {
       return;
     }
 

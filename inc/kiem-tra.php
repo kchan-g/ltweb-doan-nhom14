@@ -55,6 +55,14 @@ function kiemTraSanPham(array $vao, array $danhSachIdDanhMuc): array
 
     if ($du['thoi_gian'] === '') {
         $loi['thoi_gian'] = 'Vui lòng chọn thời gian diễn ra sự kiện.';
+    } else {
+        $normalizedTime = str_replace('T', ' ', $du['thoi_gian']);
+        $ts = strtotime($normalizedTime);
+        if ($ts === false) {
+            $loi['thoi_gian'] = 'Thời gian diễn ra không đúng định dạng ngày giờ hợp lệ.';
+        } else {
+            $du['thoi_gian'] = date('Y-m-d H:i:s', $ts);
+        }
     }
 
     if ($du['diem_ren_luyen'] === false) {

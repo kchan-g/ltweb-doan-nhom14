@@ -363,6 +363,8 @@ nav.site-nav ul {
   grid-template-columns: 1fr;
   gap: var(--space-6);
   align-items: start;
+  min-width: 0;
+  max-width: 100%;
 }
 
 /* Layout trang giới thiệu */

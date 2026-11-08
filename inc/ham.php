@@ -160,3 +160,53 @@ function uiIcon(string $ten, string $lop = '', int $co = 16): string
         $path
     );
 }
+
+/**
+ * Cấu hình thông tin tài khoản ngân hàng thụ hưởng phục vụ thanh toán vé UniEvent.
+ *
+ * @return array<string, string> Mảng thông tin ngân hàng
+ */
+function thongTinNganHang(): array
+{
+    return [
+        'ma_ngan_hang'  => 'TPB',
+        'ten_ngan_hang' => 'TPBank - Ngân hàng TMCP Tiên Phong',
+        'chi_nhanh'     => 'Chi nhánh Đà Nẵng',
+        'so_tai_khoan'  => '13012062204',
+        'chu_tai_khoan' => 'UNIEVENT',
+    ];
+}
+
+/**
+ * Tạo URL mã QR thanh toán động VietQR tự động khớp số tiền và nội dung đơn hàng.
+ *
+ * @param string $maDon Mã đơn hàng (VD: DH-20261108-001)
+ * @param int $tongTien Tổng số tiền thanh toán (VNĐ)
+ * @param string|null $nganHang Mã ngân hàng (mặc định: ICB)
+ * @param string|null $soTaiKhoan Số tài khoản thụ hưởng
+ * @param string|null $chuTaiKhoan Tên chủ tài khoản
+ * @return string Đường dẫn ảnh VietQR chuẩn Napas
+ */
+function taoLinkVietQR(
+    string $maDon,
+    int $tongTien,
+    ?string $nganHang = null,
+    ?string $soTaiKhoan = null,
+    ?string $chuTaiKhoan = null
+): string {
+    $cfg = thongTinNganHang();
+    $bank = $nganHang ?: $cfg['ma_ngan_hang'];
+    $stk = $soTaiKhoan ?: $cfg['so_tai_khoan'];
+    $chu = $chuTaiKhoan ?: $cfg['chu_tai_khoan'];
+
+    // Chuẩn hóa nội dung chuyển khoản: UE <MA_DON>
+    $noiDung = 'UE ' . preg_replace('/[^A-Za-z0-9_-]/', '', $maDon);
+
+    $query = http_build_query([
+        'amount'      => max(0, $tongTien),
+        'addInfo'     => $noiDung,
+        'accountName' => $chu,
+    ]);
+
+    return "https://img.vietqr.io/image/{$bank}-{$stk}-compact2.png?{$query}";
+}

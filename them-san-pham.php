@@ -25,6 +25,7 @@ $du = [
     'mo_ta_ngan'     => '',
     'mo_ta_chi_tiet' => '',
     'video'          => '',
+    'anh_url'        => '',
 ];
 $loi = [];
 
@@ -34,6 +35,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $tenAnhLuu = 'images/AI.jpg';
 
+    // 1. Nhận đường dẫn ảnh trực tuyến (Unsplash, Pexels, Web URL)
+    $anhUrl = trim((string)($_POST['anh_url'] ?? ''));
+    if ($anhUrl !== '') {
+        if (filter_var($anhUrl, FILTER_VALIDATE_URL)) {
+            $tenAnhLuu = $anhUrl;
+        } else {
+            $loi['anh'] = 'Đường dẫn liên kết ảnh không hợp lệ (phải bắt đầu bằng http:// hoặc https://).';
+        }
+    }
+
+    // 2. Nhận tệp tải lên từ máy tính (ưu tiên nếu có tệp được chọn)
     if (isset($_FILES['anh']) && $_FILES['anh']['error'] !== UPLOAD_ERR_NO_FILE) {
         $file = $_FILES['anh'];
         if ($file['error'] !== UPLOAD_ERR_OK) {
@@ -226,18 +238,34 @@ require __DIR__ . '/inc/header.php';
 
         <div style="flex:1 1 240px;">
           <label for="thoi_gian" class="form-label fw-bold mb-2" style="font-size:0.875rem; color:var(--chu-chinh);">
-            Thời gian tổ chức (YYYY-MM-DD HH:MM:SS) <span style="color:#ef4444;">*</span>
+            Thời gian tổ chức <span style="color:#ef4444;">*</span>
           </label>
-          <input
-            type="text"
-            id="thoi_gian"
-            name="thoi_gian"
-            class="form-control <?= isset($loi['thoi_gian']) ? 'is-invalid' : '' ?>"
-            placeholder="2026-11-20 08:00:00"
-            value="<?= e($du['thoi_gian']) ?>"
-            style="width:100%; height:44px; padding:0.5rem 1rem; border:1.5px solid var(--border-nhat); border-radius:10px; font-size:0.9rem;"
-            required
-          />
+          <?php
+          $valThoiGian = '';
+          if (!empty($du['thoi_gian'])) {
+              $ts = strtotime(str_replace('T', ' ', (string)$du['thoi_gian']));
+              if ($ts !== false) {
+                  $valThoiGian = date('Y-m-d\TH:i', $ts);
+              }
+          }
+          ?>
+          <div style="position:relative;">
+            <input
+              type="datetime-local"
+              id="thoi_gian"
+              name="thoi_gian"
+              class="form-control <?= isset($loi['thoi_gian']) ? 'is-invalid' : '' ?>"
+              value="<?= e($valThoiGian) ?>"
+              min="<?= date('Y-m-d\TH:i') ?>"
+              style="width:100%; height:44px; padding:0.5rem 2.5rem 0.5rem 1rem; border:1.5px solid var(--border-nhat); border-radius:10px; font-size:0.9rem; cursor:pointer;"
+              onclick="try{this.showPicker()}catch(e){}"
+              required
+            />
+            <span onclick="try{document.getElementById('thoi_gian').showPicker()}catch(e){}" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer; color:var(--mau-chinh);" title="Bấm để mở lịch chọn ngày giờ">
+              <?= uiIcon('calendar', '', 18) ?>
+            </span>
+          </div>
+          <div style="font-size:0.75rem; color:var(--chu-phu); margin-top:4px;">Bấm vào ô hoặc biểu tượng lịch để chọn ngày và giờ tổ chức sự kiện</div>
           <?php if (isset($loi['thoi_gian'])): ?>
             <div style="color:#dc2626; font-size:0.8rem; margin-top:5px; font-weight:500;"><?= e($loi['thoi_gian']) ?></div>
           <?php endif; ?>
@@ -261,14 +289,30 @@ require __DIR__ . '/inc/header.php';
         </div>
 
         <div style="flex:1 1 240px;">
-          <label for="anh" class="form-label fw-bold mb-2" style="font-size:0.875rem; color:var(--chu-chinh);">
-            Hình ảnh sự kiện (JPG, PNG, WebP &le; 2MB)
+          <label for="anh_url" class="form-label fw-bold mb-2" style="font-size:0.875rem; color:var(--chu-chinh);">
+            Dán link ảnh Unsplash hoặc Web URL
           </label>
-          <input type="file" id="anh" name="anh" class="form-control" accept="image/*" style="width:100%; padding:0.4rem; border:1.5px solid var(--border-nhat); border-radius:10px; font-size:0.85rem;" />
-          <?php if (isset($loi['anh'])): ?>
-            <div style="color:#dc2626; font-size:0.8rem; margin-top:5px; font-weight:500;"><?= e($loi['anh']) ?></div>
-          <?php endif; ?>
+          <input
+            type="url"
+            id="anh_url"
+            name="anh_url"
+            class="form-control <?= isset($loi['anh']) ? 'is-invalid' : '' ?>"
+            placeholder="https://images.unsplash.com/photo-..."
+            value="<?= e($du['anh_url'] ?? '') ?>"
+            style="width:100%; height:44px; padding:0.5rem 1rem; border:1.5px solid var(--border-nhat); border-radius:10px; font-size:0.9rem;"
+          />
+          <div style="font-size:0.75rem; color:var(--chu-phu); margin-top:4px;">Hỗ trợ dán trực tiếp link ảnh Unsplash chất lượng cao</div>
         </div>
+      </div>
+
+      <div class="form-group mb-4">
+        <label for="anh" class="form-label fw-bold mb-2" style="font-size:0.875rem; color:var(--chu-chinh);">
+          Hoặc tải tệp ảnh từ máy tính (JPG, PNG, WebP &le; 2MB)
+        </label>
+        <input type="file" id="anh" name="anh" class="form-control" accept="image/*" style="width:100%; padding:0.4rem; border:1.5px solid var(--border-nhat); border-radius:10px; font-size:0.85rem;" />
+        <?php if (isset($loi['anh'])): ?>
+          <div style="color:#dc2626; font-size:0.8rem; margin-top:5px; font-weight:500;"><?= e($loi['anh']) ?></div>
+        <?php endif; ?>
       </div>
 
       <div class="form-group mb-4">

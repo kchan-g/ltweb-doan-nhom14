@@ -31,7 +31,8 @@ INSERT INTO nguoi_dung (id, email, ho_ten, mat_khau, vai_tro, so_dien_thoai, nga
 (2, 'lan@ued.vn', 'Nguyễn Thị Lan', '$2y$10$6RSEuRESwpYOryF5Q9CEBuqDp5cGrPsEz/hD2avXNTvVPqPzV0iQm', 'khach_hang', '0912345678', '2026-09-02 09:30:00'),
 (3, 'an@ued.vn', 'Trần Văn An', '$2y$10$6RSEuRESwpYOryF5Q9CEBuqDp5cGrPsEz/hD2avXNTvVPqPzV0iQm', 'khach_hang', '0934567890', '2026-09-03 14:15:00'),
 (4, 'hung@ued.vn', 'Đinh Trịnh Ngọc Hưng', '$2y$10$6RSEuRESwpYOryF5Q9CEBuqDp5cGrPsEz/hD2avXNTvVPqPzV0iQm', 'quan_tri', '0707174128', '2026-09-04 10:00:00'),
-(5, '3120224065@ued.udn.vn', 'Đinh Trịnh Ngọc Hưng (Sinh viên)', '$2y$10$6RSEuRESwpYOryF5Q9CEBuqDp5cGrPsEz/hD2avXNTvVPqPzV0iQm', 'khach_hang', '0707174128', '2026-09-05 11:00:00');
+(5, '3120224065@ued.udn.vn', 'Đinh Trịnh Ngọc Hưng (Sinh viên)', '$2y$10$6RSEuRESwpYOryF5Q9CEBuqDp5cGrPsEz/hD2avXNTvVPqPzV0iQm', 'khach_hang', '0707174128', '2026-09-05 11:00:00'),
+(6, 'dat@ued.vn', 'Lê Phú Đạt', '$2y$10$6RSEuRESwpYOryF5Q9CEBuqDp5cGrPsEz/hD2avXNTvVPqPzV0iQm', 'khach_hang', '0905130424', '2026-09-06 08:00:00');
 
 -- ----------------------------------------------------------------------------
 -- 3. NẠP DỮ LIỆU SỰ KIỆN (su_kien) - ĐỦ 32 DÒNG (>= 30 DÒNG)
@@ -110,7 +111,7 @@ INSERT INTO su_kien (id, danh_muc_id, ten, gia, ton_kho, dia_diem, thoi_gian, di
 -- Đơn hàng lưu chi_tiet_don kèm don_gia tại thời điểm đặt.
 -- ----------------------------------------------------------------------------
 INSERT INTO don_hang (id, nguoi_dung_id, ma_don, ngay_dat, tong_tien, trang_thai, ghi_chu) VALUES
-(1, 2, 'DH-20261015-001', '2026-10-15 09:30:00', 80000, 'da_thanh_toan', 'Đăng ký vé đêm nhạc và workshop IT'),
+(1, 2, 'DH-20261015-001', '2026-10-15 09:30:00', 70000, 'da_thanh_toan', 'Đăng ký vé đêm nhạc và workshop IT'),
 (2, 3, 'DH-20261016-002', '2026-10-16 14:00:00', 30000, 'cho_xac_nhan', 'Đăng ký vé Lễ hội Văn hóa Quốc tế');
 
 INSERT INTO chi_tiet_don (don_hang_id, su_kien_id, so_luong, don_gia) VALUES
@@ -134,7 +135,7 @@ INSERT INTO lien_he (id, ho_ten, email, so_dien_thoai, khoa_vien, noi_dung, anh,
 INSERT INTO thanh_vien (mssv, ho_ten, nguoi_dung_id) VALUES
 ('3120224065', 'Đinh Trịnh Ngọc Hưng', 4),
 ('3120224011', 'Nguyễn Hoài Bảo', NULL),
-('3120224024', 'Lê Phú Đạt', NULL),
+('3120224024', 'Lê Phú Đạt', 6),
 ('3120224106', 'Phan Nhuận', NULL),
 ('3120224153', 'Nguyễn Thị Kiều Trang', NULL);
 

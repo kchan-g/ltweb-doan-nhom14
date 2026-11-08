@@ -579,7 +579,7 @@ require __DIR__ . '/../../inc/header.php';
           📋 Lịch sử dự toán chi phí gần đây (Bảng CSDL <code>tv_du_toan_web</code>)
         </h4>
         <div class="table-responsive">
-          <table class="table table-sm table-bordered text-center m-0" style="background: var(--nen-surface); color: var(--chu-chinh);" style="font-size: 0.88rem;">
+          <table class="table table-sm table-bordered text-center m-0" style="background: var(--nen-surface); color: var(--chu-chinh); font-size: 0.88rem;">
             <thead style="background: var(--nen-section); color: var(--chu-chinh);">
               <tr>
                 <th>Loại website</th>

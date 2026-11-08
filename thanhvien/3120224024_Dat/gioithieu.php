@@ -21,11 +21,44 @@ $trang = 'gioi-thieu';
 
 const MSSV_DAT = '3120224024';
 
+// Kiểm tra quyền chủ trang (thanh_vien.nguoi_dung_id, email hoặc vai trò quan_tri)
+$ndHienTai = nguoiDung();
+$laChuTrang = false;
+if ($ndHienTai !== null) {
+    $uid = (int)($ndHienTai['id'] ?? 0);
+    try {
+        $stChu = db()->prepare('SELECT nguoi_dung_id FROM thanh_vien WHERE mssv = ? LIMIT 1');
+        $stChu->execute([MSSV_DAT]);
+        $ndIdDb = $stChu->fetchColumn();
+        if ($ndIdDb !== false && $ndIdDb !== null && (int)$ndIdDb === $uid) {
+            $laChuTrang = true;
+        }
+    } catch (Throwable $e) {
+        error_log('Lỗi kiểm tra quyền chủ trang Đạt: ' . $e->getMessage());
+    }
+    if (!$laChuTrang) {
+        $emailNd = strtolower((string)($ndHienTai['email'] ?? ''));
+        if ($emailNd === 'dat@ued.vn' || $emailNd === '3120224024@ued.udn.vn' || $emailNd === 'lephudat1304@gmail.com' || laQuanTri()) {
+            $laChuTrang = true;
+        }
+    }
+}
+
 // Xử lý Xóa bản ghi điểm học phần trong CSDL (POST -> DELETE -> PRG)
+// Kiểm tra quyền nghiêm ngặt: chỉ tài khoản chủ trang hoặc quản trị viên mới được xóa
 $thongBaoXoaDiem = $_SESSION['dat_diem_xoa_ok'] ?? null;
 unset($_SESSION['dat_diem_xoa_ok']);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['xoa_diem'])) {
+    if (!$laChuTrang) {
+        http_response_code(403);
+        $_SESSION['dat_diem_loi'] = [
+            'quyen' => 'Bạn không có quyền xóa dữ liệu! Vui lòng đăng nhập với tài khoản chủ trang (Lê Phú Đạt) hoặc Quản trị viên.'
+        ];
+        header('Location: gioithieu.php#tinh-diem');
+        exit;
+    }
+
     $xoaId = filter_var($_POST['xoa_diem_id'] ?? null, FILTER_VALIDATE_INT);
     if ($xoaId && $xoaId > 0) {
         try {
@@ -471,6 +504,12 @@ require __DIR__ . '/../../inc/header.php';
       </p>
     </div>
 
+    <?php if (!empty($loiDiem['quyen'])): ?>
+      <div class="alert alert-danger mb-3" role="alert" style="background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; padding: 10px 14px; border-radius: 8px; font-size: 0.9rem;">
+        ⚠️ <?= e($loiDiem['quyen']) ?>
+      </div>
+    <?php endif; ?>
+
     <?php if ($ketQuaDiem !== null): ?>
       <div class="dat-grade-result dat-grade-result--<?= e($ketQuaDiem['badge']) ?>" role="region" aria-label="Kết quả tính điểm">
         <div class="dat-grade-result-top">
@@ -650,7 +689,7 @@ require __DIR__ . '/../../inc/header.php';
             📋 Lịch sử tính điểm & Quản lý CSDL (Bảng <code>tv_diem_hoc_phan</code>)
           </h4>
           <div class="table-responsive">
-            <table class="table table-sm table-bordered text-center m-0" style="background: var(--nen-surface); color: var(--chu-chinh);" style="font-size: 0.88rem;">
+            <table class="table table-sm table-bordered text-center m-0" style="background: var(--nen-surface); color: var(--chu-chinh); font-size: 0.88rem;">
               <thead style="background: var(--nen-section); color: var(--chu-chinh);">
                 <tr>
                   <th>Học phần</th>
@@ -674,10 +713,14 @@ require __DIR__ . '/../../inc/header.php';
                     <td><span class="badge bg-primary text-white" style="background-color: #2563eb; color: #fff; padding: 2px 6px; border-radius: 4px;"><?= e($row['diem_chu']) ?></span></td>
                     <td><?= e(date('d/m/Y H:i', strtotime((string)$row['ngay_tinh']))) ?></td>
                     <td>
-                      <form method="POST" action="gioithieu.php#tinh-diem" style="display:inline;" onsubmit="return confirm('Bạn có chắc muốn xóa bản ghi điểm môn này khỏi CSDL?');">
-                        <input type="hidden" name="xoa_diem_id" value="<?= (int)$row['id'] ?>">
-                        <button type="submit" name="xoa_diem" style="padding: 2px 8px; font-size: 0.78rem; border-radius: 4px; border: 1px solid #ef4444; color: #ef4444; background: transparent; cursor: pointer;">Xóa</button>
-                      </form>
+                      <?php if ($laChuTrang): ?>
+                        <form method="POST" action="gioithieu.php#tinh-diem" style="display:inline;" onsubmit="return confirm('Bạn có chắc muốn xóa bản ghi điểm môn này khỏi CSDL?');">
+                          <input type="hidden" name="xoa_diem_id" value="<?= (int)$row['id'] ?>">
+                          <button type="submit" name="xoa_diem" style="padding: 2px 8px; font-size: 0.78rem; border-radius: 4px; border: 1px solid #ef4444; color: #ef4444; background: transparent; cursor: pointer;">Xóa</button>
+                        </form>
+                      <?php else: ?>
+                        <span style="font-size: 0.75rem; color: #94a3b8; font-style: italic;" title="Chỉ chủ trang Lê Phú Đạt hoặc Quản trị viên mới có quyền xóa dữ liệu">🔒 Đã khóa</span>
+                      <?php endif; ?>
                     </td>
                   </tr>
                 <?php endforeach; ?>
@@ -808,7 +851,6 @@ require __DIR__ . '/../../inc/header.php';
             <td></td>
             <td></td>
             <td></td>
-            <td></td>
           </tr>
 
           <!-- Tiết 3 -->
@@ -820,7 +862,6 @@ require __DIR__ . '/../../inc/header.php';
               21221904 - 24-0311<br />
               <span class="room-badge">Phòng: A6-502</span>
             </td>
-            <td></td>
             <td></td>
             <td></td>
             <td></td>
@@ -836,7 +877,6 @@ require __DIR__ . '/../../inc/header.php';
               31231330 - 24-0102<br />
               <span class="room-badge">Phòng: A5-404B</span>
             </td>
-            <td></td>
             <td></td>
             <td></td>
             <td></td>

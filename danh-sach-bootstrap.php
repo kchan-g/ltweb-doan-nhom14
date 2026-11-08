@@ -3,9 +3,23 @@
  * Danh sách sự kiện sinh viên UniEvent xây dựng bằng Bootstrap 5
  * Xử lý dữ liệu ở đầu tệp (không echo)
  */
-require_once __DIR__ . '/inc/data.php';
+require_once __DIR__ . '/inc/config.php';
 
-$tatCaSuKien = layTatCaSuKien();
+$tatCaSuKien = [];
+try {
+    $st = db()->query(
+        "SELECT sk.id, sk.ten, dm.ten AS tenDanhMuc, sk.anh AS hinhAnh, 
+                DATE_FORMAT(sk.thoi_gian, '%H:%i %d/%m/%Y') AS thoiGian, 
+                sk.dia_diem AS diaDiem, sk.diem_ren_luyen AS diemRenLuyen,
+                sk.gia, sk.ton_kho AS tonKho
+         FROM su_kien sk
+         LEFT JOIN danh_muc dm ON sk.danh_muc_id = dm.id
+         ORDER BY sk.thoi_gian DESC"
+    );
+    $tatCaSuKien = $st->fetchAll();
+} catch (Throwable $e) {
+    error_log('Lỗi lấy sự kiện trong danh-sach-bootstrap.php: ' . $e->getMessage());
+}
 ?>
 <!doctype html>
 <html lang="vi">

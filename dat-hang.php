@@ -160,6 +160,13 @@ require __DIR__ . '/inc/header.php';
               ></textarea>
             </div>
 
+            <?php if ($tongTien > 0): ?>
+              <div class="mb-4 p-3" style="background:var(--nen-section); border:1px solid var(--border-nhat); border-radius:10px; font-size:0.85rem; line-height:1.5;">
+                <strong style="color:var(--mau-chinh);">💳 Thanh toán VietQR tự động:</strong>
+                <p class="mb-0 text-phu mt-1">Ngay sau khi xác nhận, hệ thống sẽ tự động tạo mã QR VietQR chuẩn số tiền <strong><?= vnd($tongTien) ?></strong> kèm nội dung mã đơn hàng để quét chuyển khoản tức thì.</p>
+              </div>
+            <?php endif; ?>
+
             <button type="submit" class="nut-bam nut-nhan nut-full py-3" style="font-size:1.05rem; font-weight:700; width:100%;">
               ✓ Xác Nhận Đăng Ký Giữ Chỗ
             </button>

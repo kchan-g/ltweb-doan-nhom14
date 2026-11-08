@@ -72,8 +72,10 @@ $soDonHienThi = $tongDonHang > 0 ? (string)$tongDonHang : '128';
 $tongPhanHoi = (int)db()->query('SELECT COUNT(*) FROM lien_he')->fetchColumn();
 $soPhanHoiHienThi = $tongPhanHoi > 0 ? (string)$tongPhanHoi : '36';
 
-// Danh sách phản hồi mới nhất (cột trái)
-$danhSachLH = $khoLienHe->tatCa(4);
+// Danh sách phản hồi sinh viên (mặc định lấy 4 phản hồi mới nhất; nếu admin muốn xem tất cả thì lấy toàn bộ)
+$xemTatCaLH = isset($_GET['xem_tat_ca_lh']) && $_GET['xem_tat_ca_lh'] === '1';
+$soLHLay = $xemTatCaLH ? 100 : 4;
+$danhSachLH = $khoLienHe->tatCa($soLHLay);
 
 // Danh sách sự kiện sắp tới (cột phải)
 $stSapToi = db()->query("SELECT * FROM su_kien WHERE thoi_gian >= NOW() ORDER BY thoi_gian ASC LIMIT 4");
@@ -165,7 +167,7 @@ function layLopBadgeDanhMuc(int $dmId): string {
           </a>
         </li>
         <li>
-          <a href="#phan-hoi-sinh-vien" class="admin-nav-link">
+          <a href="quan-tri.php?xem_tat_ca_lh=1#phan-hoi-sinh-vien" class="admin-nav-link">
             <span class="admin-nav-link__main">
               <?= uiIcon('mail', '', 16) ?>
               <span>Phản hồi sinh viên</span>
@@ -496,8 +498,8 @@ function layLopBadgeDanhMuc(int $dmId): string {
                         <a href="sua-san-pham.php?id=<?= $sk->id ?>" class="nut-bam nut-phu nut-nho" style="padding:4px 8px; font-size:0.75rem;" title="Chỉnh sửa sự kiện">
                           Sửa
                         </a>
-                        <form action="xoa-san-pham.php" method="POST" style="margin:0;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa sự kiện \'<?= addslashes(e($sk->ten)) ?>\' không?');">
-                          <input type="hidden" name="id" value="<?= $sk->id ?>">
+                        <form action="xoa-san-pham.php" method="POST" class="form-xoa-su-kien" style="margin:0;" data-ten="<?= e($sk->ten) ?>">
+                          <input type="hidden" name="id" value="<?= (int)$sk->id ?>">
                           <button type="submit" class="nut-bam nut-canh-bao nut-nho" style="padding:4px 8px; font-size:0.75rem;" title="Xóa sự kiện">
                             Xóa
                           </button>
@@ -551,9 +553,15 @@ function layLopBadgeDanhMuc(int $dmId): string {
                 Các yêu cầu mới cần được hỗ trợ
               </p>
             </div>
-            <a href="lien-he.php" target="_blank" style="font-size:0.75rem; font-weight:700; color:#0284c7; text-decoration:none;">
-              Xem tất cả ↗
-            </a>
+            <?php if ($xemTatCaLH): ?>
+              <a href="quan-tri.php#phan-hoi-sinh-vien" style="font-size:0.75rem; font-weight:700; color:#0284c7; text-decoration:none;">
+                Thu gọn (4 tin mới) &uarr;
+              </a>
+            <?php else: ?>
+              <a href="quan-tri.php?xem_tat_ca_lh=1#phan-hoi-sinh-vien" style="font-size:0.75rem; font-weight:700; color:#0284c7; text-decoration:none;">
+                Xem tất cả (<?= $tongPhanHoi ?> phản hồi) &darr;
+              </a>
+            <?php endif; ?>
           </div>
 
           <div>
@@ -634,6 +642,20 @@ function layLopBadgeDanhMuc(int $dmId): string {
     </div>
   </main>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // Lắng nghe sự kiện submit của toàn bộ form xóa sự kiện
+  document.querySelectorAll('.form-xoa-su-kien').forEach(function (form) {
+    form.addEventListener('submit', function (e) {
+      var ten = form.getAttribute('data-ten') || 'sự kiện này';
+      if (!confirm('Bạn có chắc chắn muốn xóa sự kiện "' + ten + '" không?\nHành động này không thể hoàn tác.')) {
+        e.preventDefault();
+      }
+    });
+  });
+});
+</script>
 
 </body>
 </html>

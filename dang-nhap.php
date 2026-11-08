@@ -44,7 +44,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 flash("Đăng nhập thành công! Chào mừng " . $nd['ho_ten'] . ".");
 
-                if (!empty($tiepTuc) && !str_starts_with($tiepTuc, 'http')) {
+                // Kiểm tra an toàn giá trị chuyển hướng tiếp tục (Open Redirect Prevention)
+                // Chặn triệt để URL tuyệt đối, scheme nguy hiểm và protocol-relative URL dạng //domain, /\domain
+                $urlChuyenTiepHopLe = false;
+                if (!empty($tiepTuc)) {
+                    if (!preg_match('/[\r\n]/', $tiepTuc)) {
+                        $laUrlNgoai = preg_match('/^[a-z][a-z0-9+.-]*:/i', $tiepTuc)
+                                   || str_starts_with($tiepTuc, '//')
+                                   || str_starts_with($tiepTuc, '/\\')
+                                   || str_starts_with($tiepTuc, '\\\\');
+                        if (!$laUrlNgoai) {
+                            $urlChuyenTiepHopLe = true;
+                        }
+                    }
+                }
+
+                if ($urlChuyenTiepHopLe) {
                     header('Location: ' . $tiepTuc);
                 } elseif (($nd['vai_tro'] ?? '') === 'quan_tri') {
                     header('Location: quan-tri.php');

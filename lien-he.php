@@ -18,7 +18,7 @@ $du = [
 $loi = [];
 $tenAnhLuu = null;
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     $du['hoten']   = trim($_POST['hoten'] ?? '');
     $du['email']   = trim($_POST['email'] ?? '');
     $du['sdt']     = trim($_POST['sdt'] ?? '');
@@ -88,13 +88,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($loi)) {
         $khoLienHe->them([
-            'thoiGian' => date('Y-m-d H:i:s'),
-            'hoTen'    => $du['hoten'],
-            'email'    => $du['email'],
-            'sdt'      => $du['sdt'],
-            'khoa'     => $du['khoa'],
-            'noiDung'  => $du['noidung'],
-            'anh'      => $tenAnhLuu,
+            'thoiGian'  => date('Y-m-d H:i:s'),
+            'hoTen'     => $du['hoten'],
+            'email'     => $du['email'],
+            'sdt'       => $du['sdt'],
+            'khoaVien'  => $du['khoa'],
+            'khoa'      => $du['khoa'],
+            'noiDung'   => $du['noidung'],
+            'anh'       => $tenAnhLuu,
         ]);
 
         flash('Cảm ơn bạn! Thông tin liên hệ đã được gửi thành công đến Ban Quản trị UniEvent.');
@@ -134,9 +135,9 @@ require __DIR__ . '/inc/header.php';
       </div>
     <?php endif; ?>
 
-    <div class="lien-he-layout">
-      <section aria-labelledby="tieu-de-form-lien-he">
-        <div style="background:var(--nen-surface); border:1px solid var(--border-nhat); border-radius:16px; padding:32px; box-shadow:var(--shadow-card);">
+    <div class="lien-he-layout" style="min-width:0; max-width:100%;">
+      <section aria-labelledby="tieu-de-form-lien-he" style="min-width:0; max-width:100%;">
+        <div style="background:var(--nen-surface); border:1px solid var(--border-nhat); border-radius:16px; padding:clamp(16px, 4vw, 32px); box-shadow:var(--shadow-card); box-sizing:border-box; max-width:100%;">
           <h2 id="tieu-de-form-lien-he" class="h3 mb-4 font-hien-thi fw-700 text-chinh">
             Gửi Phiếu Yêu Cầu Hỗ Trợ
           </h2>
@@ -256,16 +257,16 @@ require __DIR__ . '/inc/header.php';
                 </div>
               </div>
 
-              <div class="mt-4 d-flex gap-2">
-                <button type="submit" class="nut-bam nut-nhan py-2 px-4" style="font-weight:700;">Gửi Phiếu Yêu Cầu Hỗ Trợ</button>
-                <button type="reset" class="nut-bam nut-phu py-2 px-4">Nhập lại</button>
+              <div class="mt-4 d-flex gap-2 flex-wrap">
+                <button type="submit" class="nut-bam nut-nhan py-2 px-3" style="font-weight:700;">Gửi Phiếu Yêu Cầu Hỗ Trợ</button>
+                <button type="reset" class="nut-bam nut-phu py-2 px-3">Nhập lại</button>
               </div>
             </fieldset>
           </form>
         </div>
       </section>
 
-      <aside aria-label="Thông tin liên hệ trực tiếp">
+      <aside aria-label="Thông tin liên hệ trực tiếp" style="min-width:0; max-width:100%;">
         <div class="widget mb-4">
           <h3 class="h5 mb-3 font-hien-thi fw-700 text-chinh">Thông Tin Văn Phòng</h3>
           <p class="text-phu mb-3 fs-nho lh-chuan" style="line-height:1.7;">
@@ -278,7 +279,7 @@ require __DIR__ . '/inc/header.php';
           <ul class="mb-0 text-phu" style="padding-left:1.25rem; line-height:1.8; font-size:0.875rem;">
             <li>Hotline hỗ trợ kỹ thuật: <strong class="text-chinh">(0236) 3841 323</strong></li>
             <li>
-              Email tiếp nhận: <strong class="text-chinh">support@unievent.edu.vn</strong>
+              Email tiếp nhận: <strong class="text-chinh" style="word-break:break-all;">support@unievent.edu.vn</strong>
             </li>
             <li>Thời gian làm việc: Thứ 2 – Thứ 6 (07:30 - 17:00)</li>
           </ul>
