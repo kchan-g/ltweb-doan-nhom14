@@ -335,6 +335,7 @@ require __DIR__ . '/../../inc/header.php';
           class="nhuan-form"
           novalidate
         >
+          <?= csrfField() ?>
           <div class="form-group mb-3">
             <label for="nguoi_gui" class="form-label">
               Họ và tên của bạn <span class="bat-buoc">*</span>
@@ -498,6 +499,7 @@ require __DIR__ . '/../../inc/header.php';
 
     <div class="nhuan-form-card">
       <form action="gioithieu.php#trac-nghiem" method="post" class="nhuan-form" novalidate>
+        <?= csrfField() ?>
         <div class="form-group mb-3">
           <label for="ten_hoc_vien" class="form-label">Tên của bạn: <span class="bat-buoc">*</span></label>
           <input type="text" id="ten_hoc_vien" name="ten_hoc_vien" class="form-control" placeholder="Nhập họ tên để nhận kết quả..." required>
