@@ -1,0 +1,14 @@
+# .htaccess — Thư mục gốc dự án UniEvent (XAMPP / Laragon Apache)
+# Không liệt kê nội dung thư mục
+Options -Indexes
+
+# Tệp và thư mục ẩn (.env, .git...) — chừa .well-known
+RedirectMatch 404 /\.(?!well-known/)
+
+# Chặn truy cập trực tiếp các thư mục nội bộ
+RedirectMatch 404 /(inc|src|vendor|database|logs|storage)(/|$)
+
+# Chặn đọc các tệp cấu hình, CSDL, nhật ký
+<FilesMatch "\.(sql|log|bak|ini|lock)$|^composer\.json$">
+    Require all denied
+</FilesMatch>

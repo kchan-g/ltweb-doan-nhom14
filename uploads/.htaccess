@@ -1,0 +1,13 @@
+# uploads/.htaccess — Thư mục tải lên chỉ chứa tệp hình ảnh tĩnh
+# Không liệt kê nội dung thư mục
+Options -Indexes
+
+# Cấm chạy mọi mã thực thi
+<FilesMatch "\.(php\d?|phtml|phar|cgi|pl|py|sh)$">
+    Require all denied
+</FilesMatch>
+
+# Chống MIME sniffing
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+</IfModule>

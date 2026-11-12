@@ -1,0 +1,136 @@
+# ============================================================================
+# tests/bao-mat.http
+# Bộ kịch bản kiểm thử bảo mật phủ định (14 Ca theo Bảng 3 - Chương 7)
+# Công cụ: VS Code Extension REST Client
+# ============================================================================
+
+@goc = http://localhost:8000
+@csrf = thay_bang_ma_csrf
+@cookie = thay_bang_cookie_phpsessid
+
+### ============================================================================
+### CA 1: Kiểm tra Header bảo mật & Cookie an toàn
+### Kỳ vọng: CSP self, nosniff, Referrer-Policy, không có X-Powered-By, HttpOnly, SameSite=Lax
+### ============================================================================
+GET {{goc}}/index.php
+
+### ============================================================================
+### CA 2: POST biểu mẫu thiếu mã CSRF hoặc mã sai -> Kỳ vọng 403 Forbidden
+### Kỳ vọng: 403 "Trang đã hết hạn...", logs/bao-mat.log ghi csrf_sai
+### ============================================================================
+# 2a. POST không có ô csrf
+POST {{goc}}/dang-nhap.php
+Content-Type: application/x-www-form-urlencoded
+
+email=admin@ued.vn&password=123
+
+### 2b. POST với mã CSRF sai (csrf=abc)
+POST {{goc}}/dang-nhap.php
+Content-Type: application/x-www-form-urlencoded
+
+csrf=abc_sai_ma&email=admin@ued.vn&password=123
+
+### ============================================================================
+### CA 3: Gọi API api/gio-hang.php không có header X-CSRF-Token -> 403 JSON
+### ============================================================================
+# 3a. Không có header X-CSRF-Token -> 403 JSON
+POST {{goc}}/api/gio-hang.php
+Content-Type: application/json
+Accept: application/json
+
+{
+  "id": 1,
+  "sl": 1
+}
+
+### 3b. Có header X-CSRF-Token hợp lệ -> 200 OK
+POST {{goc}}/api/gio-hang.php
+Content-Type: application/json
+Accept: application/json
+Cookie: PHPSESSID={{cookie}}
+X-CSRF-Token: {{csrf}}
+
+{
+  "id": 1,
+  "sl": 1
+}
+
+### ============================================================================
+### CA 4: Thao tác GET trên chức năng thay đổi dữ liệu & Phân quyền
+### Kỳ vọng: GET xoa-san-pham.php và dang-xuat.php -> 405 Method Not Allowed (Allow: POST)
+### ============================================================================
+# 4a. GET xoa-san-pham.php
+GET {{goc}}/xoa-san-pham.php?id=1
+
+### 4b. GET dang-xuat.php
+GET {{goc}}/dang-xuat.php
+
+### ============================================================================
+### CA 5: Chống cố định phiên (Session Fixation)
+### Kỳ vọng: Gửi PHPSESSID tùy tiện -> máy chủ bỏ qua và cấp mã mới (use_strict_mode)
+### ============================================================================
+GET {{goc}}/index.php
+Cookie: PHPSESSID=session_gia_mao_1234567890
+
+### ============================================================================
+### CA 7: Thử nghiệm XSS (Cross-Site Scripting)
+### Kỳ vọng: Tìm kiếm hoặc gửi form chứa ký tự đặc biệt -> xuất ra nguyên văn an toàn
+### ============================================================================
+GET {{goc}}/danh-sach.php?q=<b>TestXSS</b>
+
+### ============================================================================
+### CA 8: Tham số dạng mảng (?q[]=..., id[]=...)
+### Kỳ vọng: Không gây TypeError hoặc 500, được lọc an toàn qua chuoi()
+### ============================================================================
+# 8a. Tìm kiếm với mảng
+GET {{goc}}/danh-sach.php?q[]=AI&danh_muc[]=1
+
+### 8b. Chi tiết sự kiện với id mảng
+GET {{goc}}/chi-tiet.php?id[]=1
+
+### ============================================================================
+### CA 10: Chặn truy cập tệp nội bộ qua Apache (.htaccess)
+### Kỳ vọng: .env -> 404, inc/db.php -> 404, schema.sql -> 403, uploads/ -> 403
+### ============================================================================
+GET {{goc}}/.env
+
+### 10b. Tệp CSDL
+GET {{goc}}/database/schema.sql
+
+### 10c. Tệp mã nguồn nội bộ
+GET {{goc}}/inc/db.php
+
+### ============================================================================
+### CA 12: Chống brute force đoán mật khẩu
+### Kỳ vọng: Gửi sai liên tiếp 5 lần -> lần 6 nhận 429 Too Many Requests
+### ============================================================================
+POST {{goc}}/dang-nhap.php
+Content-Type: application/x-www-form-urlencoded
+Cookie: PHPSESSID={{cookie}}
+
+csrf={{csrf}}&email=bruteforce_test@ued.vn&password=wrong_pass
+
+### ============================================================================
+### CA 13 (Đề tài UniEvent): Khách chưa đăng nhập gọi POST đặt vé trực tiếp
+### Kỳ vọng: 302 Redirect chuyển hướng về dang-nhap.php, không tạo đơn
+### ============================================================================
+POST {{goc}}/dat-hang.php
+Content-Type: application/x-www-form-urlencoded
+Cookie: PHPSESSID={{cookie}}
+
+csrf={{csrf}}&ghi_chu=dat_ve_khong_login
+
+### ============================================================================
+### CA 14 (Đề tài UniEvent): Thêm vé với số lượng âm vào giỏ qua API
+### Kỳ vọng: 422 Unprocessable Entity kèm thông báo lỗi JSON
+### ============================================================================
+POST {{goc}}/api/gio-hang.php
+Content-Type: application/json
+Accept: application/json
+Cookie: PHPSESSID={{cookie}}
+X-CSRF-Token: {{csrf}}
+
+{
+  "id": 1,
+  "sl": -5
+}
