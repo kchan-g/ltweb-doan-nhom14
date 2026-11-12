@@ -461,6 +461,7 @@ require __DIR__ . '/../../inc/header.php';
       class="dat-form"
       novalidate
     >
+      <?= csrfField() ?>
       <div class="form-group mb-3">
         <label for="anh_dai_dien" class="form-label">
           Chọn tệp hình ảnh mới (JPG, PNG, WEBP &le; 2MB):
@@ -560,6 +561,7 @@ require __DIR__ . '/../../inc/header.php';
         novalidate
         aria-labelledby="form-diem-title"
       >
+        <?= csrfField() ?>
         <div class="form-group mb-3">
           <label for="hoc_phan" class="form-label">
             Học phần / Môn học <span class="bat-buoc" aria-hidden="true">*</span>
@@ -715,6 +717,7 @@ require __DIR__ . '/../../inc/header.php';
                     <td>
                       <?php if ($laChuTrang): ?>
                         <form method="POST" action="gioithieu.php#tinh-diem" style="display:inline;" onsubmit="return confirm('Bạn có chắc muốn xóa bản ghi điểm môn này khỏi CSDL?');">
+                          <?= csrfField() ?>
                           <input type="hidden" name="xoa_diem_id" value="<?= (int)$row['id'] ?>">
                           <button type="submit" name="xoa_diem" style="padding: 2px 8px; font-size: 0.78rem; border-radius: 4px; border: 1px solid #ef4444; color: #ef4444; background: transparent; cursor: pointer;">Xóa</button>
                         </form>
