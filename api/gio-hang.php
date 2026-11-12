@@ -28,17 +28,19 @@ set_exception_handler(function (Throwable $e): void {
 });
 
 /**
- * Trả về phản hồi JSON chuẩn REST.
+ * Trả về phản hồi JSON chuẩn REST (nếu chưa nạp từ inc/ham.php).
  */
-function traJson(mixed $duLieu, int $ma = 200, array $headers = []): void
-{
-    http_response_code($ma);
-    header('Content-Type: application/json; charset=utf-8');
-    foreach ($headers as $k => $v) {
-        header("{$k}: {$v}");
+if (!function_exists('traJson')) {
+    function traJson(mixed $duLieu, int $ma = 200, array $headers = []): void
+    {
+        http_response_code($ma);
+        header('Content-Type: application/json; charset=utf-8');
+        foreach ($headers as $k => $v) {
+            header("{$k}: {$v}");
+        }
+        echo json_encode($duLieu, JSON_UNESCAPED_UNICODE);
+        exit;
     }
-    echo json_encode($duLieu, JSON_UNESCAPED_UNICODE);
-    exit;
 }
 
 $phuongThuc = $_SERVER['REQUEST_METHOD'];

@@ -42,13 +42,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     try {
+      // Lấy mã CSRF từ thẻ meta trong <head>
+      const metaCsrf = document.querySelector('meta[name="csrf-token"]');
+      const csrfToken = metaCsrf ? metaCsrf.getAttribute('content') : '';
+
       const res = await fetch('api/gio-hang.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
+          'Accept': 'application/json',
+          'X-CSRF-Token': csrfToken
         },
-        body: JSON.stringify({ id: id, sl: sl })
+        body: JSON.stringify({ id: id, sl: sl, csrf: csrfToken })
       });
 
       const data = await res.json();

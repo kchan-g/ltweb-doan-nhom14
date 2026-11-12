@@ -80,6 +80,20 @@ class BaoMatTest extends TestCase
         $this->assertEquals('1.500.000 đ', vnd(1500000));
     }
 
+    public function testHamChuoiLocThamSoMang(): void
+    {
+        // Chuỗi bình thường giữ nguyên
+        $this->assertEquals('Hội thảo IT', chuoi('Hội thảo IT'));
+
+        // Tham số mảng (như ?q[]=attack hoặc id[]...) phải lọc thành chuỗi rỗng
+        $this->assertEquals('', chuoi(['phan_tu_1', 'phan_tu_2']));
+        $this->assertEquals('', chuoi(['hack' => 'payload']));
+
+        // Null hoặc kiểu khác không phải chuỗi -> chuỗi rỗng
+        $this->assertEquals('', chuoi(null));
+        $this->assertEquals('', chuoi(12345));
+    }
+
     /**
      * Logic chuẩn hóa chuyển hướng an toàn được áp dụng trong dang-nhap.php
      */

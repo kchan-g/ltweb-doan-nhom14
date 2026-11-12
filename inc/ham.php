@@ -19,6 +19,59 @@ function e(mixed $chuoi): string
 }
 
 /**
+ * Lọc tham số chuỗi đầu vào an toàn. Nếu người dùng cố tình gửi mảng (?q[]=...), trả về chuỗi rỗng.
+ */
+function chuoi(mixed $v): string
+{
+    return is_string($v) ? $v : '';
+}
+
+/**
+ * Xuất phản hồi JSON chuẩn UTF-8 và kết thúc request.
+ */
+if (!function_exists('traJson')) {
+    function traJson(mixed $duLieu, int $maTrangThai = 200, array $headers = []): void
+    {
+        http_response_code($maTrangThai);
+        header('Content-Type: application/json; charset=utf-8');
+        foreach ($headers as $k => $v) {
+            header("{$k}: {$v}");
+        }
+        echo json_encode($duLieu, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        exit;
+    }
+}
+
+/**
+ * Ghi nhật ký sự kiện bảo mật vào logs/bao-mat.log theo định dạng chuẩn:
+ * YYYY-MM-DD HH:MM:SS <ten_su_kien> <json_chi_tiet>
+ * TUYỆT ĐỐI KHÔNG GHI: mật khẩu, mã phiên, mã CSRF.
+ */
+function ghiLogBaoMat(string $suKien, array $chiTiet = []): void
+{
+    // Loại bỏ mọi trường nhạy cảm nếu có
+    unset($chiTiet['mat_khau'], $chiTiet['password'], $chiTiet['csrf'], $chiTiet['token']);
+
+    $uid = $_SESSION['uid'] ?? ($_SESSION['nguoi_dung']['id'] ?? null);
+    $ip  = $_SERVER['REMOTE_ADDR'] ?? '-';
+
+    $duLieuGhi = array_merge([
+        'ip'  => $ip,
+        'uid' => $uid,
+    ], $chiTiet);
+
+    $json = json_encode($duLieuGhi, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    $dong = date('Y-m-d H:i:s') . " {$suKien} {$json}" . PHP_EOL;
+
+    $thuMucLog = __DIR__ . '/../logs';
+    if (!is_dir($thuMucLog)) {
+        @mkdir($thuMucLog, 0755, true);
+    }
+
+    @file_put_contents($thuMucLog . '/bao-mat.log', $dong, FILE_APPEND | LOCK_EX);
+}
+
+/**
  * Định dạng số tiền sang định dạng VNĐ.
  *
  * @param int|float $so Số tiền

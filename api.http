@@ -6,6 +6,9 @@
 # ============================================================================
 
 @goc = http://localhost:8000
+# Lưu ý: Với Chương 7, mọi request POST yêu cầu mã CSRF token.
+# Chép mã csrf từ trang web hoặc cookie PHPSESSID vào biến dưới đây:
+@csrf = thay_bang_ma_csrf
 
 ### 1. Tìm kiếm sự kiện theo từ khóa -> 200 OK {"du_lieu": [...], "tong": N}
 GET {{goc}}/api/san-pham.php?q=AI
@@ -31,6 +34,7 @@ Accept: application/json
 POST {{goc}}/api/gio-hang.php
 Content-Type: application/json
 Accept: application/json
+X-CSRF-Token: {{csrf}}
 
 {
   "id": 1,
@@ -41,6 +45,7 @@ Accept: application/json
 POST {{goc}}/api/gio-hang.php
 Content-Type: application/json
 Accept: application/json
+X-CSRF-Token: {{csrf}}
 
 {id: 1, sl: 2}
 
@@ -48,6 +53,7 @@ Accept: application/json
 POST {{goc}}/api/gio-hang.php
 Content-Type: application/json
 Accept: application/json
+X-CSRF-Token: {{csrf}}
 
 {
   "id": 1,
@@ -58,6 +64,7 @@ Accept: application/json
 POST {{goc}}/api/gio-hang.php
 Content-Type: application/json
 Accept: application/json
+X-CSRF-Token: {{csrf}}
 
 {
   "id": 888888,
@@ -68,6 +75,13 @@ Accept: application/json
 # Sự kiện ID 10 có ton_kho = 0 (hết vé)
 POST {{goc}}/api/gio-hang.php
 Content-Type: application/json
+Accept: application/json
+X-CSRF-Token: {{csrf}}
+
+{
+  "id": 10,
+  "sl": 10
+}
 Accept: application/json
 
 {
