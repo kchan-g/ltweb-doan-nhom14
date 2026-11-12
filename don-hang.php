@@ -113,6 +113,7 @@ if ($idXemChiTiet !== false && $idXemChiTiet !== null && $idXemChiTiet > 0) {
 
               <?php if ($laAdmin): ?>
                 <form action="don-hang.php" method="POST" class="mt-2 d-flex gap-1 align-items-center justify-content-end">
+                  <?= csrfField() ?>
                   <input type="hidden" name="don_id" value="<?= $don['id'] ?>">
                   <input type="hidden" name="quay_lai_id" value="<?= $don['id'] ?>">
                   <select name="trang_thai" class="form-control" style="font-size:0.8rem; padding:4px 8px; border-radius:6px; border:1px solid var(--border-nhat);">
@@ -437,6 +438,7 @@ require __DIR__ . '/inc/header.php';
               <td style="text-align:center;">
                 <?php if ($laAdmin): ?>
                   <form action="don-hang.php" method="POST" style="margin:0; display:inline-flex; gap:6px; align-items:center;">
+                    <?= csrfField() ?>
                     <input type="hidden" name="don_id" value="<?= $d['id'] ?>">
                     <select name="trang_thai" class="form-control" style="font-size:0.75rem; padding:4px 6px; border-radius:6px; border:1px solid var(--border-nhat);">
                       <option value="cho_xac_nhan" <?= $d['trang_thai'] === 'cho_xac_nhan' ? 'selected' : '' ?>>Chờ xác nhận</option>

@@ -198,6 +198,7 @@ require __DIR__ . '/inc/header.php';
                       </a>
                     <?php else: ?>
                       <form action="gio-hang.php" method="POST" style="margin:0; display:inline;" class="form-them-gio-nhanh">
+                        <?= csrfField() ?>
                         <input type="hidden" name="hanh_dong" value="them">
                         <input type="hidden" name="id" value="<?= $sk->id ?>">
                         <input type="hidden" name="so_luong" value="1">

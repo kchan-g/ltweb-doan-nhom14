@@ -172,6 +172,7 @@ require __DIR__ . '/inc/header.php';
                 </a>
               <?php else: ?>
                 <form action="gio-hang.php" method="POST" style="margin:0; display:inline;">
+                  <?= csrfField() ?>
                   <input type="hidden" name="hanh_dong" value="them">
                   <input type="hidden" name="id" value="<?= $sp->id ?>">
                   <input type="hidden" name="so_luong" value="1">
@@ -239,6 +240,7 @@ require __DIR__ . '/inc/header.php';
                   </a>
                 <?php else: ?>
                   <form action="gio-hang.php" method="POST" style="margin:0; display:inline;">
+                    <?= csrfField() ?>
                     <input type="hidden" name="hanh_dong" value="them">
                     <input type="hidden" name="id" value="<?= $sp->id ?>">
                     <input type="hidden" name="so_luong" value="1">

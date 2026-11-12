@@ -120,6 +120,7 @@ require __DIR__ . '/inc/header.php';
     <?php endif; ?>
 
     <form action="them-san-pham.php" method="POST" enctype="multipart/form-data" novalidate>
+      <?= csrfField() ?>
       <div class="form-group mb-4">
         <label for="ten" class="form-label fw-bold mb-2" style="font-size:0.875rem; color:var(--chu-chinh);">
           Tên sự kiện <span style="color:#ef4444;">*</span>

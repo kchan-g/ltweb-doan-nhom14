@@ -143,6 +143,7 @@ require __DIR__ . '/inc/header.php';
           </h2>
 
           <form action="lien-he.php" method="POST" enctype="multipart/form-data">
+            <?= csrfField() ?>
             <fieldset style="border:none; padding:0; margin:0;">
               <legend class="chi-danh-cho-sr">Thông tin người gửi và nội dung yêu cầu</legend>
 

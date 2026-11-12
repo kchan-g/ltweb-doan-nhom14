@@ -499,6 +499,7 @@ function layLopBadgeDanhMuc(int $dmId): string {
                           Sửa
                         </a>
                         <form action="xoa-san-pham.php" method="POST" class="form-xoa-su-kien" style="margin:0;" data-ten="<?= e($sk->ten) ?>">
+                          <?= csrfField() ?>
                           <input type="hidden" name="id" value="<?= (int)$sk->id ?>">
                           <button type="submit" class="nut-bam nut-canh-bao nut-nho" style="padding:4px 8px; font-size:0.75rem;" title="Xóa sự kiện">
                             Xóa

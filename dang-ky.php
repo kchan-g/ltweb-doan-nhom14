@@ -103,6 +103,7 @@ require __DIR__ . '/inc/header.php';
     <?php endif; ?>
 
     <form action="dang-ky.php" method="POST" novalidate>
+      <?= csrfField() ?>
       <div class="form-group mb-3">
         <label for="ho_ten" class="form-label fw-bold mb-2" style="font-size: 0.875rem; color:var(--chu-chinh);">
           Họ và tên của bạn <span class="bat-buoc" style="color:#ef4444;">*</span>

@@ -226,6 +226,7 @@ require __DIR__ . '/inc/header.php';
             </div>
           <?php else: ?>
             <form action="gio-hang.php" method="POST" class="mt-4 form-them-gio-nhanh" id="form-them-gio">
+              <?= csrfField() ?>
               <input type="hidden" name="hanh_dong" value="them">
               <input type="hidden" name="id" value="<?= $sk->id ?>">
               <input type="hidden" name="so_luong" value="1">

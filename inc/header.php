@@ -39,6 +39,7 @@ if ($laDarkHung && !str_contains($lopBody, 'dark-theme')) {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><?= e($tieuDe) ?> | UniEvent - ĐH Sư Phạm Đà Nẵng</title>
+  <meta name="csrf-token" content="<?= csrfToken() ?>">
   <link rel="icon" type="image/svg+xml" href="<?= $goc ?>images/favicon.svg">
 
   <?php if ($laTrangHung): ?>
@@ -170,13 +171,19 @@ if ($laDarkHung && !str_contains($lopBody, 'dark-theme')) {
               <span class="badge-quantri" title="Quản trị viên hệ thống"><?= uiIcon("shield", "icon-brand", 14) ?> <?= e(tenNguoiDung()) ?></span>
               <a href="<?= $goc ?>quan-tri.php" class="nut-bam nut-phu nut-nho" style="padding: 4px 8px; font-size: 0.75rem;" title="Mở trang Quản trị">Quản trị</a>
               <a href="<?= $goc ?>don-hang.php" class="nut-bam nut-phu nut-nho" style="padding: 4px 8px; font-size: 0.75rem;" title="Xem các đơn hàng">Đơn hàng</a>
-              <a href="<?= $goc ?>dang-xuat.php" class="nut-bam nut-canh-bao nut-nho" style="padding: 4px 8px; font-size: 0.75rem;" title="Đăng xuất khỏi hệ thống">Thoát</a>
+              <form method="POST" action="<?= $goc ?>dang-xuat.php" style="display:inline; margin:0;">
+                <?= csrfField() ?>
+                <button type="submit" class="nut-bam nut-canh-bao nut-nho" style="padding: 4px 8px; font-size: 0.75rem;" title="Đăng xuất khỏi hệ thống">Thoát</button>
+              </form>
             </div>
           <?php else: ?>
             <div class="tai-khoan-sinhvien d-flex align-items-center gap-2" role="group" aria-label="Tài khoản Sinh viên">
               <span class="fw-bold" style="font-size: 0.8125rem; color: var(--mau-chinh);"><?= uiIcon("user", "icon-brand", 15) ?> <?= e(tenNguoiDung()) ?></span>
               <a href="<?= $goc ?>don-hang.php" class="nut-bam nut-phu nut-nho" style="padding: 4px 10px; font-size: 0.75rem;" title="Xem vé đã đặt">Vé của tôi</a>
-              <a href="<?= $goc ?>dang-xuat.php" class="nut-bam nut-canh-bao nut-nho" style="padding: 4px 10px; font-size: 0.75rem;" title="Đăng xuất tài khoản">Đăng xuất</a>
+              <form method="POST" action="<?= $goc ?>dang-xuat.php" style="display:inline; margin:0;">
+                <?= csrfField() ?>
+                <button type="submit" class="nut-bam nut-canh-bao nut-nho" style="padding: 4px 10px; font-size: 0.75rem;" title="Đăng xuất tài khoản">Đăng xuất</button>
+              </form>
             </div>
           <?php endif; ?>
         <?php else: ?>

@@ -146,6 +146,7 @@ require __DIR__ . '/inc/header.php';
           </div>
 
           <form action="dat-hang.php" method="POST">
+            <?= csrfField() ?>
             <div class="form-group mb-4">
               <label for="ghi_chu" class="form-label fw-bold mb-2" style="font-size:0.875rem; color:var(--chu-chinh);">
                 Ghi chú thêm (không bắt buộc):

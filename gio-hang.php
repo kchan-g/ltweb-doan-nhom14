@@ -282,6 +282,7 @@ require __DIR__ . '/inc/header.php';
                     </td>
                     <td style="text-align:center;">
                       <form action="gio-hang.php" method="POST" class="d-flex align-items-center justify-content-center gap-1" style="margin:0;">
+                        <?= csrfField() ?>
                         <input type="hidden" name="hanh_dong" value="cap_nhat">
                         <input type="hidden" name="id" value="<?= $sk->id ?>">
                         <input
@@ -306,6 +307,7 @@ require __DIR__ . '/inc/header.php';
                     </td>
                     <td style="text-align:center;">
                       <form action="gio-hang.php" method="POST" style="margin:0;">
+                        <?= csrfField() ?>
                         <input type="hidden" name="hanh_dong" value="xoa">
                         <input type="hidden" name="id" value="<?= $sk->id ?>">
                         <button type="submit" class="nut-bam nut-canh-bao nut-nho" style="padding:6px 10px; border-radius:6px;" title="Xóa mục này">
@@ -337,6 +339,7 @@ require __DIR__ . '/inc/header.php';
             <div class="nhom-nut-trai">
               <a href="danh-sach.php" class="nut-bam nut-phu">← Tiếp tục chọn sự kiện</a>
               <form action="gio-hang.php" method="POST" style="margin:0; display:inline-flex;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa toàn bộ giỏ vé này?');">
+                <?= csrfField() ?>
                 <input type="hidden" name="hanh_dong" value="xoa_het">
                 <button type="submit" class="nut-bam nut-canh-bao">Xóa giỏ vé</button>
               </form>
@@ -427,6 +430,7 @@ require __DIR__ . '/inc/header.php';
                     </td>
                     <td style="text-align:center;">
                       <form action="gio-hang.php" method="POST" style="margin:0;" onsubmit="return confirm('Bạn có chắc chắn muốn hủy vé sự kiện này?');">
+                        <?= csrfField() ?>
                         <input type="hidden" name="hanh_dong" value="huy_ve">
                         <input type="hidden" name="id" value="<?= $sk->id ?>">
                         <button type="submit" class="nut-bam nut-canh-bao nut-nho" style="padding:6px 12px; font-size:0.8rem; border-radius:6px;">
