@@ -1,11 +1,16 @@
+# Tệp cấu hình bảo mật môi trường
+.env
+.env.*
+!.env.example
+
 /vendor/
 
-# Logs phat sinh khi chay
+# Logs phát sinh khi chạy
 /logs/*
 !/logs/.htaccess
 !/logs/.gitkeep
 
-# Storage: Du lieu phat sinh runtime (jsonl, txt, avatars)
+# Storage: Dữ liệu phát sinh runtime
 /storage/*
 !/storage/.htaccess
 !/storage/.gitkeep
@@ -14,8 +19,9 @@
 *.jsonl
 *.log
 
-# Uploads cua nguoi dung
+# Uploads của người dùng
 /uploads/*
+!/uploads/.htaccess
 !/uploads/.gitkeep
 
 # OS & Editor temp files
