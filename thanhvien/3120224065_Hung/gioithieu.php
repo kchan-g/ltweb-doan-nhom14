@@ -768,6 +768,7 @@ require __DIR__ . '/../../inc/header.php';
           novalidate
           aria-labelledby="form-luubut-title"
         >
+          <?= csrfField() ?>
           <div class="form-group mb-3">
             <label for="ho_ten" class="form-label">
               Họ và tên của bạn <span class="bat-buoc" aria-hidden="true">*</span>
@@ -877,6 +878,7 @@ require __DIR__ . '/../../inc/header.php';
                     </time>
                     <?php if ($laChuTrang && !empty($item['id'])): ?>
                       <form action="gioithieu.php#luubut" method="post" class="d-inline ms-2" onsubmit="return confirm('Bạn có chắc chắn muốn xóa lời nhắn này khỏi CSDL?');">
+                        <?= csrfField() ?>
                         <input type="hidden" name="xoa_luu_but" value="1">
                         <input type="hidden" name="id_luu_but" value="<?= (int)$item['id'] ?>">
                         <button type="submit" class="btn-xoa-luubut" title="Chủ trang xóa lời nhắn">🗑️ Xóa</button>
