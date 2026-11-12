@@ -100,7 +100,7 @@ function yeuCauDangNhap(): void
 /**
  * Yêu cầu người dùng phải có đúng vai trò chỉ định để truy cập.
  * - Nếu chưa đăng nhập -> Chuyển hướng tới dang-nhap.php.
- * - Nếu đã đăng nhập nhưng không đủ quyền -> Trả về mã HTTP 403 Forbidden và hiển thị 403.php.
+ * - Nếu đã đăng nhập nhưng không đủ quyền -> Ghi log cam_truy_cap, trả về mã HTTP 403 Forbidden và hiển thị 403.php.
  *
  * @param string $vaiTro Vai trò yêu cầu (ví dụ: 'quan_tri')
  */
@@ -114,6 +114,11 @@ function yeuCauQuyen(string $vaiTro): void
 
     $nd = nguoiDung();
     if (($nd['vai_tro'] ?? '') !== $vaiTro) {
+        ghiLogBaoMat('cam_truy_cap', [
+            'trang'   => $_SERVER['REQUEST_URI'] ?? '',
+            'vai_tro' => $nd['vai_tro'] ?? 'khach',
+            'yeu_cau' => $vaiTro,
+        ]);
         http_response_code(403);
         if (file_exists(__DIR__ . '/../403.php')) {
             require __DIR__ . '/../403.php';
@@ -122,4 +127,59 @@ function yeuCauQuyen(string $vaiTro): void
         }
         exit;
     }
+}
+
+/**
+ * Đăng nhập người dùng: đổi mã phiên chống cố định phiên (Session Fixation) và lưu UID.
+ */
+function dangNhap(int $uid): void
+{
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        session_regenerate_id(true);
+    }
+    $_SESSION['uid'] = $uid;
+    $_SESSION['hoat_dong'] = time();
+}
+
+/**
+ * Đăng xuất người dùng: hủy toàn bộ dữ liệu phiên và cookie phiên.
+ */
+function dangXuat(): void
+{
+    $_SESSION = [];
+    if (ini_get('session.use_cookies')) {
+        $params = session_get_cookie_params();
+        setcookie(session_name(), '', [
+            'expires'  => time() - 3600,
+            'path'     => $params['path'] ?? '/',
+            'domain'   => $params['domain'] ?? '',
+            'secure'   => $params['secure'] ?? false,
+            'httponly' => $params['httponly'] ?? true,
+            'samesite' => $params['samesite'] ?? 'Lax',
+        ]);
+    }
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        session_destroy();
+    }
+}
+
+/**
+ * Chương 7: Đếm số lần đăng nhập sai của email trong 15 phút gần nhất.
+ */
+function soLanSai(string $email): int
+{
+    $st = db()->prepare('SELECT COUNT(*) FROM dang_nhap_sai WHERE email = ? AND thoi_gian > NOW() - INTERVAL 15 MINUTE');
+    $st->execute([$email]);
+    return (int)$st->fetchColumn();
+}
+
+/**
+ * Chương 7: Ghi nhận một lần đăng nhập sai vào CSDL và nhật ký bảo mật logs/bao-mat.log.
+ */
+function ghiLanSai(string $email): void
+{
+    $ip = $_SERVER['REMOTE_ADDR'] ?? '-';
+    $st = db()->prepare('INSERT INTO dang_nhap_sai (email, ip, thoi_gian) VALUES (?, ?, NOW())');
+    $st->execute([$email, $ip]);
+    ghiLogBaoMat('dang_nhap_sai', ['email' => $email]);
 }

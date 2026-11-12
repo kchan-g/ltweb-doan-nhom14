@@ -114,6 +114,18 @@ CREATE TABLE lien_he (
   ngay_tao      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- ----------------------------------------------------------------------------
+-- 6B. BẢNG GHI NHẬN ĐĂNG NHẬP SAI (dang_nhap_sai - Chương 7: Chống Brute Force)
+-- Mỗi lần đăng nhập sai một dòng — phát hiện và khóa tạm sau 5 lần sai trong 15 phút.
+-- ----------------------------------------------------------------------------
+CREATE TABLE dang_nhap_sai (
+  id        INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  email     VARCHAR(255) NOT NULL,
+  ip        VARCHAR(45) NOT NULL,
+  thoi_gian DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_email_thoi_gian (email, thoi_gian)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- ============================================================================
 -- PHẦN B: CÁC BẢNG TRANG CÁ NHÂN VÀ THÀNH VIÊN
 -- ============================================================================

@@ -17,12 +17,15 @@ $email = '';
 $tiepTuc = trim((string)($_GET['tieptuc'] ?? ''));
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = trim((string)($_POST['email'] ?? ''));
-    $matKhau = (string)($_POST['password'] ?? '');
-    $tiepTuc = trim((string)($_POST['tieptuc'] ?? ''));
+    $email = trim(chuoi($_POST['email'] ?? ''));
+    $matKhau = chuoi($_POST['password'] ?? '');
+    $tiepTuc = trim(chuoi($_POST['tieptuc'] ?? ''));
 
     if ($email === '' || $matKhau === '') {
         $loi = 'Vui lòng nhập đầy đủ địa chỉ email và mật khẩu.';
+    } elseif (soLanSai($email) >= 5) {
+        http_response_code(429);
+        $loi = 'Sai quá nhiều lần, hãy thử lại sau 15 phút';
     } else {
         try {
             $st = db()->prepare('SELECT id, email, ho_ten, mat_khau, vai_tro FROM nguoi_dung WHERE email = ?');
@@ -30,17 +33,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $nd = $st->fetch();
 
             if ($nd === false || !password_verify($matKhau, (string)$nd['mat_khau'])) {
-                error_log(sprintf('[%s] Cảnh báo: Đăng nhập thất bại cho email "%s"', date('Y-m-d H:i:s'), $email));
-                $loi = 'Email hoặc mật khẩu không chính xác.';
+                ghiLanSai($email);
+                $loi = 'Sai email hoặc mật khẩu';
             } else {
+                db()->prepare('DELETE FROM dang_nhap_sai WHERE email = ?')->execute([$email]);
+
                 if (password_needs_rehash((string)$nd['mat_khau'], PASSWORD_DEFAULT)) {
                     $hashMoi = password_hash($matKhau, PASSWORD_DEFAULT);
                     $stRehash = db()->prepare('UPDATE nguoi_dung SET mat_khau = ? WHERE id = ?');
                     $stRehash->execute([$hashMoi, $nd['id']]);
                 }
 
-                session_regenerate_id(true);
-                $_SESSION['uid'] = (int)$nd['id'];
+                dangNhap((int)$nd['id']);
 
                 flash("Đăng nhập thành công! Chào mừng " . $nd['ho_ten'] . ".");
 
@@ -106,6 +110,7 @@ require __DIR__ . '/inc/header.php';
     <?php endif; ?>
 
     <form action="dang-nhap.php" method="POST" novalidate>
+      <?= csrfField() ?>
       <?php if (!empty($tiepTuc)): ?>
         <input type="hidden" name="tieptuc" value="<?= e($tiepTuc) ?>">
       <?php endif; ?>
