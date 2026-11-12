@@ -898,6 +898,7 @@ require __DIR__ . '/../../inc/header.php';
           novalidate
           aria-labelledby="form-tuvan-title"
         >
+          <?= csrfField() ?>
           <div class="form-group mb-3">
             <label for="ho_ten" class="form-label">
               Họ và tên của bạn <span class="bat-buoc" aria-hidden="true">*</span>
