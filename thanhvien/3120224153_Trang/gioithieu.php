@@ -395,6 +395,7 @@ require __DIR__ . '/../../inc/header.php';
           class="trang-form"
           novalidate
         >
+          <?= csrfField() ?>
           <div class="form-group mb-3">
             <label for="loai_web" class="form-label">
               Loại hình website <span class="bat-buoc">*</span>
@@ -644,6 +645,7 @@ require __DIR__ . '/../../inc/header.php';
           class="trang-form"
           novalidate
         >
+          <?= csrfField() ?>
           <div class="form-group mb-3">
             <label for="ho_ten" class="form-label">
               Họ và tên của bạn <span class="bat-buoc">*</span>
