@@ -3,10 +3,10 @@
 > **Học phần:** Thiết kế và Lập trình Web (Web Design and Programming)  
 > **Khoa:** Toán – Tin, Trường Đại học Sư phạm – Đại học Đà Nẵng  
 > **Học kỳ:** Học kỳ 1, Năm học 2026 – 2027  
-> **BÀI TẬP THỰC HÀNH NHÓM SỐ 6:** Chương 6 – PHP và cơ sở dữ liệu MySQL  
+> **BÀI TẬP THỰC HÀNH NHÓM SỐ 7:** Chương 7 – Bảo mật ứng dụng web  
 > **Nhóm thực hiện:** Nhóm 14  
 > **Kho lưu trữ GitHub:** [https://github.com/kchan-g/ltweb-doan-nhom14](https://github.com/kchan-g/ltweb-doan-nhom14)  
-> **Thẻ git bản Bài 5:** `btn5`
+> **Thẻ git bản Bài 6:** `btn6` | **Thẻ git bản Bài 7:** `btn7`
 
 ---
 
@@ -33,45 +33,82 @@
 
 ---
 
+## ⚙️ Hướng Dẫn Cài Đặt Môi Trường & Khởi Động Website
+
+### 1. Cài đặt thư viện phụ thuộc qua Composer
+Cài đặt thư viện nạp tệp môi trường `.env` (`vlucas/phpdotenv`) và sinh bộ nạp tự động PSR-4:
+```bash
+composer install
+```
+
+### 2. Thiết lập tệp cấu hình bảo mật `.env`
+Sao chép từ tệp mẫu `.env.example` và cấu hình thông số kết nối CSDL theo môi trường thực tế:
+```bash
+# Windows PowerShell
+copy .env.example .env
+
+# Hoặc Linux / MacOS
+cp .env.example .env
+```
+*Nội dung tệp `.env` mẫu:*
+```ini
+APP_ENV=development
+APP_DEBUG=true
+APP_URL=http://localhost:8000
+
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=ltweb_nhom14
+DB_USERNAME=root
+DB_PASSWORD=
+```
+> [!NOTE]
+> Hệ thống hỗ trợ tài khoản MySQL phân quyền tối thiểu `nhom14_app` (DML only: SELECT, INSERT, UPDATE, DELETE). Bạn có thể đổi `DB_USERNAME=nhom14_app` và `DB_PASSWORD=mat_khau_ung_dung_2026` sau khi chạy tệp `database/tai-khoan.sql`.
+
+---
+
 ## 🗄️ Hướng Dẫn Cài Đặt Cơ Sở Dữ Liệu (`ltweb_nhom14`)
 
 CSDL của nhóm được thiết kế chuẩn 3NF, lưu trữ tại thư mục `database/`:
-- `database/schema.sql`: DDL xóa và tạo lại CSDL `ltweb_nhom14`, cấu trúc 12 bảng, khóa chính, khóa ngoại, ràng buộc CHECK và chỉ mục.
-- `database/seed.sql`: DML nạp dữ liệu mẫu gồm 32 sự kiện (phủ 4 danh mục + 1 danh mục rỗng để kiểm thử), 5 tài khoản mẫu, đơn hàng, phản hồi liên hệ và dữ liệu thành viên.
-- `database/erd.png`: Sơ đồ quan hệ thực thể độ phân giải cao trực quan hóa toàn bộ 12 bảng.
+- `database/schema.sql`: DDL cấu trúc CSDL `ltweb_nhom14` gồm 13 bảng (bổ sung bảng `dang_nhap_sai` kiểm soát Brute Force theo Chương 7), khóa chính, khóa ngoại, ràng buộc CHECK và chỉ mục.
+- `database/seed.sql`: DML nạp dữ liệu mẫu gồm 32 sự kiện, 5 tài khoản thử nghiệm, đơn hàng mẫu, phản hồi liên hệ và dữ liệu thành viên.
+- `database/tai-khoan.sql`: Phân quyền tài khoản CSDL nguyên tắc đặc quyền tối thiểu (Least Privilege) cho người dùng ứng dụng web `nhom14_app`.
+- `database/erd.png`: Sơ đồ quan hệ thực thể độ phân giải cao trực quan hóa toàn bộ CSDL.
 
-### Cách 1: Sử dụng phpMyAdmin (XAMPP / Laragon)
-
-1. Mở trình duyệt truy cập: `http://localhost/phpmyadmin/`.
-2. Vào thẻ **Import** (Nhập).
-3. Chọn tệp `database/schema.sql` và nhấn **Import** (tệp đã chứa lệnh `DROP DATABASE IF EXISTS ltweb_nhom14; CREATE DATABASE ...`).
-4. Chọn CSDL `ltweb_nhom14` vừa tạo, tiếp tục chọn thẻ **Import**, nạp tệp `database/seed.sql` và nhấn **Import**.
-
-### Cách 2: Sử dụng dòng lệnh (CLI / Terminal)
-
+### Cài đặt qua dòng lệnh (CLI / Terminal):
 ```bash
 # 1. Nhập cấu trúc CSDL (schema)
 mysql -u root -p < database/schema.sql
 
 # 2. Nhập dữ liệu mẫu ban đầu (seed)
 mysql -u root -p ltweb_nhom14 < database/seed.sql
+
+# 3. Tạo tài khoản MySQL phân quyền tối thiểu cho ứng dụng (tùy chọn)
+mysql -u root -p < database/tai-khoan.sql
 ```
 
 ---
 
-## 🚀 Hướng Dẫn Khởi Động Website
+## 🚀 Hướng Dẫn Khởi Động Website & Kiểm Thử Tự Động
 
-### Chạy bằng PHP Built-in Server
-1. Mở PowerShell / Terminal tại thư mục `ltweb-doan-nhom14/`.
-2. Khởi tạo nạp tự động Composer:
-   ```bash
-   composer dump-autoload
-   ```
-3. Khởi chạy máy chủ PHP:
-   ```bash
-   php -S localhost:8000
-   ```
-4. Truy cập website: `http://localhost:8000/`.
+### Khởi chạy máy chủ PHP Built-in Server:
+```bash
+php -S localhost:8000
+```
+Truy cập website tại: `http://localhost:8000/`.
+
+### Chạy bộ kiểm thử tự động (Unit Test Suite):
+Bộ kiểm thử gồm 38 bài test bao phủ toàn bộ chức năng CSDL, giao dịch ACID, giỏ hàng, lọc đầu vào, mã hóa XSS, kiểm tra CSRF token, chống brute force và hết hạn phiên 30 phút:
+```bash
+php tests/run_tests.php
+```
+
+### Chạy kịch bản kiểm thử bảo mật 14 ca (Chương 7):
+- Sử dụng Bash Script (Curl):
+  ```bash
+  bash tests/bao-mat.sh http://localhost:8000
+  ```
+- Hoặc mở tệp `tests/bao-mat.http` trong Visual Studio Code với tiện ích mở rộng **REST Client**.
 
 ---
 
@@ -141,17 +178,51 @@ Hệ thống cung cấp 2 REST API trả JSON đúng chuẩn RESTful, có xử l
 
 ---
 
-## 🛡️ Điểm Sáng Kỹ Thuật & Bảo Mật (Rubric Bài 6)
+## 🛡️ Điểm Sáng Kỹ Thuật & Bảo Mật Toàn Diện (Chương 6 & Chương 7)
 
-1. **Phòng chống SQL Injection tuyệt đối:**  
-   100% truy vấn có tham số người dùng đều sử dụng PDO Prepared Statement (`prepare()` + `execute()` / `bindValue()`). Sắp xếp và phân trang dùng Whitelist an toàn.
-2. **Giao dịch ACID trong đặt hàng (`luuDonHang`):**  
-   Bao bọc trong `beginTransaction()`, `commit()`, `rollBack()`. Trừ tồn kho nguyên tử `UPDATE su_kien SET ton_kho = ton_kho - :sl WHERE id = :id AND ton_kho >= :sl` kết hợp kiểm tra `rowCount() === 1` chống bán vượt tồn kho (race condition).
-3. **Phòng chống tấn công IDOR (Insecure Direct Object Reference):**  
-   Tại `don-hang.php?id=X`, khách hàng chỉ xem được đơn hàng của chính tài khoản mình (`AND nguoi_dung_id = ?`). Truy cập đơn của người khác nhận mã lỗi 404 (thay vì 403 để tránh rò rỉ sự tồn tại của đơn hàng).
-4. **Phòng chống N+1 Query:**  
-   Khối "Đã xem gần đây" ở trang chủ và giỏ hàng gom tất cả ID vào một câu truy vấn duy nhất `layTheoIds()` dạng `WHERE id IN (?, ?, ...)` thay vì vòng lặp truy vấn.
-5. **Phiên làm việc & Mật khẩu chuẩn:**  
-   Chỉ lưu `$_SESSION['uid']`, nạp thông tin người dùng qua hàm `nguoiDung()` có cơ chế cache trong cùng một request. Gọi `session_regenerate_id(true)` khi đăng nhập để chống Session Fixation.
-6. **0 lỗi W3C Markup Validator & Thân thiện tiếp cận (a11y):**  
-   Toàn bộ mã HTML sinh ra tuân thủ chuẩn W3C, hỗ trợ nhãn `aria-*`, cấu trúc ngữ nghĩa rõ ràng và tương thích thiết bị di động.
+Hệ thống được thiết kế theo các tiêu chuẩn bảo mật OWASP Top 10 và các quy chuẩn bảo mật ứng dụng web của Trường Đại học Sư phạm - ĐHĐN:
+
+1. **Phòng chống CSRF (Cross-Site Request Forgery) tập trung:**
+   - Tạo mã token ngẫu nhiên bảo mật 64 ký tự hex bằng `random_bytes(32)`.
+   - Kiểm tra mã token bằng thuật toán chống timing-attack `hash_equals()`.
+   - Middleware tập trung tại `inc/config.php` tự động chặn mọi request POST không hợp lệ với mã lỗi HTTP 403.
+   - Thẻ `<meta name="csrf-token">` và hàm tiện ích `csrfField()` tự động đồng bộ trên toàn bộ biểu mẫu và Fetch API.
+
+2. **Phòng chống XSS (Cross-Site Scripting):**
+   - Hàm `e()` áp dụng `htmlspecialchars($str, ENT_QUOTES | ENT_HTML5, 'UTF-8')` trên toàn bộ dữ liệu người dùng render ra view.
+   - Hàm `chuoi()` lọc tham số chuỗi, tự động chuyển mảng độc hại thành chuỗi rỗng.
+   - JavaScript sử dụng thuộc tính `textContent` và gán sự kiện an toàn qua `addEventListener()` thay vì chèn inline script hoặc `eval()`.
+
+3. **Phòng chống Brute Force Đăng Nhập:**
+   - Theo dõi số lần đăng nhập sai theo IP và email trong bảng CSDL `dang_nhap_sai`.
+   - Tự động tạm khóa tài khoản 15 phút khi nhập sai quá 5 lần liên tiếp (HTTP 429 Too Many Requests).
+   - Tự động xóa lịch sử sai khi đăng nhập thành công.
+
+4. **Bảo mật Phiên làm việc (Session & Cookie):**
+   - Bật `session.use_strict_mode = 1` từ chối Session ID do client tự chỉ định.
+   - Cookie cấu hình chặt chẽ: `HttpOnly = true` (chặn JavaScript đọc cookie), `SameSite = Lax` (chống CSRF), `Secure = true` trên HTTPS.
+   - Hết hạn phiên tự động sau 30 phút không hoạt động.
+   - Tái tạo ID phiên `session_regenerate_id(true)` ngay khi đăng nhập thành công để triệt tiêu Session Fixation.
+
+5. **Phòng chống SQL Injection & Nguyên Tắc Đặc Quyền Tối Thiểu (Least Privilege):**
+   - 100% truy vấn có tham số đều sử dụng PDO Prepared Statement.
+   - Tài khoản CSDL ứng dụng `nhom14_app` chỉ có quyền DML (SELECT, INSERT, UPDATE, DELETE) trên CSDL `ltweb_nhom14`, bị cấm hoàn toàn các thao tác DDL (DROP, CREATE, ALTER).
+
+6. **Chính sách An toàn Nội dung (CSP) & HTTP Security Headers:**
+   - `Content-Security-Policy: default-src 'self'; connect-src 'self' https://api.open-meteo.com; img-src 'self' data: https://img.vietqr.io https://images.unsplash.com; style-src 'self' 'unsafe-inline'`.
+   - `X-Content-Type-Options: nosniff`.
+   - `X-Frame-Options: SAMEORIGIN` (chống Clickjacking).
+   - `Referrer-Policy: strict-origin-when-cross-origin`.
+   - Gỡ bỏ hoàn toàn tiêu đề `X-Powered-By`.
+
+7. **Bảo vệ Máy chủ Web & Thư mục Uploads (`.htaccess`):**
+   - Chặn liệt kê danh mục tệp (`Options -Indexes`).
+   - Cấm truy cập trực tiếp các thư mục nội bộ `inc/`, `src/`, `vendor/`, `database/`, `logs/`.
+   - Thư mục `uploads/.htaccess` cấm hoàn toàn việc thực thi các tệp kịch bản PHP (`.php`, `.phtml`, `.phar`) ngăn chặn triệt để Web Shell.
+
+8. **Giao dịch ACID trong đặt vé:**
+   - Trừ tồn kho nguyên tử bằng câu lệnh UPDATE có điều kiện `ton_kho >= ?` và kiểm tra `rowCount() === 1`.
+   - Bảo đảm tính toàn vẹn dữ liệu đơn hàng ngay cả khi có xung đột đồng thời.
+
+9. **Ghi nhật ký bảo mật an toàn (`logs/bao-mat.log`):**
+   - Hàm `ghiLogBaoMat()` tự động làm sạch (masking) các trường nhạy cảm như mật khẩu (`mat_khau`), mã xác nhận, CSRF token trước khi ghi vào log file.
